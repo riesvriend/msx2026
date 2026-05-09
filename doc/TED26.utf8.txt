@@ -1,0 +1,2252 @@
+   Print deze handleiding door op F4, en daarna op P te drukken.
+
+	      █████╠████████╠ └▄┬ █████  ╦███████╦┬▄└
+		├▀┼╠███┼▀├   ████ ┼▀├	  ╦█ ├▀┼█╦████
+		    ███╠     ████ ┬▄└	  ╦█	 ╦████
+		    ███╠     ████ █████   ╦█	 ╦████
+		    ███╠     ████ ┼▀├	  ╦█	 ╦████
+		    ███╠     ████ █┬▄└	  ╦█ └▄┬█╦████
+		    ███╠     ├▀┼█ █████  ╦███████╦┼▀├
+
+		      Handleiding TED versie #2.6
+
+		  Copyright (C) 1991 M.S. BBS Jos-Tel
+			    (C) M.J. Vriend
+
+
+	INHOUD						      Pagina
+
+1.	Introduktie..............................................  3
+
+2.	De Jos-Tel Multiple Sclerose Aktie.......................  4
+   2.1	  Wat is Multiple Sclerose...............................  4
+   2.2	  Wat gebeurt er met de opbrengst van de Jos-Tel aktie...  5
+
+3.	Installatie van TED......................................  6
+   3.1	  Het maken van werkdiskette.............................  6
+   3.2	  Het opstarten van het programma........................  7
+
+4.	Schermopbouw.............................................  8
+   4.1	  Statusregels...........................................  8
+   4.2	  Tekstregels............................................  9
+
+5.	Toetsenbord.............................................. 10
+   5.1	  Lettertoetsen.......................................... 10
+   5.2	  Overige toetsen........................................ 10
+
+6.	Beschrijving van de funktietoetscommando's............... 14
+   6.1	  De struktuur van de funktietoetsen..................... 14
+   6.2	  Funktietoets 1 en 6: voor- en achteruit bladeren....... 14
+   6.3	  Funktietoets 2: Instellingen........................... 14
+   6.4	  Funktietoets 3: Systeem................................ 23
+   6.5	  Funktietoets 4: Commando's............................. 30
+   6.6	  Funktietoets 5: Blokfunkties........................... 32
+   6.7	  Funktietoets 7: Hulpmenu............................... 32
+ 
+7.	Controltoets commando's.................................. 33
+   7.1	  Werking................................................ 33
+   7.2	  Opstarten van het TEDINS6 installatie programma........ 33
+   7.3	  Tonen huidige instellingen............................. 33
+   7.4	  Instellen toetscombinaties............................. 33
+   7.5	  Bewaren van de toetscombinaties........................ 34
+   7.6	  Het verlaten van TEDINS6............................... 34
+
+8.	Stap voor stap voorbeelden van toepassingen.............. 35
+   8.1	  Indelen van een tekst in alinea's...................... 35
+   8.2	  Standaardbrief met mail-merge.......................... 36
+   8.3	  Lijsten................................................ 38
+   8.4	  Tekst in kolommen...................................... 38
+   8.5	  Programma in Pascal.................................... 39
+   8.6	  Programma in BASIC..................................... 39
+   8.7	  Programma in Assembler................................. 40
+
+9.	Het geheugen beheerprogramma MemMan...................... 41
+   9.1	  Installatie van MemMan................................. 41
+
+10.	Het printerbufferprogramma PB.TSR........................ 42
+  10.1	  Installatie van de printerbuffer....................... 42
+  10.2	  Het toepassingsprogramma PRINT.COM..................... 42
+
+
+Appendix A - Overzichtslijst van funkties........................ 44
+Appendix B - Wijzigingen ten opzichte van TED 2.5................ 48
+
+Bestellen, informatie etcetera................................... 49
+
+
+┐ 1.  Introduktie
+
+TED is een uitgebreide tekstverwerker voor MSX2 computers. TED is 
+bijzonder snel, gemakkelijk te bedienen en heeft een grote geheugen· 
+capaciteit.
+
+TED is bijvoorbeeld te gebruiken voor:
+   - brieven
+   - werkstukken
+   - handleidingen
+   - persoonlijk geadresseerde circulaires
+   - notulen
+   - programmeren in assembler, Pascal, C, BASIC, enz...
+
+TED maakt gebruik van al het MSX2 geheugen in Video RAM en Memory· 
+mapper, en er kan ook samengewerkt worden met een printerbuffer en 
+Ramdisk. TED werkt samen met de MSX-DOS1 en MSX-DOS2 besturings· 
+systemen.
+
+De demonstratieversie van TED heet TEDDEMO.COM. Deze demo is vrijwel 
+gelijk aan TED 2.6, alleen de bewaar- en printfunkties zijn verwij· 
+derd. Dit evaluatieprogramma mag vrij verspreid worden. U kunt een 
+geregistreerde versie van TED 2.6 aanschaffen bij Jos-Tel voor ƒ 
+50,=. Dit bedrag is inclusief diskette en porto, de volledige winst 
+(± ƒ 40,=) komt ten goede aan de Nederlandse Multiple Sclerose 
+Stichting. Een verantwoording hiervan kunt u terug vinden in de 
+Jos-Tel databank.
+
+
+┐ 2.  De Jos-Tel Multiple Sclerose Aktie
+
+TED is reeds drie jaar in ontwikkeling en wordt nog steeds aan de 
+behoefte van de gebruikers aangepast en uitgebreid. TED wordt in 
+Nederland ontwikkeld en verkocht door MS-BBS Jos-Tel. Deze databank 
+stelt zich ten doel geld ten behoeve van de Stichting Vrienden Mul· 
+tiple Sclerose Research te verdienen door middel van de verkoop van 
+diverse MSX en MS-DOS programma's, waaronder TED.
+
+
+┐ 2.1  Wat is Multiple Sclerose
+
+Iedereen tussen de 20 en 40 jaar kan het slachtoffer worden van de 
+slopende ziekte Multiple Sclerose. De medische wetenschap kijkt 
+machteloos toe omdat er nauwelijks geld is voor onderzoek. Uw bij· 
+drage helpt mee een eind te maken aan de bedreiging die MS voor ons 
+allemaal is.
+
+MS - een aandoening van het zenuwstelsel.
+MS - leidt tot lichte verlammingen.
+MS - waarvan de oorzaak onbekend is en dus genezing niet mogelijk 
+     is.
+MS - waar je nooit van weet wanneer de volgende aanval weer een 
+     stukje van je energie meeneemt.
+MS - een stil verdriet voor de mens die het heeft en voor de partner 
+     die machteloos toeziet.
+
+
+┐ 2.2  Wat gebeurt er met de opbrengst van de Jos-Tel aktie
+
+Door een donatie ten bate van de Stichting Vrienden M.S. Research 
+over te maken kunt u bij Jos-Tel heel aardige programma's down· 
+loaden.
+
+De Stichting Vrienden M.S. Research heeft zich ten doel gesteld, 
+onderzoek naar de oorzaak en genezing van Multiple Sclerose te 
+financieren. De stichting gebruikt zijn fondsen voor steun aan 
+onderzoekers, hulpverleners enz.
+
+Elke maand stort ik uw bijdragen op het gironummer van de MS Stich· 
+ting. Een verantwoording daarvan kunt u in de Jos-Tel databank 
+terugvinden.
+
+Bedankt voor het aanschaffen van dit programma,
+
+					 met vriendelijke groet,
+
+						   J.R. de Boer,
+						   Sysop Jos-Tel
+
+
+Met goedkeuring tekenen wij,
+
+   Mw. M. du Bois	  directeur MS Stichting, den Haag
+   Dr. P.J.H.W. Jansen	  neuroloog St. Anthonius Ziekenhuis, Sneek
+   Ted de Braak 	  radio/TV presentator-entertainer, Lelystad
+   Chriet Titulaer	  Wondere Wereld presentator, Houten
+   Bert Haanstra	  cineast, Laren
+   Thijs van Leer	  musicus, Huizen
+   Prof. O.R. Hommes	  neuroloog, Nijmegen
+
+
+┐ 3. Installatie van TED
+
+Op de originele TED-diskette vindt u het TED.COM programma, enkele 
+hulpprogramma's en diverse tekstbestanden uit de Jos-Tel databank.
+U kunt dit schijfje het beste direkt op een lege diskette kopiëren 
+en deze kopie als werkschijf gebruiken. Het origineel kunt u dan op 
+een veilige plaats opbergen.
+
+TED is beveiligd door middel van een gebruikersnaam die in iedere 
+verkochte versie aangebracht wordt. Uw gebruikersnaam wordt iedere 
+keer als TED verlaten wordt op het scherm getoond. Het is altijd 
+mogelijk om voor eigen gebruik werk-kopieën te maken. Het is van· 
+zelfsprekend niet toegestaan om TED te verspreiden of te kopiëren 
+voor derden. Houd alstublieft rekening met de Multiple Sclerose 
+Aktie en ondersteun de aktie door geen kopieën te verspreiden!
+
+
+┐ 3.1  Het aanmaken van een werkdiskette
+
+Het MSXDOS systeem, dat door copyrights beschermd wordt, staat niet 
+op de originele TED-diskette, zodat u ook de MSXDOS.SYS en 
+COMMAND.COM bestanden op uw werkschijfje dient te kopiëren.
+
+Het beste kunt u hiervoor als volgt te werk gaan:
+
+1. U zorgt ervoor dat u een lege, geformatteerde diskette klaar hebt 
+   liggen, en start uw computer op met een willekeurige MSXDOS dis· 
+   kette in de A: diskdrive, bijvoorbeeld de systeemdiskette die bij 
+   uw computer werd geleverd.
+   Als u twee diskdrives bezit, kunt u de lege diskette alvast in de 
+   B: drive steken.
+
+2. U typt dan na de A> prompt van MSXDOS het volgende commando:
+   COPY  A:MSXDOS.SYS B:
+   Hierdoor wordt het MSXDOS.SYS bestand van de systeemdiskette naar 
+   de (nu nog lege) TED-werkschijf gekopiëerd wordt. Als u één disk· 
+   drive bezit zult u dus de schijfjes moeten wisselen, in dat geval 
+   krijgt u hiervoor een melding van de computer.
+
+3. Op dezelfde manier kopiëert u met commando: COPY A:COMMAND.COM B: 
+   het COMMAND.COM bestand van uw systeemdiskette naar de werk· 
+   schijf.
+
+4. Daarna doet u de originele TED diskette in de A: drive en kopi· 
+   ëert alle bestanden naar de werkschijf, dit door middel van het 
+   COPY A:*.* B: commando.
+
+
+┐ 3.2  Opstarten van TED
+
+U schakelt de computer aan met de TED-werkdiskette in de A: disk· 
+drive. Na enkele seconden verschijnt de A> prompt van het MSX-DOS 
+systeem. Door nu het commando:
+
+TED
+
+in te typen en op Return te drukken wordt TED ingeladen en opge· 
+start. Het is mogelijk om na het opstarten van TED automatisch een 
+tekstbestand in te lezen, bijvoorbeeld het bestand `BRIEF.TXT'. 
+Hiervoor dient na de A> prompt van MSX-Dos het volgende commando 
+ingetypt te worden:
+
+TED BRIEF.TXT
+
+TED wordt dan ingeladen en het tekstbestand met de naam 'BRIEF.TXT' 
+wordt in het geheugen gelezen. Er kan natuurlijk ook een andere 
+bestandsnaam gekozen worden. Indien u geen naam-extensie opgeeft, 
+wordt de voorkeurs-extensie gebruikt die u zelf kunt instellen. 
+N.B.: Onder extensie wordt het gedeelte van de bestandsnaam achter 
+de punt verstaan, in dit voorbeeld is de extensie dus '.TXT'.
+
+Indien MSX-DOS 2 gebruikt wordt, kan worden opgegeven uit welke 
+directory het bestand geladen moet worden.
+
+
+┐ 4. Schermopbouw
+
+┐ 4.1 Statusregels
+
+De regels die niet tot de eigenlijke tekst behoren zijn in 'inverse' 
+(=in een tegengestelde kleur) weergegeven. Standaard is deze kleur 
+groen.
+
+- Informatieregel
+  De bovenste regel van het scherm (informatieregel) geeft het vol· 
+gende weer:
+
+	- de stand van de 'Invoeg' vlag.
+	- het huidige regel- en kolomnummer van de cursor
+	- de huidige pagina. De paginalengte kan bepaald worden met 
+	  commando F2/P/L.
+	- De aktieve funktie- of control toets. Als er geen funktie 
+	  aktief is, staat er: "F7:Hulp".
+	- een informatie lichtkrant
+	- een klok
+	- Onder de informatieregel staat de bestandsnaam van de 
+	  huidige tekst. Indien MSX-DOS2 gebruikt wordt, wordt het 
+	  volledige zoekpad getoond, dus inclusief eventuele sub· 
+	  directories.
+
+- Commandoregel
+  De regel onder de informatieregel is de commandoregel. Deze regel 
+geeft de betekenissen van de funktietoetsen weer.
+
+- Lineaal
+  De één na onderste regel van het scherm geeft de grenzen van de 
+linker- en de rechterkantlijnen weer, evenals de instelbare tabula· 
+tiestops. De linkerkantlijn wordt aangeven met de letter 'L' en de 
+rechterkantlijn door middel van de letter 'R'. Een tabulatiestop 
+wordt aangeven door het '+'-teken. Het wijzertje op de onderste 
+regel geeft aan op welke positie de cursor zich bevindt.
+
+
+┐ 4.2 Tekstregels
+
+De overige regels hebben de 'gewone' kleur en bevatten de te verwer· 
+ken tekst. Tekst die onderdeel van een blok is, wordt inverse weer· 
+gegeven. Aan de rechterkant van elk van deze regels staat een 'sta· 
+tusteken' weergeven. Dit teken is inverse weergegeven en bevat 
+informatie over de betreffende tekstregel.
+
+
+De betekenissen van de statustekens zijn:
+
+spatie	Geeft aan dat de regel niet het einde van de alinea is. Dit 
+	is het geval wanneer het laatste teken van de regel een 
+	spatie is. Een regel is dus aan een alinea toe te voegen 
+	door een spatie aan het einde van de regel te plaatsen.
+
+<	Geeft het einde van een alinea aan. Het indelen met de HOME 
+	toets zal dus bij deze regel stoppen.
+
++	Dit statusteken wordt getoond indien de regel meer tekens 
+	bevat dan het scherm kan weergeven.
+
+1 t/m 5 Deze statustekens worden gebruikt om de laatste regel van de 
+	kolom met het betreffende nummer aan te geven.
+P	Geeft de laatste regel, van de laatste kolom van een pagina 
+	aan.
+
+
+┐ 5. Het toetsenbord
+
+┐ 5.1 Lettertoetsen
+
+Net als met iedere tekstverwerker of schrijfmachine, worden de let· 
+tertoetsen (A..Z 1..9 etc.) gebruikt om de tekst in te tikken. Wan· 
+neer de rechterkantlijn bereikt wordt, wordt het gehele woord naar 
+de volgende regel verplaatst, zodat u niet hoeft op te letten of het 
+einde van de regel al is bereikt. De returntoets wordt gebruikt om 
+een nieuwe alinea te beginnen.
+
+
+┐ 5.2 Overige toetsen
+
+Naast de gewone lettertoetsen zijn er een aantal toetsen die een 
+speciale betekenis hebben.
+
+De cursortoetsen (pijltoetsen) besturen de cursor (de cursor geeft 
+aan waar het volgende teken geplaatst zal worden). Bij het bewegen 
+van de cursor zal de tekst, indien nodig, naar boven, onder, links 
+of rechts bewegen. De cursor kan niet meer dan één positie achter 
+het laatste teken van een regel geplaatst worden.
+
+
+RETURN	Stuurt de cursor naar het begin van de volgende regel. Als 
+	de invoegstand AAN staat, schuift de onderliggende tekst één 
+	regel omlaag.
+
+BS	Wist het teken links van de cursor
+DEL	Wist het teken onder de cursor
+	SHIFT+DEL wist de tekst rechts van de cursor
+	CTRL+DEL  wist de huidige regel
+
+INS	Zet de invoegstand uit of aan. Hiermee kunt u bepalen of een 
+	ingetoetst teken het huidige moet overschrijven of dat het 
+	ingetoetste teken tussengevoegd moet worden.
+
+HOME	Deelt de alinea waar de cursor zich in bevindt aan de hand 
+	van de ingestelde kantlijnen in. De alinea's worden even· 
+	tueel ook aan de rechterkantlijn uitgelijnd (Instellen met 
+	F2/A).
+	Als met F2/A de afbreekoptie is aangeschakeld, wordt u in 
+	bepaalde gevallen verzocht woorden af te breken. Woorden 
+	worden alleen afgebroken als er nog minstens vijf letters 
+	van het woord op de vorige regel geplaatst kunnen worden.
+	De cursor wordt dan op het betreffende woord geplaatst en 
+	onderaan het scherm verschijnt een hulpregel. U kunt dan met 
+	de links- en rechtscursortoetsen de cursor op de positie 
+	sturen waar het woord moet worden afgebroken, daarna drukt u 
+	op Return. Als echter het woord niet afgebroken kan worden, 
+	drukt u op de spatiebalk, het gehele woord wordt dan omge· 
+	slagen naar de volgende regel. Indien u het indelen van de 
+	alinea wilt afbreken, omdat u bijvoorbeeld een foutje met 
+	het afbreken heeft gemaakt, drukt u op ESCape.
+
+	N.B.: Op de meest rechtse positie van een regel kunnen 
+	      alleen spaties worden geplaatst, ook als een woord nog 
+	      net in zijn geheel op de regel lijkt te passen. Deze 
+	      spaties geven aan dat de alinea doorloopt op de vol· 
+	      gende regel.
+
+	In de invoerregels van de diverse menu's wist een druk op de 
+	HOME-toets de gehele huidige regel. Dit werkt sneller dan 
+	het wissen van de regel door middel van de BS (back-space) 
+	toets.
+
+	CTRL+HOME:  Bijna gelijk aan HOME, deelt echter de alinea 
+		    vanaf de cursorpositie in, en laat de tekst die 
+		    voor de cursor staat ongemoeid. Deze funktie is 
+		    bijzonder geschikt om een alinea in te delen met 
+		    een tussenkopje voor de linker kantlijn. Een 
+		    uitgewerkt voorbeeld van deze optie is te vinden 
+		    in ┐ 8.1, het indelen van alinea's.
+
+	SHIFT+HOME: Bijna gelijk aan HOME, laat echter de eerste 
+		    regel van de alinea inspringen. Het aantal posi· 
+		    ties is in te stellen met F2/A/I.
+
+	GRAPH+HOME: Centreert de huidige regel aan de hand van de 
+		    huidige kantlijninstellingen.
+
+CTRL	Als CTRL samen met een links- of rechtscursortoets wordt 
+	ingedrukt, beweegt de cursor zich naar het begin respectie· 
+	velijk einde van de huidige regel. Samen met de omhoog- of 
+	omlaagtoets zal de cursor zich één schermhoogte omhoog/om· 
+	laag bewegen (dit is gelijk aan de funktietoetsen F6 en F1).
+	Verder kunt u door CTRL vast te houden en daarna één of twee 
+	lettertekens aan te slaan, dezelfde opties uitvoeren als 
+	die, die met funktietoetsen gegeven kunnen worden. U kunt 
+	deze letter-combinaties instellen met programma TEDINS6.BAS, 
+	zie hiervoor ┐ 7.
+	N.B.: Het ^-teken wordt vaak gebruikt om de CTRL toets aan 
+	te duiden.
+
+SHIFT	Werkt als gewone hoofdlettertoets, maar heeft ook speciale 
+	functies:
+
+	SHIFT+Cursortoets rechts/links: Cursor één woord naar rechts 
+	c.q. links.
+
+	SHIFT+Cursortoets omhoog/omlaag: Cursor naar het begin van 
+	de vorige/volgende printerpagina of -kolom. De paginalengte 
+	kan ingesteld worden door middel van het commando 
+	F2/Print/Lengte. Normaal gesproken wordt de tekst in één 
+	kolom afgedrukt, zodat elke kolom op een nieuwe pagina 
+	begint. Het commando F3/koLom kan gebruikt worden om het 
+	aantal kolommen per pagina te veranderen.
+
+TAB	Beweegt de cursor naar de volgende tabulatiestop. Een tabu· 
+	latiestop wordt in de lineaal onderaan het scherm als een 
+	gekruist lijntje weergegeven. Als de invoegstand AAN staat 
+	worden er spaties in de regel ingevoegd, in het andere geval 
+	springt de cursor over de tekst heen zonder spaties in te 
+	voegen.
+	Als de auto-indent funktie AAN staat (commando F3/S/A) wordt 
+	de funktie van de TAB toets gewijzigd. De cursor stopt be· 
+	halve bij de tabulatorstops ook onder het begin van een 
+	woord op de vorige regel. Zie hiervoor ook de beschrijving 
+	van de F3/S/A funktie.
+
+	SHIFT+TAB: Met deze toetscombinatie kunt u tekst vòòr de 
+		   huidige linkerkantlijn invoeren. Tekst die na 
+		   shift+tab ingevoerd wordt, wordt niet automatisch 
+		   vanaf de eerste schermpositie naar het begin van 
+		   de linkerkantlijn getransporteerd. Dit effect is 
+		   dus alleen merkbaar als de linkerkantlijn op een 
+		   kolompositie groter dan 1 staat.
+
+ESC	Heeft 2 betekenissen:
+	1. Maakt een met een funktie- of controltoets gemaakte keuze 
+	   ongedaan.
+	2. Geeft tijdens het invoeren van tekst een 'escape teken', 
+	   dat gebruikt kan worden om de printer te besturen. Dit 
+	   escape-teken ziet er op het scherm uit als een inverse 
+	   weergeven letter 'e'.
+	   N.B.: Zoek de printercodes op in uw printerhandleiding!
+
+SELECT	Geeft het Control-voorloopteken. De gevorderde gebruiker kan 
+	hiermee de ascii-tekens maken die normaal gesproken alleen 
+	als stuurtekens gebruikt kunnen worden. Hieronder vallen de 
+	tekens met de ascii-nummers 0 t/m 31, 127 (DEL) en 255 (Cur· 
+	sor).
+
+	Het control-voorloopteken is een inverse weergegeven ^-te· 
+	ken. Direkt na dit control-teken dient u een tweede teken te 
+	plaatsen. Van dit tweede teken wordt tijdens het bewaren van 
+	de tekst op disk het ascii nummer min 64 genomen.
+
+	Voorbeeld: de combinatie ^G staat voor het ascii teken met 
+		   de waarde 7 (beep), want de letter G heeft het 
+		   ascii nummer 71, en 71-64 is 7.
+
+	Andere bruikbare tekens zijn bijvoorbeeld:
+
+	^L: cls 		^[: escape, inverse 'e' teken
+	^\: cursor rechts	^]: cursor links
+	^^: cursor omhoog	^_: cursor omlaag
+
+	Zie voor verdere gegevens de standaard ASCII-tabel, deze 
+	staat in vrijwel elk MSX-handboek.
+
+STOP	Met de STOP toets kan de stand van het cassette-relais 
+	gewisseld worden. Indien een cassetterecorder op de casset· 
+	te-connector is aangesloten, kan aldus de cassette motor aan 
+	en uit gezet worden. Hierdoor kan bijvoorbeeld gedicteerde 
+	tekst op cassette gemakkelijker uitgetikt worden. Liefheb· 
+	bers kunnen natuurlijk ook allerlei andere zaken via het 
+	cassette-relais aan en uit schakelen.
+
+
+┐ 6.  Beschrijving van de funktietoets commando's 
+
+┐ 6.1  De struktuur van de funktietoetsen
+
+De betekenissen van de funktietoetsen staan aangegeven in de comman· 
+doregel bovenaan het scherm. Na een druk op één van de funktietoets· 
+en F2 t/m F5, verschijnt er een 2e commandoregel. In deze sub-regel 
+staan de bij de betreffende funktietoets behorende opties, die u 
+kunt selecteren door op een - met een hoofdletter aangegeven - 
+lettertoets te drukken. Indien u zonder een keuze te maken weer 
+terug wilt naar de 'gewone' commandoregel, drukt u op ESC(ape). U 
+kunt dan weer verder gaan waar u gebleven was.
+
+Hierna volgt een volledige beschrijving van iedere funktietoets en 
+de bijbehorende opties. Een beknopte samenvattende lijst vindt u in 
+appendix A.
+
+
+┐ 6.2  Funktietoetsen F1 en F6: Omlaag/Omhoog
+
+   Verplaatst de cursor één schermhoogte omlaag, resp. omhoog.
+
+
+┐ 6.3  Funktietoets F2: Instellingen
+
+
+F2/L en F2/R: Linker-/Rechterkantlijn
+
+   Linker- resp. rechterkantlijn instellen door een kolomnummer in 
+   te voeren. Als u niets invoert wordt de huidige positie van de 
+   cursor gebruikt.
+
+   Tijdens het intypen wordt de tekst zoveel mogelijk binnen de 
+   kantlijnen geplaatst. Is echter een bepaalde alinea met DEL en 
+   INS etc. veranderd, dan kunt u met een druk op de HOME toets de 
+   alinea weer opnieuw indelen.
+
+
+F2/A: Alinea
+
+   Hiermee kunt u bepalen hoe de Home-toets alinea's moet indelen. U 
+   heeft de volgende mogelijkheden:
+
+   -U: Uitvullen
+       Alinea's rechts uitlijnen aan/uit.
+
+   -A: Afbreken
+       Afbreken van woorden aan/uit.
+
+   -S: Afbreek-streepje
+       Vorm van het afbreek-streepje.
+       Dit streepje wordt gebruikt om aan te geven dat een woord 
+       afgebroken is. U heeft de keuze uit een lang streepje: '-' 
+       (Ascii nr. 45) en een kort streepje: '·' (Ascii nr. 250). Het 
+       verdient de aanbeveling het korte streepje te gebruiken, 
+       omdat er anders verwarring kan ontstaan tussen een 
+       afbreek-streepje en een koppel-teken. Neem bijvoorbeeld de 
+       volgende zin:
+
+       "De auto heeft een voor- en een achterruit"
+
+       Tijdens het indelen van deze zin - middels de "HOME" toets - 
+       mag het streepje achter het woord 'voor' niet met een af· 
+       breek-teken worden verward. De woorden "voor-" en "en" zouden 
+       dan aan elkaar gekoppeld worden, hetgeen in dit voorbeeld 
+       niet de bedoeling is.
+       Door als afbreek-teken het kortere 'MSX-streepje' te gebrui· 
+       ken, wordt deze verwarring voorkomen. Tijdens het afdrukken 
+       wordt - door middel van de Printer-Driver - het afbreekteken 
+       "·" (Shift+Graph+C op het toetsenbord) automatisch door een 
+       een liggend streepje vervangen.
+
+       In teksten die ook op computers gebruikt moeten kunnen worden 
+       die niet beschikken over de MSX of IBM karakterset, moet 
+       echter wel altijd het 'lange' streepje gebruikt worden, aan· 
+       gezien het korte streepje niet op andere merken computers 
+       voorkomt. U kunt in dat geval natuurlijk ook het afbreken met 
+       F2/Alinea functie uitschakelen.
+
+   -I: Inspringen
+       Instellen van het aantal posities dat aan het begin van een 
+       alinea moet worden ingesprongen tijdens het indelen met 
+       shift+home.
+
+
+F2/Z en F2/W: Zet/Wis tabulatiestop
+
+       Zetten resp. wissen van een tabulatiestop op de positie waar 
+       de cursor zich bevindt. In de kantlijn aan de onderkant van 
+       het scherm verschijnt, resp. verdwijnt, het gekruiste lijntje 
+       dat de tabulatiestop aangeeft.
+
+
+F2/T: Tabulatorinstellingen
+
+       Hiermee kunt u aangeven of rijen spaties als TAB-tekens 
+       (ascii no. 9) mogen worden opgeslagen. U heeft drie mogelijk· 
+       heden:
+
+   -G: Gebruik Tab-tekens in het geheugen
+       Als deze optie aangeschakeld staat past er meer tekst in het 
+       geheugen maar werken de laad- en bewaarfunkties iets trager. 
+       De spaties worden aan de hand van de (met F2/W en F2/Z) 
+       ingestelde tabulatiestops omgezet.
+       Het wisselen van deze instelling heeft tot gevolg dat de 
+       huidige tekst gewist wordt, dus eerst op disk bewaren!
+
+   -B: Bewaar Tab-tekens op diskette
+       het gebruik van deze optie levert kortere disk-bestanden op. 
+       De spaties worden aan de hand van de instelbare tabulatie· 
+       stops in TAB-tekens omgezet. Als u tekst inlaadt die met een 
+       andere instelling van de tabulatiestops is bewaard, wordt de 
+       tekst aan hand van de nieuwe instelling aangepast. Indien u 
+       dit niet op prijs stelt, dient u deze optie uit te schakelen 
+       voordat u de tekst bewaart.
+       Ook wanneer een tekst, die met TED is gemaakt, in tekstver· 
+       werkers die de TAB-tekens niet kennen (b.v. Tasword en de 
+       Turbo Pascal editor) geladen moet worden, dient u deze optie 
+       uit te schakelen.
+
+   -L: Laad Tab-tekens direkt van disk
+       Als deze optie aangeschakeld staat worden alle tab-tekens 
+       direkt van schijf in het geheugen gezet, en worden rijen 
+       spaties die eventueel ook door één of meer tab-tekens aange· 
+       geven zouden kunnen worden niet in tab-tekens omgezet. Hier· 
+       door wordt het laden versneld.
+
+       Als de tekst echter niet optimaal van tab-tekens voorzien is 
+       (teksten die in hun geheel met TED zijn ingetypt zijn dit 
+       wel), past er minder tekst in het geheugen. Het is daarom 
+       raadzaam deze optie UIT te zetten als u tekstbestanden in· 
+       leest die niet met TED aangemaakt zijn. Als u dit niet niet 
+       doet, wordt de tekst ook tijdens het bewaren niet optimaal 
+       van TAB-tekens voorzien waardoor het bestand meer ruimte op 
+       de schijf inneemt dan nodig is.
+
+      Samenvattend:
+	- Als u een zo klein mogelijke tekst wilt, gebruik dan de 
+	  instelling AAN, AAN, UIT
+	- Als u zo snel mogelijk wilt laden/bewaren, gebruik dan de 
+	  instelling UIT, UIT, UIT
+	- Wilt u beide opties, bewaar dan de tekst eerst op schijf 
+	  met zoveel mogelijk TAB's (instelling AAN, AAN, UIT) en 
+	  zet daarna de instelling op AAN, AAN, AAN en bewaar deze 
+	  instelling met F2/B. De tekst wordt dan in het vervolg 
+	  snel geladen/bewaard maar de reeds aanwezige TAB-tekens 
+	  blijven toch bewaard. Als u regels aan de tekst toevoegd 
+	  worden deze ook optimaal van TAB-tekens voorzien.
+
+
+F2/M: Memorymapper
+
+   Hiermee kunt u bepalen of TED gebruik mag maken van de Memory 
+   mapper en/of van het Video RAM. Dit is vooral van belang als er 
+   onder MSX-DOS1 een RAMdisk programma gebruikt wordt. Het is 
+   belangrijk om na het gebruik van deze optie de huidige instellin· 
+   gen op disk te bewaren via F2/Bewaar/Ted, zodat TED al tijdens 
+   het opstarten weet welk deel van het geheugen gebruikt mag wor· 
+   den. Het pas naderhand uitschakelen van bijvoorbeeld de 
+   memorymapper kan namelijk fatale gevolgen hebben voor een al 
+   aanwezige ramdisk.
+
+   Een uitzondering hierop is het printerbuffer programma PB. TED 
+   herkent direkt na het opstarten de aanwezigheid van dit program· 
+   ma, en zorgt er zelf voor dat er geen geheugenkonfikten ontstaan. 
+   Door het gebruik van PB.COM wordt het maximaal beschikbaar geheu· 
+   gen teruggebracht tot 150 kilobytes.
+
+   Indien het geheugen-beheerprogramma MemMan of het besturings· 
+   systeem MSX-DOS2 gebruikt wordt, zal TED automatisch 
+   bepalen welk gedeelte van het geheugen nog vrij is voor gebruik.
+   Het aangeven of TED wel of niet van de Memory Mapper(s!) gebruik 
+   mag maken, heeft onder DOS2 of MemMan dus geen enkel nut, TED zal 
+   deze instelling dan ook negeren.
+
+   Het veranderen van de Memory Mapper en Video RAM instellingen 
+   heeft tot gevolg dat de huidige tekst gewist wordt, dus eerst op 
+   disk bewaren!
+
+
+F2/P: Printer
+
+   Hiermee kunt u aangeven hoe de tekst de op printer moet worden 
+   afgedrukt. U heeft verscheidene mogelijkheden, die op het scherm 
+   aangeven worden door een hoofdletter. Om de kop- of voetregel te 
+   veranderen dient u echter een cijfer te kiezen (1 of 2).
+
+   U heeft de volgende mogelijkheden:
+
+   -S: Setup String
+       Deze string wordt iedere keer als met afdrukken begonnen 
+       wordt naar de printer gestuurd. Hij bestaat meestal uit 
+       enkele ESC-codes, b.v.: ESC L006 (met deze code wordt uw 
+       MSX-printer ingesteld op een linkerkantlijn op kolom 6). Ook 
+       kunt u, met F2/D, aan bepaalde tekens speciale codes toeken· 
+       nen, zodat ook karakters met een asciinummer kleiner als 32 
+       naar de printer gestuurd kunnen worden.
+
+   -B: Boven marge
+       Aantal lege regels dat er extra bovenaan elke pagina 
+       geplaatst wordt. De kopregel kan op iedere gewenste positie 
+       in de boven marge geplaatst worden.
+
+   -O: Onder marge
+       Aantal lege regels dat er extra onderaan elke pagina 
+       geplaatst wordt. De voetregel kan op iedere gewenste positie 
+       in de onder marge geplaatst worden.
+
+   -L: Pagina lengte
+       Het aantal regels per pagina dat tekst bevat. Als de pagina· 
+       lengte op nul gesteld wordt, wordt de tekst tussen de vaste 
+       pagina-stops niet in pagina's ingedeeld. Vaste pagina-stops 
+       kunnen in de tekst worden geplaatst door middel van het com· 
+       mando F3/Pagina/Plaats pagina-stop.
+
+   -1: Kopregel
+       Tekst van maximaal 78 tekens die automatisch boven iedere 
+       pagina geplaatst kan worden. Als u in de kopregel (ook) het 
+       paginanummer afgedrukt wilt hebben, typt u $P op de gewenste 
+       plaats. Tijdens het afdrukken zal daar dan het huidige 
+       paginanummer geplaatst worden.
+
+   -2: Voetregel
+       Eenzelfde regel als de kopregel, met als verschil dat hij 
+       onderaan i.p.v. bovenaan de pagina geplaatst wordt.
+
+   -E: Eerste paginanummer
+       Het nummer van de eerste pagina die afgedrukt wordt.
+
+   -P: Kopregel positie
+       Kolomnummer van het eerste teken van de kopregel.
+
+   -T: Voetregel positie
+       Kolomnummer van het eerste teken van de voetregel.
+
+   -R: Kopregel marge
+       Geeft aan op welke regel in de boven marge de kopregel 
+       geplaatst wordt. Als de kopregel marge buiten de boven marge 
+       valt, wordt er geen kopregel afgedrukt.
+
+   -G: Voetregel marge
+       Geeft aan op welke regel in de onder marge de voetregel 
+       geplaatst wordt. Als de voetregel marge buiten de onder marge 
+       valt, wordt er geen voetregel afgedrukt.
+       Wanneer er bijvoorbeeld geen pagina-nummer onderaan iedere 
+       bladzijde afgedrukt hoeft te worden, kan de voetregel marge 
+       op 0 worden gezet.
+
+   -F: Formfeed
+       Als u deze optie AAN heeft staan wordt na elke pagina een 
+       formfeedteken (ascii 12) naar de printer gestuurd. Dit heeft 
+       op de meeste printers tot gevolg dat de printer naar de vol· 
+       gende pagina gaat. Heeft uw printer deze mogelijkheid niet, 
+       of wilt u het doorvoeren van pagina's onderdrukken of het 
+       doorvoeren via de Onder en Boven marge laten verlopen, dan 
+       zet u deze optie uit.
+
+   -C: Continu afdrukken
+       Als deze optie UIT staat, wordt het printen aan begin van 
+       elke nieuwe pagina gepauseerd. Als u op een toets drukt, 
+       wordt het printen vervolgd. Als er op ESCape gedrukt wordt, 
+       wordt het printen onderbroken.
+       Als de optie AAN staat, gaat het printen continu door.
+
+   -M: Mail-Merge
+       Als deze optie aan staat, wordt er tijdens het printen met 
+       F4/P of F5/P een gegevensbestand ingelezen. De gegevens uit 
+       dit bestand kunnen dan tijdens het afdrukken in de tekst 
+       ingevoegd worden. De gegevens kunnen uit een willekeurig 
+       database programma komen, of zelfs uit een 'gewoon' tekst· 
+       bestand dat met TED gemaakt en eventueel gesorteerd is.
+       De tekst wordt steeds opnieuw afgedrukt, totdat alle kaarten 
+       uit het gegevensbestand geweest zijn.
+
+   -N: Bestandsnaam
+       Hier typt u de naam van het door de Mail-Merge functie in te 
+       voegen gegevensbestand. Deze naam kan ook met het commando 
+       F3/Inhoud/Mail-merge geselecteerd worden.
+
+   -I: Mail-merge teken
+       Hier kunt u het teken invoeren dat u wilt gebruiken om in de 
+       tekst naar een veld (regel) uit het databasebestand te ver· 
+       wijzen. Standaard wordt hiervoor het dollar ($)-teken 
+       gebruikt.
+       Stel dat u met TED een adressenbestand heeft ingevoerd. U 
+       heeft achtereenvolgens de naam, straat, postcode en plaats 
+       ingevoerd. De naam staat dus in het eerste veld, het adres in 
+       het tweede en de postcode en de plaats in het derde.
+       Om nu de naam van de persoon af te drukken moet naar het 
+       eerste veld van de kaart verwezen worden en typt u dus $(1). 
+       De haakjes om het veldnummer zijn verplicht. Het hoogst moge· 
+       lijke veldnummer is 99, het laagste is 1.
+
+   -A: Kaart-einde
+       Hier voert u de tekens, of Ascii nummers, in die in het 
+       gegevensbestand het einde van elke kaart aangeven.
+       TED kan bij het invoegen van de gegevens alleen onderscheid 
+       maken tussen de achtereenvolgende kaarten als het einde van 
+       iedere kaart duidelijk aangeven is. Als u met TED een gege· 
+       vensbestand invoert, moet u zelf tussen alle kaarten een 
+       speciaal (willekeurig) merkteken zetten, bijvoorbeeld een 
+       streepje (-). U vult voor het kaart-einde dus het streepje 
+       ("-") en de codes voor een Return (13, 10) in.
+       Als u echter kaarten uit het database programma van EASE in 
+       de tekst wilt invoegen (.DBD bestanden), dan vult u voor het 
+       kaarteinde alleen het nummer 240 in. Het invoeren van de 
+       tekens werkt hetzelfde als bij de printer-driver (F2/D).
+
+   -V: Veld-einde
+       Hier voert u de tekens of Ascii-nummers in die het gegevens· 
+       bestand het einde van elk veld aangeven.
+       Als u met TED een gegevensbestand invoert, is een 'veld' 
+       niets anders als een gewone regel, en gewone regels worden 
+       afgesloten met een Return. Het einde van een veld wordt dus 
+       aangeven door de codes van een return (13, 10).
+       Als u echter kaarten uit het database programma van EASE in 
+       de tekst wilt invoegen (.DBD bestanden), dan vult u voor het 
+       kaarteinde alleen het nummer 0 in. U kunt (natuurlijk) ook 
+       kaarten uit andere database programma's in de tekst invoegen, 
+       mits u de juiste codes weet van het einde van kaart en veld.
+
+   -K: Eerste kaart:
+       Hier geeft u het nummer op van de eerste kaart die afgedrukt 
+       (ingevoegd) wordt.
+
+F2/D: Printer driver
+
+   Dit is de zogenaamde printer driver. Hiermee kunnen maximaal 32 
+   tekens, tijdens het afdrukken, door een serie van maximaal negen 
+   andere tekens vervangen worden. Bovenaan het scherm staat een 
+   overzicht van de huidige instelling van de printerdriver. Bij elk 
+   omgevormd teken staan de bijbehorende vervangende codes.
+
+   Eerst typt u het teken dat u wilt omvormen. Daarna kunt u de 
+   bijbehorende codes opgeven. Als u bijvoorbeeld aan het teken @ de 
+   codes 27, "C", "I" en " " wilt toekennen. Op een Philips MSX 
+   printer is dit de code om het cursief afdrukken aan te zetten. U 
+   typt eerst het @-teken, daarna drukt op ESC (of typt gewoon het 
+   getal 27) en drukt op Return. Daarna typt u de letter "C", even· 
+   tueel tussen aanhalingstekens, maar dat is niet verplicht, en 
+   drukt weer op return. Zo gaat u door totdat u de laatste spatie 
+   heeft gehad. Deze laatste spatie is overigens ook niet verplicht, 
+   maar zorgt ervoor dat de rechterkantlijn regelmatig blijft als de 
+   tekst uitgevuld is.
+
+   U kunt een teken uit de printer-driver verwijderen door eerst het 
+   betreffende teken in te toetsen, en daarna met de Back-Space 
+   toets de 'oude' code te wissen. Als u daarna op Return drukt 
+   krijgt het teken zijn eigen waarde weer terug. Als u de code van 
+   een al eerder ingevoerd teken wilt wijzigen, doet u dit op dezel· 
+   fde manier, zij het dat u dan direkt de vervangende code intypt, 
+   nadat u de oude met de BS-toets gewist heeft.
+
+   Met een druk op Return kunt u instellen of de printerdriver tij· 
+   delijk niet gebruikt moet worden, zonder dat u alle tekens hun 
+   oude waarde moet teruggeven. Met ESCape verlaat u de printer-dri· 
+   ver.
+
+
+F2/S: Sorteer instellingen
+
+   Hiermee kunt instellen hoe het F5/T commando een blok moet sor· 
+   teren.
+
+   U heeft de volgende mogelijkheden:
+
+   -K: Kaartlengte
+       Hier kan worden aangeven uit hoeveel regels een kaart 
+       bestaat.
+
+   -A: Sorteersleutel 1
+       Hier vult u het nummer van het veld waarop gesorteerd moet 
+       worden. Vervolgens vult u de kolompositie van het veld in de 
+       regel in.
+
+   -B: Sorteersleutel 2
+       Indien van twee kaarten de inhoud van het eerste sorteerveld 
+       gelijk is, worden de kaarten onderverdeeld volgens deze 
+       tweede sorteersleutel.
+
+   -C: Sorteersleutel 3
+       Dit is het veld waarop gesorteerd wordt als van twee kaarten 
+       de velden A en B beide gelijk zijn.
+
+   Een voorbeeld. U heeft een adreslijst ingevoerd, en wel als 
+   volgt:
+ 
+Jos de Boer
+Boppelâns 24
+8721 GG Warns
+-
+Ries Vriend
+Molenweg 45
+1619 EV Andijk
+-
+Jan Janssen
+Boppelâns 10
+8721 ZZ Warns
+-
+
+   N.B.: Zoals u ziet worden de kaarten onderling gescheiden door 
+	 een "-"-teken, hierdoor weet de mail-merge funktie waar het 
+	 einde van iedere kaart is (Zie F2/P/A).
+
+   Om nu deze lijst te sorteren dient u eerst de lengte per kaart op 
+   te geven, in dit geval 4 regels (velden).
+
+   Stel dat u de lijst op plaatsnaam gesorteerd wilt hebben, en als 
+   er meerdere personen in dezelfde plaats wonen, wilt u per plaats· 
+   naam de namen van de personen op volgorde hebben.
+
+   In het menu vult u door middel van het commando "A" het veldnum· 
+   mer van de plaatsnaam in, in dit voorbeeld is dat 3. Bij het 
+   kolomnummer vult u een 9 in, omdat de plaatsnaam op positie 9 
+   begint, achter de postcode.
+
+   Daarna vult u bij "B" het veldnummer 1 in, want de naam van de 
+   persoon staat in het eerste veld. Bij het kolomnummer kunt u nu 
+   gewoon een 1 invullen, want er staan geen andere gegevens voor de 
+   naam.
+
+   Bij de derde sorteersleutel vult u veldnummer "0" in, door middel 
+   van het commando "C". Hiermee wordt aangegeven dat u geen derde 
+   sorteergang wenst.
+
+   U gaat vervolgens met ESCape terug naar de tekst. U stuurt de 
+   cursor naar het 1e veld van 1e adres (u gaat dus ergens op "Jos 
+   de Boer" staan) en zet hier het begin van het blok (F5/S). Daarna 
+   zet u het einde van het blok in de laatste kaart door de cursor 
+   op "Boppelâns 10" te zetten en op F5/E te drukken.
+
+   Vervolgens drukt u op F5/T en zie daar, eerst komt Ries, dan Jan 
+   en tenslotte Jos.
+
+   N.B.: Om het sorteren goed te laten verlopen is het zeer belang· 
+	 rijk dat alle kaarten evenveel regels beslaan. Eerst een 
+	 kaart met drie velden, en daarachter een kaart met vier 
+	 velden gaat gegarandeerd mis. U kunt kontroleren of alle 
+	 kaarten dezelfde lengte hebben door met F3/Pagina/Grens de 
+	 pagina indikatie AAN te zetten en de paginalengte met 
+	 F2/Pagina/Lengte in te stellen op de kaartlengte.
+
+	 De zo verkregen pagina indikatie kan fungeren als een 
+	 kaartlengte indikatie. Als het einde van iedere kaart over· 
+	 een komt met de paginalijn aan de rechterkant van het 
+	 scherm, weet u dat de kaarten de goede lengte hebben. U 
+	 kunt nu ook door de Shift toets vast te houden, en tege· 
+	 lijkertijd de cursoromhoog- of cursoromlaagtoets in te 
+	 drukken, door de diverse kaarten bladeren.
+
+
+F2/B: Bewaar en laad instellingen
+
+   Met deze funktie kunt u uw eigen voorkeursinstellingen vastleggen 
+   en weer inlezen. Alle instellingen die met de funktietoetsen F2 
+   en F3 zijn ingesteld worden op diskette vastgelegd.
+
+   U heeft de volgende mogelijkheden:
+
+   -E: Bewaar/Laad instellingen bij iedere tekst
+       Als deze optie AAN staat, wordt bij het bewaren van iedere 
+       tekst een extra bestand op diskette gezet. Dit bestand krijgt 
+       dezelfde bestandsnaam als de tekst en de extensie .TED. In 
+       dit bestand worden de instellingen zoals kantlijnen en kop- 
+       en voetregels vastgelegd. Bij het laden van de tekst wordt 
+       dit instellingenbestand weer ingelezen.
+
+   -T: Instellingen vastleggen in TED
+       Hiermee kunt u de huidige instellingen in TED.COM vastleggen, 
+       zodat zij direkt geaktiveerd worden als TED een volgende keer 
+       opstart wordt. DOS2 gebruikers dienen er op te letten dat het 
+       bestand TED.COM in de huidige directory aanwezig moet zijn.
+
+   -B: Bewaar instellingen in een bestand
+       Hiermee kunt u de huidige instellingen in een bestand bewa· 
+       ren. Dit bestand zal automatisch van de extensie .TED voor· 
+       zien worden.
+
+   -L: Laad een instellingen bestand
+       Met deze funktie kunt een instellingen bestand van diskette 
+       inlezen. Ook bij deze funktie zal het bestand automatisch de 
+       extensie .TED krijgen, zelfs indien er een andere extensie 
+       opgegeven wordt. Een instellingenbestand kan ook met de 
+       F3/I/S funktie ingelezen worden.
+
+
+┐ 6.4  Funktietoets F3 = Systeem
+
+
+F3/G: Geheugen
+
+   Geeft het totale en het vrije aantal kilobytes geheugen aan. Met 
+   één 128 kB Memorymapper is er ongeveer 200 kB vrij (122 kB Video 
+   RAM en 80 kB RAM wordt dan gebruikt). Iedere tekstregel kost vier 
+   bytes plus de lengte van de betreffende regel.
+
+   Indien MSX-DOS2 gebruikt wordt, is er 32 kilobyte minder geheugen 
+   beschikbaar. TED ondersteunt onder MSX-DOS2 of MemMan zowel 
+   intern geheugen als geheugen in externe cartridges.
+
+
+F3/W: Wis
+
+   Hiermee kunt u het geheugen en/of de printerbuffer wissen. U 
+   heeft de volgende mogelijkheden:
+
+   -T: Wis tekst
+       Wist de gehele tekst uit het geheugen.
+
+   -P: Leeg printerbuffer
+       Leegt de printerbuffer van het programma PB. Deze optie is 
+       vooral handig wanneer het papier is vastgelopen of iets der· 
+       gelijks en de buffer snel geleegd moet worden.
+       Zowel de printer buffer PB.TSR voor MemMan als de buffer van 
+       het programma PB.COM kunnen in samenwerking met TED worden 
+       gebruikt.
+
+
+F3/I: Inhoud
+ 
+   Geeft een overzicht van de bestanden en vrije ruimte op de dis· 
+   kette. U kunt een drive selecteren door A: of B: als selectie op 
+   te geven. Indien er geen selectie wordt opgegeven, neemt TED aan 
+   dat *.ext bedoeld wordt, waarbij .ext voor de met F3/E ingestelde 
+   voorkeurs-extensie staat.
+
+   Een overzicht van alle bestanden verkrijgt u door *.* te typen.
+
+   Indien MSX-DOS2 gebruikt wordt, kunnen er ook sub-directories in 
+   het zoekpad worden opgenomen. Bijvoorbeeld, het zoekpad
+
+   B:\TED\BRIEF\*.*
+
+   geeft u een overzicht van alle bestanden en sub-directories van 
+   de directory \TED\BRIEF\ op disk B:.
+
+   Nadat er op return is gedrukt verschijnt er linksboven een cursor 
+   die u met de cursortoetsen kunt besturen en waarmee u een bestand 
+   kunt aanwijzen.
+
+   Onderaan het scherm verschijnt een hulpregel met de volgende 
+   opties:
+
+   -L: Laad
+       Laadt het bestand van disk. Deze optie is gelijk aan F4/L. 
+       Indien u MSX-DOS2 gebruikt kunt met deze optie ook sub-direc· 
+       tories selecteren. De sub-directories worden in het bestands· 
+       overzicht met de letter 'd' onderscheiden van de gewone bes· 
+       tanden. Door de speciale '..' sub-directory te selecteren 
+       kunt u één sub-directory nivo terugspringen.
+
+   -B: Blok
+       Voegt het bestand aan de tekst toe. Deze optie is gelijk aan 
+       F5/L. Het bestand wordt op de huidige positie van de cursor 
+       ingevoegd.
+
+   -K: Karakterset:
+       Laadt het bestand als karakterset (extensie .SUP). Deze optie 
+       is gelijk aan F4/S/K. De karakterset zal niet geladen worden 
+       indien de standaard MSX-Karakterset AAN staat (F3/S/M).
+
+   -S: Instellingen
+       Laadt een instellingenbestand (extensie .TED). Deze optie is 
+       gelijk aan F2/B/S.
+
+   -M: Mail-Merge
+       Wijst het bestand als gegevens-bron aan voor de mail-merge 
+       funktie. Deze optie is gelijk aan F2/P/N.
+
+   -W: Wis
+       Wist het bestand van de diskette.
+
+   -I: Inhoud
+       Met deze optie kunt u nogmaals een disk-inhoud opvragen.
+
+   Met ESCape keert u terug naar de tekst.
+
+
+F3/L: KoLom instellingen.
+
+   U heeft de volgende mogelijkheden:
+
+   -A: Aantal kolommen
+       Hiermee kunt u instellen hoeveel kolommen er naast elkaar op 
+       de printer worden afgedrukt. Deze kolommen moeten onder 
+       elkaar, aan de hand van de paginalengte, ingetypt worden. Ze 
+       kunnen ingedeeld worden door met F3/Pagina/Grens de 
+       pagina-indicatielijn aan te zetten. Als u de SHIFT toets vast 
+       houdt, kunt u met de cursoromhoog en -omlaagtoetsen snel naar 
+       het begin van elke kolom springen.
+
+   -1 t/m 6: Positie kolom 1 tot en met 6
+       De positie van elke kolom kan ingevoerd worden door een cij· 
+       fer tussen 1 en 6 aan te slaan.
+
+       Stel dat u het aantal kolommen op 2 heeft ingesteld. De eer· 
+       ste kolom kunt u dan bijvoorbeeld op positie 5 zetten, en 
+       kolom 2 op positie 45. De eerste kolom wordt dan op 5 spaties 
+       vanaf de linkerkantlijn afgedrukt, en de tweede kolom komt 45 
+       spaties vanaf de linkerkantlijn. Om te voorkomen dat de 
+       kolommen elkaar overlappen, mogen de regels van de eerste 
+       kolom, in dit voorbeeld, dus maximaal 40 tekens lang gemaakt 
+       worden.
+
+       Het is ook mogelijk om 'titelregels' in te voeren die boven 
+       de kolommen doorlopen. Zo'n titelregel komt gewoon op de 1e 
+       regel van de 1e kolom. De 1e regel van de naastliggende 
+       kolom(men) moet dan leeg gelaten worden, zodat er geen regels 
+       doorelkaar geprint worden.
+
+
+F3/P: Pagina indeling
+
+   U heeft de volgende mogelijkheden:
+
+   -P: Plaats pagina-stop
+       Door middel van dit commando wordt de huidige regel gemar· 
+       keerd als laatste regel van een pagina. Bij het afdrukken van 
+       de tekst op de printer zal - nadat de gemarkeerde regel is 
+       afgedrukt - verder worden gegaan op een nieuwe pagina.
+       Er kunnen maximaal tweehonderd pagina-stops in de tekst wor· 
+       den geplaatst.
+
+   -V: Verwijder pagina-stop
+       Met dit commando wordt een paginastop op de huidige regel 
+       ongedaan gemaakt.
+
+   -A: Verwijder alle pagina-stops
+       Deze optie verwijdert alle pagina-stops uit de tekst.
+
+   -N: Pagina-nummer indicatie aan/uit
+       Door middel van deze schakelaar kan worden ingesteld of in de 
+       statusregel bovenin het scherm het huidige paginanummer moet 
+       worden getoond. Indien deze optie uit wordt geschakeld, zal 
+       het verplaatsen van de cursor iets soepeler verlopen. Dit is 
+       vooral van toepassing wanneer de tekst veel pagina-stops 
+       bevat.
+
+   -S: Pagina-stop indicatie aan/uit
+       Met behulp van deze schakelaar kan de pagina-stop indicatie· 
+       lijn aan of uit worden geschakeld. Indien deze optie aan 
+       staat, wordt het einde van iedere regel die een pagina-stop 
+       bevat gemarkeerd, door middel van een gestreepte lijn. Tevens 
+       verschijnt in de statusbalk geheel rechts op het scherm het 
+       statusteken `S'. Dit teken betekent: "Pagina-Stop".
+
+   -G: Pagina-grens indicatie aan/uit
+       Deze optie schakelt de indicatielijn - die de grens tussen 
+       twee pagina's aangeeft - aan of uit. Indien deze schakelaar 
+       aan staat, wordt het statusteken van iedere laatste regel van 
+       een pagina een `P'. Dit teken betekent: "Pagina-Grens".
+       De positie van een paginagrens is afhankelijk van de inge· 
+       stelde paginalengte. De paginalengte kan gewijzigd worden met 
+       het commando F2/Print/Lengte.
+
+       Als een pagina meer dan één kolom bevat (aantal kolommen 
+       instellen met F3/koLom), verandert het statusteken de laatste 
+       regel van elke kolom in een cijfer tussen de 1 en de 5. Dit 
+       cijfer correspondeert met het kolomnummer.
+
+       Aan de hand van deze indikatoren kan de tekst ingedeeld wor· 
+       den over verschillende pagina's en kolommen.
+
+       U kunt de cursor naar het begin van een pagina of kolom 
+       sturen, door de SHIFT toets vast te houden, en te gelijker 
+       tijd de cursor omhoog- of omlaagtoets in te drukken.
+
+
+F3/K: Kleur
+
+   Toont een kleurenoverzicht op het scherm. U kunt vier kleuren 
+   instellen, namelijk de voor- en achtergrondkleur van de tekst en 
+   de voor- en achtergrondkleur van de cursor. De kleuren van de 
+   statusregels zijn dezelfde als die van de cursor. Als de 
+   kleuren-cursor is uitgeschakeld (met F3/S/C), worden alleen de 
+   kleuren van de statusregels gewijzigd.
+
+   Elke kleur bestaat uit een mengsel uit het palet blauw, rood en 
+   groen. Aan elke paletkleur kunt u een intensiteit tussen de 0 en 
+   7 toekennen door de betreffende waarde in te toetsen.
+
+   Met de cursortoetsen kunt u de cursor naar de te veranderen kleur 
+   sturen.
+
+   Als u alle kleuren heeft ingesteld, kunt u met een druk op ESC 
+   weer naar de tekst terugkeren. U kunt de kleurinstellingen met 
+   F2/B op diskette bewaren.
+
+
+F3/B: Backup
+
+   Dit is het backup (reserve kopie) menu. U heeft de volgende 
+   keuzes:
+
+   -B: Backup-bestand aanmaken
+       Als deze optie AAN staat zal de vorige versie van een tekst 
+       tijdens het bewaren van de tekst in een reserve bestand 
+       gekopiëerd worden. De bestandsnaam van dit backup bestand 
+       blijft ongewijzigd, de extensie wordt veranderd in '.BAK'.
+
+   -A: Automatische backup maken
+       Als deze optie AAN staat zal de tekst automatisch, na een 
+       bepaald aantal toetsaanslagen, op disk bewaard worden. Als op 
+       het moment van bewaren nog geen bestandsnaam bekend is, zal 
+       TED u hier om vragen. Als er wel een bestandsnaam bekend is, 
+       zal er slechts een geluidssignaal ten gehore worden gebracht 
+       en wordt u verzocht een momentje te wachten.
+
+   -S: Aantal aanslagen
+       Met deze keuze kunt u instellen na welk aantal toetsaanslagen 
+       de tekst automatisch bewaard moet worden, zie ook de boven· 
+       staande alinea.
+
+
+F3/E: voorkeurs-Extensie
+
+   De filenaam van bestanden op een diskette is opgebouwd uit een 
+   naam en een extensie. De extensie geeft aan om wat voor soort 
+   bestand het gaat. Met deze optie kunt u uw eigen voorkeurs-exten· 
+   sie kiezen.
+
+   De cursor wordt achter de vorige extensie geplaatst, u kunt hem 
+   aanpassen door op Back-Space (BS) of HOME te drukken, en daarna 
+   de nieuwe extensie in te typen.
+
+   De extensie '.TXT' achter een bestandsnaam geeft aan, dat het om 
+   een tekstbestand gaat. Deze heeft dus normaal gesproken de voor· 
+   keur. Indien u de ingestelde voorkeurs-extensie niet wilt gebrui· 
+   ken, dan kunt u natuurlijk ook gewoon een extensie achter de 
+   filenaam intypen.
+
+
+F3/S: Scherm
+
+   Hiermee kunt u het scherm instellen. Er zijn de volgende moge· 
+   lijkheden:
+
+   -C: Kleuren cursor
+       Wisselt tussen een gekleurde en inverse (gewone) cursor.
+
+   -B: Blok cursor
+       Wisselt tussen een blokvormige en een lijnvormige cursor. 
+       Indien deze optie UIT staat wordt de cursor lijnvormig wan· 
+       neer de invoegstand AAN staat.
+
+   -S: Commandoregel op scherm
+       Verwijdert / toont de commandoregel en het wijzertje in de 
+       lineaal. Wanneer deze commandoregel en lineaal verwijderd 
+       worden wordt het tekstvenster met drie regels vergroot.
+
+   -V: Voorloop-nul
+       Verwijdert / toont een extra nul voor de minuten en de secon· 
+       den in het klokje. 7. 0: 0 wordt dus 7.00:00 of andersom.
+
+   -L: Lichtkrant
+       Schakelt het lichtkrantje rechtsboven in de statusregel aan 
+       of uit.
+
+   -G: Grote letters
+       Verwijdert / toont grote letters in het hulpmenu dat met 
+       funktietoets F7 opgeroepen kan worden. Deze voorziening is 
+       speciaal ingebouwd voor slechtzienden.
+
+   -R: Repeteer toetsen
+       Schakelt de repeteerfunktie van het toetsenbord aan of uit.
+
+   -E: Edit mode
+       Schakelt de edit mode aan of uit. De edit mode is speciaal 
+       geschikt voor het ontwikkelen van programmatuur. Alle spaties 
+       aan het einde van iedere regel worden automatisch verwijderd 
+       en alle alinea-indelingsfunkties worden uitgeschakeld.
+
+   -A: Auto Indent
+       Deze optie wordt meestal gebruikt in combinatie met de edit 
+       mode. Als de auto indent - automatisch inspringen - optie aan 
+       staat springt de cursor na een druk op return in, tot onder 
+       het begin van de bovenstaande regel.
+       De funktie van de TAB toets wordt door deze optie veranderd. 
+       Met een druk op TAB wordt tot onder het begin van een woord 
+       op de vorige regel gesprongen. De huidige tabulatorstops 
+       behouden echter ook hun funktie. De auto-indent optie is 
+       ideaal voor het invoeren en wijzigen van Pascal, C en assem· 
+       bler programma's.
+
+   -I: Knipperende cursor
+       Schakelt het knipperen van de cursor aan of uit.
+
+   -N: Cursor aan tijd
+       Met dit commando kan het aantal tijdeenheden ingesteld wor· 
+       den, waarop de cursor zichtbaar is tijdens het knipperen. Eén 
+       eenheid is één vijftigste seconde.
+
+   -U: Cursor uit tijd
+       Met deze optie kan het aantal tijdeenheden ingesteld worden, 
+       waarop de cursor onzichtbaar is tijdens het knipperen.
+
+   -M: MSX karakterset
+       Wisselt tussen de standaard MSX-karakterset en een karakerset 
+       op disk. Als de MSX-karakterset aan staat zal er vanzelf· 
+       sprekend geen karakterset van disk geladen kunnen worden.
+
+   -K: Karakter bestand
+       Bij deze optie kunt u opgeven welke karakterset van disk 
+       geladen moet worden. Karaktersets kunt u zelf ontwerpen met 
+       het programma Superletter dat geschreven is door Leon van 
+       Knijff. De karakterset zal niet geladen worden indien de 
+       standaard MSX-Karakterset AAN staat (zie de alinea hier· 
+       boven).
+
+
+F3/H: Hulpmenu
+
+       Hiermee kunt u de tekst in het hulpmenu, dat met funktietoets 
+       F7 opgeroepen kan worden, wijzigen. U heeft de volgende moge· 
+       lijkheden:
+
+   -T: Menu naar de tekst
+       Kopieert de acht regels uit het hulpmenu naar huidige regel 
+       in tekst zodat u er wijzigingen in aan kunt brengen. Als de 
+       tekst aan uw wensen hebt aangepast kunt u de M-optie gebrui· 
+       ken om de tekst weer naar het hulpmenu te kopiëren.
+
+   -M: Tekst naar Menu
+       Kopieert acht regels vanaf de huidige regel naar het hulp· 
+       menu.
+
+
+┐ 6.5  Funktietoets F4 = Commando's
+
+
+F4/Z: Zoek
+
+   Zoekt een reeks letters, en vervangt deze in een andere reeks. 
+   Indien u alleen iets wilt opzoeken, dan vult u bij de vervang· 
+   tekst niets in.
+
+   Daarna kunt u met de funktietoetsen F1 en F2 bepalen of er tij· 
+   dens het zoeken onderscheid gemaakt moet worden tussen hoofd- en 
+   kleine letters, en of er voor- of achteruit gezocht moet worden. 
+   Met funktietoets F3 kunt u instellen of alle gevonden zoekteksten 
+   onvoorwaardelijk vervangen mogen worden of dat TED eerst om een 
+   bevestiging moet vragen.
+
+   Een druk op Return start het zoeken. U kunt het zoeken voortijdig 
+   afbreken door op ESCape te drukken.
+
+   Er wordt altijd gezocht vanaf de positie waar de cursor zich op 
+   het huidige moment bevindt.
+
+   De zoek- en vervang instellingen worden bewaard. U kunt ze dus 
+   naderhand, door nog een keer op F4/Z te drukken, nog een keer 
+   gebruiken, of er enige veranderingen in aan brengen. Als u een 
+   nieuwe zoek- of vervangtekst wilt invoeren, kunt u de oude wissen 
+   door op de HOME toets te drukken.
+
+
+F4/N: Nog eens zoeken
+
+   Zoekt/vervangt nog eens volgens dezelfde voorwaarden als bij F4/Z 
+   zijn opgegeven.
+
+
+F4/G: Ga naar
+
+   Gaat naar een bepaalde positie in de tekst. U heeft de volgende 
+   mogelijkheden:
+
+   -T: Naar de top van de tekst
+   -B: Naar de bodem van de tekst
+   -S: Naar start van een blok
+   -E: Naar einde van een blok
+   -R: Naar een regelnummer
+   -0..9: Naar een met F4/0..9 gemerkte regel
+
+
+F4/P: Print
+
+   Drukt de tekst af op de printer volgens de met F2/P en F2/D geko· 
+   zen instellingen. U kunt het printen voortijdig afbreken door de 
+   CTRL- en STOP-toetsen tegelijk in te drukken.
+
+   Bovenaan het scherm wordt getoond tot welke regel het afdrukken 
+   gevorderd is, en tot welke regel er afgedrukt moet worden. Als 
+   met F2/P/M de mail-merge funktie ingeschakeld is, wordt er tevens 
+   getoond welke kaart op dit moment van disk gelezen, en in de 
+   tekst ingevoegd wordt.
+
+   Als met F2/P/C het continue printen UIT geschakeld is, wordt het 
+   printen aan het begin van elke pagina gepauseerd. Het printen 
+   wordt vervolgd als u op een toets drukt.
+
+
+F4/B: Bewaar de tekst
+
+   Bewaart een tekst op disk met een door u op te geven naam. Als u 
+   geen extensie opgegeeft, neemt TED aan dat de, met F3/E ingestel· 
+   de, voorkeurs-extensie bedoeld wordt. B.v.: B:TEST wordt 
+   B:TEST.TXT
+
+   Als het bestand al een naam heeft, bijvoorbeeld omdat het vanaf 
+   disk geladen is, dan toon TED deze naam, en plaatst de cursor 
+   erachter. Wilt u het bestand desondanks toch een andere naam 
+   geven, dan kunt u de oude naam met de Back-Space (BS) of HOME 
+   toets wissen, en daarna een andere naam intypen.
+
+
+F4/L: Laad een tekst
+
+   Laadt een tekst van disk met dezelfde aanname als bij F4/B. Als 
+   het bestand niet gevonden wordt, blijft de opgegeven naam 
+   bewaard, zodat u het met andere diskette nog eens kunt proberen.
+
+
+F4/0..9: Markeer een regel
+
+   Markeert de huidige regel in het geheugen, met een nummer tussen 
+   0 en 9, zodat er met F4/G altijd weer snel naar terug kan worden 
+   gegaan.
+
+
+F4/S: Stop
+
+   Stopt TED en gaat terug naar MSX-Dos. Voordat er gestopt wordt, 
+   kan de tekst nog op disk bewaard worden.
+
+
+┐ 6.6  Funktietoets F5 = Blokfunkties
+
+
+F5/S: markeer Startpositie van het blok
+
+F5/E: markeer Eindpositie van het blok
+
+   Markeert de huidige positie van de cursor als einde van het blok. 
+   Alle tekens die tot het blok behoren, zullen inverse (= in de 
+   kleur van de statusregels) weergeven worden.
+
+F5/W: Wist het blok (verwijdert het blok uit de tekst)
+
+F5/D: Wist de definities van blokstart en blokeinde
+
+F5/K: Kopiëert het blok naar de huidige positie van de cursor
+
+F5/V: Verplaatst het blok naar de huidige positie van de cursor
+
+F5/P: Drukt het blok af op de printer
+
+F5/T: Sorteer blok
+
+   Sorteert alle kaarten in het blok volgens de met F2/S gekozen 
+   instellingen. Het blok moet beginnen bij het 1e veld van de 1e 
+   kaart, en eindigen op het laatste veld van de laatste kaart.
+
+F5/L: Blok laden
+
+   Voegt vanaf disk een tekstblok toe op de huidige positie van de 
+   cursor.
+
+F5/B: Bewaart het blok op disk (dezelfde aanname als bij F4/B)
+
+
+┐ 6.7  Funktietoets 7 = Toon hulpmenu
+
+   Toont / Verwijdert het hulpmenu. Het hulpmenu kan door gebruiker 
+   zelf gewijzigd worden met het commando F3/H.
+
+
+┐ 7.  Controltoets commando's
+
+┐ 7.1  Werking
+
+Door de controltoets of CTRL-toets vast te houden en daarna één of 
+twee letter-tekens aan te slaan kunt u de dezelfde commando's uit· 
+voeren als met de funktietoetsen.
+
+
+┐ 7.2  Opstarten van het TEDINS6 installatie programma
+
+U kunt met programma TEDINS6.BAS zelf instellen welke toets(en) u 
+voor elk commando wilt gebruiken.
+
+Om het programma TEDINS6.BAS te gebruiken dient u ervoor te zorgen 
+dat TED.COM en TEDINS6.BAS beide op de diskette in drive A: staan. 
+Om TEDINS6 dan op te starten typt u vanuit MSX-DOS:
+
+A>BASIC TEDINS6.BAS
+
+en vanuit MSX-BASIC typt u
+
+RUN"TEDINS6.BAS"
+
+
+┐ 7.3  Tonen huidige instellingen
+
+Met optie 1 van het menu kunt u bekijken welke toets(en) voor welk 
+commando gebruikt worden. Indien gewenst kunt u dit overzicht ook op 
+de printer laten afdrukken.
+
+Als u TEDINS6 net opgestart heeft worden de toets-gegevens eerst uit 
+het programma TED.COM gelezen.
+
+
+┐ 7.4  Instellen toetscombinaties
+
+Met optie 2 van het menu kunt voor elk commando 1 of 2 letters 
+selecteren. Het verdient de aanbeveling om eerst met optie 1 de 
+huidige instellingen op de printer af te drukken, zodat u van te 
+voren (op papier) kunt bekijken welke letter-combinatie u voor elk 
+commando wilt gebruiken.
+
+Achter elk commando verschijnt, tussen haakjes, de bijbehorende 
+funktietoets en de huidige controltoets combinatie. U typt achter 
+elk commando twee letters (de gewenste controltoetsen dus). Als u 
+voor een bepaald commando slechts één letter wilt gebruiken, drukt u 
+i.p.v. het tweede teken op RETURN. Als u de controltoets combinatie 
+niet wilt wijzigen, drukt u alleen op RETURN.
+
+U mag elke combinatie slechts één keer gebruiken, en als u al een 
+bepaalde één-letterige kombinatie heeft ingevoerd, mag u voor een 
+ander commando niet een twee-letterige combinatie gebruiken die met 
+hetzelfde teken begint. Als dit het geval is moet u andere combi· 
+natie kiezen. Als u een fout gemaakt heeft, kunt met een druk op 
+ESCape opnieuw beginnen.
+
+N.B.: Voor het instellen van de commando's "Zet- en Wis markering" 
+      hoeft u slechts één letter in te typen, de tweede letter is 
+      automatisch het cijfer dat bij de bijbehorende markering hoort 
+      (0..9).
+
+
+┐ 7.5  Bewaren van de toetscombinaties
+
+Met optie 3 kunt u de ingestelde control-toetsen bewaren in het 
+programma TED.COM, zodat uw voorkeurs-toetsen voortaan direkt na het 
+opstarten van TED aanwezig zijn. Het verdient de aanbeveling om na 
+het gebruik van optie 3 met optie 1 de commando-lijst uit te prin· 
+ten, zodat u een overzichtje op papier hebt.
+
+
+┐ 7.6  Stoppen van TEDINS6
+
+Met optie 4 verlaat u het programma TEDINS6.
+
+
+┐ 8.  Stap voor stap voorbeelden van toepassingen
+
+┐ 8.1  Indelen van een tekst in alinea's
+
+Zoals reeds vermeld is geven '<'-tekens in de verticale statusbalk 
+aan de rechterkant van het scherm het einde van iedere alinea aan. 
+De alinea-indeling ontstaat doordat TED tijdens het intikken van de 
+tekst alle woorden die niet meer op een regel passen automatisch 
+omslaat naar de volgende regel, en daarbij een spatie aan het einde 
+van iedere regel plaatst. Als het laatste teken van een regel geen 
+spatie is, omdat er bijvoorbeeld op de Returntoets werd gedrukt, 
+wordt die regel als het einde van de alinea herkend.
+
+Het verdient de aanbeveling om een tekst eerst (bijna) volledig in 
+te voeren, en deze pas naderhand netjes in te delen. Hierdoor ver· 
+krijgt u een beter overzicht over de tekst doordat tijdens het 
+naderhand indelen de samenhang van de tekst opnieuw bekeken en even· 
+tueel veranderd kan worden.
+
+Hieronder volgen enkele voorbeelden van het naderhand indelen van de 
+alinea's.
+
+
+   Het koppelen van twee onderelkaar liggende alinea's
+
+      - Stuur de cursor met cursortoetsen achteraan de laatste regel 
+	van de eerste alinea. Voeg op die positie een spatie toe 
+	door op de spatiebalk te drukken. Hierdoor verdwijnt het 
+	'<'-teken aan de rechterkant van het scherm en worden de 
+	alinea's gekoppeld. De zo ontstane nieuwe alinea kan met een 
+	druk op de HOME toets opnieuw ingedeeld worden.
+
+
+   Opsplitsen van één alinea in twee aparte alinea's
+
+      - Schakel met de INS toets de invoegstand AAN. Stuur de cursor 
+	naar de positie waar de alinea gesplitst moet worden, mees· 
+	tal zal dit de spatie zijn die direkt achter het einde van 
+	een regel staat. Druk op die positie op de return toets, 
+	hierdoor wordt de alinea in twee aparte alinea's gesplitst. 
+	De beide alinea's kunnen met de HOME toets opnieuw ingedeeld 
+	worden.
+
+
+   Het indelen van alinea's waarvan de eerste regel naar links inspringt
+
+      - Stel met de F2/L funktie de gewenste linkerkantlijn in. 
+	Stuur de cursor naar de positie vòòr de linkerkantlijn van· 
+	waar ingesprongen moet worden. Houd vervolgens de CTRL toets 
+	vast en druk op HOME.
+
+
+   Het plaatsen van nummering, aandachtsstreepjes etc. voor de 
+   linkerkantlijn
+
+      - Om een nummer of aandachtsstreepje - zoals bij deze alinea - 
+	vòòr de linkerkantlijn van een alinea te plaatsen kan er als 
+	volgt te werk worden gegaan.
+	Indien het gewenste teken of nummer nog niet op de juiste 
+	positie vòòr de kantlijn staat, plaats het daar dan door 
+	spaties toe te voegen met spatiebalk en/of te wissen met de 
+	BS en DEL toetsen. Stuur de cursor vervolgens naar het eer· 
+	ste woord van de alinea en deel de alinea vanaf die positie 
+	in door de CTRL toets vast te houden en vervolgens op HOME 
+	te drukken. De alinea wordt dan volgens de ingestelde kant· 
+	lijnen ingedeeld, en de tekst die links van de cursor staat 
+	blijft ongemoeid.
+
+
+┐ 8.2  Standaardbrief met mail-merge
+
+Hieronder volgt een voorbeeld indeling van een standaardbrief en een 
+bijpassende adreslijst. Ten eerste wordt de adreslijst met TED inge· 
+voerd. De adreslijst dient net als een gewone tekst ingetypt te 
+worden en daarna met het F4/B commando op disk te worden bewaard. 
+Een adreslijst kan bijvoorbeeld zo ingedeeld worden:
+
+
+M.S. BBS Jos-Tel
+Boppelâns 24
+8721 GG Warns
+Nederland
+-
+Jos' Buurman
+Boppelâns 25
+8721 GH Warns
+Friesland
+-
+
+
+Zoals u ziet worden de kaarten onderling door een "-" teken van 
+elkaar gescheiden. U kunt ook andere scheidingstekens gebruiken, zie 
+hiervoor de uitleg bij de F2/P funktie over de mail-merge instellin· 
+gen. Ook indien u gegevens van een apart database programma gebruikt 
+dient u dit met de F2/P funktie in te stellen.
+
+Nadat u het gegevensbestand met het F4/B commando op diskette heeft 
+bewaard kunt u de standaard brief invoeren. Een veld (=regel) uit 
+een gegevenskaart wordt aangeven door $(xx), waarbij xx voor het 
+veldnummer staat. De verwijzing $(1) in de onderstaande voorbeeld· 
+brief verwijst dus naar het eerste veld van kaart, in dit geval de 
+bedrijfsnaam.
+
+De standaardbrief zou er als volgt uit kunnen zien:
+
+Van: Kees Bitbijter
+
+Aan: $(1)
+     $(2)
+     $(3)
+	    $(4)
+
+   Mevrouw, meneer,
+
+  Bij deze heb ik het genoegen de nieuwste prijslijst van diskettes 
+aan te bieden.
+
+Hoogachtend,
+
+		Kees Bitbijter.
+
+
+Als u uw brief ingevoerd heeft kunt de met de F2/P/M optie de 
+Mail-Merge funktie AAN zetten. Vervolgens voert u met de F2/P/N 
+funktie de bestandsnaam in van het gegevensbestand waaruit TED de 
+gegevens moet inlezen. Tenslotte kunt door het geven van het F4/P 
+(Print) commando de standaardbrieven uitprinten. De eerste stan· 
+daardbrief uit het bovenstaande voorbeeld zal er als volgt uit komen 
+te zien:
+
+
+Van: Kees Bitbijter
+
+Aan: M.S. BBS Jos-Tel
+     Boppelâns 24
+     8721 GG Warns
+	    Nederland
+
+   Mevrouw, meneer,
+
+  Bij deze heb ik het genoegen de nieuwste prijslijst van diskettes 
+aan te bieden.
+
+Hoogachtend,
+
+		Kees Bitbijter.
+
+
+U kunt met mail-merge funktie van TED ook adresetiketten afdrukken. 
+Hiertoe kunt dezelfde aanpak volgen als bij een standaardbrief, 
+alleen is de 'brief' nu veel eenvoudiger, bijvoorbeeld zo:
+
+$(1)
+$(2)
+$(3)
+     $(4)
+
+U kunt het gegevensbestand op etiketten afdrukken door bij de F2/P/L 
+funktie de lengte in regels van ieder etiket op te geven (meestal 
+9). Eventueel kunt de positie van de linkerkantlijn nog aanpassen 
+door de F3/L (kolom) funktie de beginpositie van kolom 1 te vari· 
+ëren. Het F4/P (Print) commando wordt weer gebruikt om het afdrukken 
+te starten.
+
+
+┐ 8.3  Lijsten
+
+Voor het invoeren van lijsten, zoals prijslijsten, kan handig 
+gebruik gemaakt worden van de instelbare tabulatiestops. Deze 
+tab-stops worden in de lineaal onderaan het scherm door een '+'-te· 
+ken weergeven. Door op de TAB toets te drukken kunt u de cursor naar 
+de dichtsbijzijnde tab-stop verplaatsen.
+
+Indien met de F2/T/G optie is ingesteld dat de TAB-tekens in het 
+geheugen bewaard moeten worden, zullen de kolommen van de ingevoerde 
+lijst automatisch worden verplaatst indien er met de F2/Z en F2/W 
+opties tab-stops geplaatst en gewist worden. Indien deze automati· 
+sche verplaatsing niet gewenst is dient u de F2/T/G optie UIT te 
+schakelen. Let erop dat de huidige tekst bij het omschakelen van de 
+F2/T/G optie gewist wordt, dus eerst de tekst op disk bewaren!
+
+De eerste regel van een lijst kan worden ingevoerd en ingedeeld door 
+de met cursor met de spatiebalk, TAB- en DEL- en BS-toetsen naar de 
+gewenste posities te sturen. Nadat de eerste regel naar wens inge· 
+deeld is, kunt met de F2/Z funktie op iedere gewenste kolompositie 
+een tabulatiestop plaatsen. Overbodige tabulatiestops kunnen met de 
+F2/W funktie gewist worden.
+
+
+┐ 8.4  Tekst in kolommen
+
+Hieronder wordt de indeling besproken van een in twee kolommen inge· 
+deelde tekst. Het verdient de aanbeveling om een tekst eerst volle· 
+dig in te typen en pas naderhand in kolommen in te delen.
+
+Stel dat u uw tekst in 2 kolommen per pagina wilt afdrukken. Met de 
+F3/L optie wordt het aantal kolommen op 2 ingesteld. De eerste kolom 
+kunt u dan bijvoorbeeld op positie 5 zetten, en kolom 2 op positie 
+45. De eerste kolom wordt dan op 5 spaties vanaf de linkerkantlijn 
+afgedrukt, en de tweede kolom komt 45 spaties vanaf de linkerkant· 
+lijn. Om te voorkomen dat de kolommen elkaar overlappen, mogen de 
+regels van de eerste kolom, in dit voorbeeld, dus maximaal 40 tekens 
+lang gemaakt worden, dit wordt bereikt door met F2/R de rechterkant· 
+lijn op positie 40 in te stellen en daarna met de HOME toets de 
+alinea's (opnieuw) in te delen. Een kolom beslaat de volledige len· 
+gte van een pagina, de paginalengte kan worden ingesteld met F2/P/L. 
+Het verdient de aanbeveling om tijdens het indelen van de tekst met 
+de F3/Pagina/Grens funktie de pagina/kolomindikatielijn aan te zet· 
+ten zodat u al tijdens het indelen kunt zien waar iedere nieuwe 
+kolom en pagina begint.
+
+Als de tekst tenslotte naar wens is is ingedeeld kunt u hem met F4/P 
+(Print) afdrukken.
+
+
+┐ 8.5  Programma in Pascal
+
+TED is uitermate geschikt om programma's in Pascal en andere talen 
+in te voeren en te wijzigen. Dit zogenaamde editten van programma's 
+werkt het beste wanneer u de 'edit mode' aan zet (optie F3/S/E). 
+Hierdoor worden alle overbodige spaties aan het einde van iedere 
+regel automatisch verwijderd en worden alle alinea-indelingsfunkties 
+uitgeschakeld.
+
+Ook de auto-indent funktie (F3/S/A) kan bij het invoeren van Pascal 
+programma's gebruikt worden, zodat de cursor automatisch inspringt 
+na een druk op return (zie ook de uitleg bij het F3/S/A commando).
+
+Indien Turbo Pascal gebruikt wordt, dient het bewaren van TAB-tekens 
+op disk UIT te worden gezet (optie F2/T/B), aangezien Turbo-Pascal 
+deze codes niet goed kan verwerken. De voorkeursextensie kan met 
+F3/E op PAS ingesteld worden. De rechterkantlijn moet op positie 131 
+ingesteld worden, dit is namelijk de maximale regellengte die Turbo 
+Pascal toestaat.
+
+
+┐ 8.6  Programma in BASIC
+
+Ook bij het invoeren van BASIC programma's moet met F3/S/E de edit 
+mode AAN gezet worden. De auto-indent funktie (F3/S/A) moet echter 
+UIT staan, aangezien BASIC regels niet mogen inspringen. De maximale 
+regellengte bij BASIC programma's is 254, de rechterkantlijn moet 
+dus ook op positie 254 ingesteld worden (met F2/R). De voorkeurs· 
+extensie voor BASIC programma's is BAS of ASC (instellen met F3/E). 
+Tenslotte dient het bewaren van TAB-tekens op disk UIT te worden 
+gezet (optie F2/T/B).
+
+Om een bestaand BASIC programma in TED te kunnen bewerken dient het 
+met het volgende BASIC commando op disk te zijn bewaard:
+
+SAVE"PROGRAM.ASC",A
+
+Door dit commando komt het programma met de naam PROGRAM.ASC als 
+ASCII tekst op disk te staan zodat het door TED ingelezen kan wor· 
+den. Een met met TED op disk bewaard programma kan met LOAD commando 
+van BASIC weer ingeladen worden, bijvoorbeeld:
+
+LOAD"PROGRAM.ASC".
+
+Het is belangrijk elke programmaregel van het BASIC programma door 
+een regelnummer voorafgegaan wordt. Indien u dit vergeet zal BASIC 
+tijdens het laden de foutmelding "Direct statement in file" geven.
+
+
+┐ 8.7  Programma in Assembler
+
+Assembler programma's kunnen bijzonder onleesbaar worden indien ze 
+niet netjes ingedeeld worden. De labels, mnemonics en het commentaar 
+kunnen het beste in aparte kolommen ingevoerd worden. Een voor· 
+beeldje:
+
+
+		;**** Test programma voor TED *****
+
+		;Dit programma geeft, nadat het is geassembleerd met
+		; b.v. GEN80 of M80 een blieptoontje.
+
+wBoot		equ  00h
+conOut		equ  02h
+bel		equ  07h
+bdos		equ  00005h
+
+start:		ld   e,bel		;Zet BEEP karakter in E
+		ld   c,conOut		;Functie: Uitvoer naar scherm
+		call bdos		;Voer commando uit
+		ld   c,wBoot		;Warme start
+		jp   bdos		;Klaar
+
+		end			;Einde van het programma
+
+
+Om programma's op deze wijze in te delen kunt u als volgt te werk 
+gaan.
+
+De edit en auto-indent modes zet u beide beide AAN (opties F3/S/E en 
+F3/S/A). De linkerkantlijn wordt ingesteld op positie 131 (door 
+middel van F2/R) en de linkerkantlijn komt op positie 1 (F2/L). 
+Verder moeten er TAB-stops op de posities 17, 22 en 41 staan (in te 
+stellen met de F2/Zet-tab optie), zodat met de TAB toets gemakkelijk 
+tussen de kolommen gesprongen kan worden. De tabstops die normaal 
+gesproken op de posities 9, 25 en 33 staan kunnen verwijderd worden 
+(dit scheelt geheugen- en diskruimte omdat de spaties tussen de 
+mnemonics en het commentaar automatisch door één TAB-teken worden 
+vervangen).
+
+Wanneer de auto-indent mode AAN gezet is, zal de cursor na een druk 
+op return automatisch tot onder het begin van de vorige regel in· 
+springen.
+
+Door middel van de toets-combinatie Ctrl-Links kan snel naar het 
+begin van de regel worden gesprongen: handig om snel een label in te 
+kunnen voeren.
+
+Tenslotte moet de invoegstand AAN staan, omdat de regel anders een 
+bij druk op de TAB-toets niet verlengd wordt tot aan de volgende 
+TABstop.
+
+
+┐ 9.  Het geheugenbeheer programma MemMan
+
+MemMan is gegeheugen beheer programma, dat ontwikkeld is door het 
+MSX Software Team. Het is een 'Public Domain' programma, hetgeen wil 
+zeggen dat vrij gekopiëerd en verspreid mag worden - dit in tegen· 
+stelling tot TED.
+
+Wanneer MemMan ingeladen is blijft het voor de gebruiker onzichtbaar 
+aanwezig. Andere programma's - zoals TED - kunnen het vervolgens 
+aanroepen om werkgeheugen aan te vragen. MemMan zal alleen geheugen 
+aan TED toekennen dat nog niet door andere programma's zoals 
+printerbuffers of RAM-disks in gebruik is. Het is dat echter wel 
+noodzakelijk dat deze programma's hun werkgeheugen ook bij MemMan 
+hebben aangevraagd.
+
+Het programma PB.TSR is speciaal geschreven voor gebruik in samen· 
+werking met MemMan, zie ┐ 10. Verder maakt MemMan het mogelijk dat 
+TED ook eventuele externe geheugenuitbreidingen in de cartridge 
+slots zal herkennen en gebruiken.
+
+
+┐ 9.1  Installatie van MemMan
+
+Door na de A> prompt van MSX-DOS
+
+MEMMAN
+
+in te tikken, zal MemMan geïnstalleerd worden. MemMan kan ook geïn· 
+stalleerd worden door na de "Ok"-prompt van MSX-BASIC
+
+BLOAD"MEMMAN.BIN",R
+
+in te tikken.
+
+MSX-BASIC kan weer worden verlaten door CALL SYSTEM in te toetsen, 
+waarna de A> prompt van MSX-DOS weer verschijnt. Vervolgens TED 
+intikken om TED te starten. Zie hiervoor ook paragraaf 3.2.
+
+Voor meer informatie over MemMan kunt u de bij MemMan behorende 
+handleiding lezen. Deze handleiding heet MM2INTRO.TXT en kan in TED 
+worden ingeladen met de F4/Laad funktie.
+
+
+┐ 10.  Het printerbufferprogramma PB
+
+┐ 10.1	Installatie van de printerbuffer
+
+Het programma PB.TSR is speciaal geschreven voor gebruik in 
+samenwerking met MemMan. Het werd gepubliceerd in MSX Computer 
+Magazine nummer 46. Deze printer buffer kan zonder problemen in 
+combinatie met MemMan èn TED worden gebruikt.
+
+PB.TSR is een 'achtergrond' programma dat na installatie continu in 
+het geheugen aanwezig blijft. Alle uitvoer die door TED en andere 
+programma's naar de printer gestuurd wordt, wordt PB onderschept en 
+in een geheugenbuffer geplaatst. Hierdoor is computer na elke 
+print-opdracht vrijwel direkt weer vrij voor gebruik, terwijl het 
+afdrukken vanuit de printerbuffer op de achtergrond gewoon doorgaat. 
+De printerbuffer is actief onder de MSX-besturingssystemen MSX-DOS1, 
+MSX-DOS2 en MSX-BASIC.
+
+Om PB in te kunnen laden moet het geheugenbeheer programma MemMan 
+actief zijn, ┐ 9 beschrijft hoe MemMan geïnstalleerd kan worden.
+
+PB wordt geïnstalleerd door het programma TL.COM. TL wordt gestart 
+vanuit MSX-DOS, u kunt vanuit TED naar MSX-DOS gaan met het F4/S 
+(stop) commando. Na enige seconden verschijnt dan de A> prompt van 
+MSX-DOS.
+
+Door na de A> prompt het commando
+
+TL PB
+
+in te typen en op Return te drukken wordt PB ingeladen. TED kan 
+daarna weer opgestart worden, alle tekst die door TED wordt 
+afgedrukt, wordt automatisch in de printerbuffer geplaatst.
+
+
+┐ 10.2 Het programma PRINT.COM
+
+Het programma PRINT.COM maakt de opties van PB beschikbaar onder het 
+MSX-DOS besturingssysteem. Hoewel PRINT niet speciaal van toepassing 
+is voor TED, geven we volledigheidshalve een bekopte beschrijving 
+van de beschikbare functies.
+
+Een belangrijke functie van PRINT is het `dumpen' van bestanden in 
+de printerbuffer. PRINT zal alle bestanden inladen die voldoen aan 
+de opgegeven bestandsnaam en ze vervolgens rechtstreeks in het buf· 
+fergeheugen plaatsen.
+
+De bestandnaam die aan PRINT wordt opgegeven mag de zogenaamde 
+wild-cards - `*' en `?' - bevatten, zodat meerdere bestanden achter· 
+elkaar naar de buffer gestuurd kunnen worden. Onder het MSX-DOS2 
+besturingssysteem mag ook worden opgegeven in welke subdirectory de 
+bestanden zich bevinden.
+
+De overige opties van PRINT zijn bereikbaar door middel van de 
+zogenaamde `switches'; commando's van één letter die vooraf worden 
+gegaan door een `slash', oftewel het deelteken `/'. PRINT is ruim 
+voorzien van deze schakelaars. Door middel van de optie /C kan de 
+buffer geleegd worden. Voordat de buffer geleegd wordt, wordt eerst 
+nog om een bevestiging gevraagd. Deze vraag kan onderdrukt worden 
+door /D op te geven. Deze optie is handig wanneer PRINT vanuit een 
+batch-file gestart wordt - de uitvoer wordt dan niet onderbroken om 
+een bevestiging te vragen.
+
+Wanneer /S wordt opgegeven, wordt de huidige omvang van de buffer op 
+het scherm getoond. Deze omvang kan gewijzigd worden door middel /I 
+gevolgd door een getal dat de grootte aangeeft. Zo zal de opdracht
+
+PRINT *.TXT /I16 /D
+
+een buffer aanmaken van 16 kB en wordt er niet om een bevestiging 
+gevraagd. Het is dus mogelijk dat hierdoor de inhoud van de buffer 
+zonder enige melding verloren gaat. Vervolgens worden alle bestanden 
+met de extensie `.TXT' in de buffer worden geladen.
+
+Middels /V kan het versienummer van PB.TSR opgevraagd worden. Wan· 
+neer onder MSX-DOS2 /H wordt opgegeven, kunnen ook de zogenaamde 
+`hidden' of verborgen bestanden worden afgedrukt. De laatste handige 
+switch is /F, wanneer deze optie wordt opgegeven zal er aan het 
+einde van ieder bestand een formfeed-karakter worden toegevoegd, 
+waardoor het laatste vel papier na ieder bestand automatisch uit de 
+printer zal worden geworpen.
+
+
+Appendix A - Samenvatting toetsenbord, funktie- en controltoetsen
+
+Toetsenbord:
+
+RETURN	     Begint een nieuwe alinea
+BS	     Wist het teken links van de cursor
+DEL	     Wist het teken onder de cursor
+  SHIFT+DEL  wist de tekst rechts van de cursor
+  CTRL +DEL  wist de huidige regel
+INS	     Zet de invoegstand uit of aan
+HOME	     Deelt de alinea waar de cursor zich in bevindt in
+  CTRL+HOME  Deelt de alinea vanaf de cursorpositie in
+  SHIFT+HOME Deelt de alinea in en laat de eerste regel inspringen
+  GRAPH+HOME Centreert de huidige regel
+CTRL+RECHTS  Naar het einde van de regel
+CTRL+LINKS   Naar het begin van de regel
+CTRL+OMHOOG  Eén schermhoogte omhoog
+CTRL+OMLAAG  Eén schermhoogte omlaag
+SHIFT+RECHTS Eén woord naar rechts
+SHIFT+LINKS  Eén woord naar links
+SHIFT+OMHOOG Eén pagina omhoog
+SHIFT+OMLAAG Eén pagina omlaag
+GRAPH+LINKS  Wisselt kleine- en hoofdletters om
+GRAPH+RECHTS Wisselt kleine- en hoofdletters om
+TAB	     Beweegt de cursor naar de volgende tabstop
+SHIFT+TAB    Invoeren van tekst voor de linkerkantlijn
+SELECT	     Geeft het controlvoorloop teken
+STOP	     Zet de cassette motor aan of uit
+ESC	     1. Verlaat een keuzemenu  2. Geeft het escape-teken
+
+
+Functie- en controltoetsen :
+
+F1 = Eén schermhoogte omlaag
+
+
+F2 = Instellingen
+
+F2/L	     Linkerkantlijn instellen
+F2/R	     Rechterkantlijn instellen
+
+F2/A/U	     Alinea rechts uitvullen aan/uit
+F2/A/A	     Woorden afbreken aan/uit
+F2/A/S	     Vorm van het afbreekstreepje
+F2/A/I	     Aantal karakters inspringen
+
+F2/Z	     Zet tabulatiestop
+F2/W	     Wis tabulatiestop
+
+F2/T/G	     Tabtekens in het geheugen aan/uit
+F2/T/B	     Tabtekens bewaren op disk aan/uit
+F2/T/L	     Tabtekens direkt laden van disk aan/uit
+
+F2/M/M	     Gebruik Memorymapper aan/uit
+F2/M/V	     Gebruik Video RAM aan/uit
+
+F2/P/S	     Printer Setup string
+F2/P/B	     Boven marge
+F2/P/O	     Onder marge
+F2/P/L	     Paginalengte
+F2/P/1	     Kopregel
+F2/P/2	     Voetregel
+F2/P/E	     Eerste paginanummer
+F2/P/P	     Kopregel positie
+F2/P/T	     Voetregel positie
+F2/P/R	     Kopregel marge
+F2/P/G	     Voetregel marge
+F2/P/F	     Formfeed (paginaopvoer) aan/uit
+F2/P/C	     Continue printen aan/uit
+F2/P/M	     Printen met mail-merge aan/uit
+F2/P/N	     Mail-Merge gegevensbestand
+F2/P/A	     Kaarteinde karakter(s)
+F2/P/V	     Veldeinde karakter(s)
+F2/P/K	     Eerste kaart uit het mail-merge bestand
+F2/P/I	     Mail Merge indikatieteken
+
+F2/D/Return  Printer driver aan/uit
+
+F2/S/K	     Sorteer kaartlengte
+F2/S/A..C    Sorteer velden
+
+F2/B/E	     Bewaar/laad instellingen bij elke tekst
+F2/B/T	     Bewaar huidige instellingen in TED
+F2/B/B	     Bewaar huidige instellingen in een .TED bestand
+F2/B/L	     Laad instellingen van disk
+
+
+F3 = Systeem
+
+F3/G	     Toon geheugenruimte
+
+F3/W/T	     Wis huidige tekst
+F3/W/P	     Leeg printerbuffer
+
+F3/I	     Disk inhoud
+
+F3/L/A	     Aantal tekstkolommen (1 t/m 6)
+F3/L/1..6    Stel kolom posities in
+
+F3/P/P	     Plaats een pagina-stop
+F3/P/V	     Verwijder een pagina-stop
+F3/P/A	     Verwijder alle pagina-stops
+F3/P/N	     Schakelt paginanummer indicatie aan/uit
+F3/P/S	     Schakelt pagina-stop indicatie aan/uit
+F3/P/G	     Schakelt pagina-grens indicatie aan/uit
+
+F3/K	     Stel schermkleuren in
+
+F3/B/B	     Backup (=reserve) bestand aanmaken aan/uit
+F3/B/A	     Automatisch bewaren aan/uit
+F3/B/S	     Aantal aanslagen voor automatisch bewaren
+
+F3/E	     Voorkeurs bestandsnaam extensie
+
+F3/S/C	     Kleuren cursor aan/uit
+F3/S/B	     Blok cursor aan/uit
+F3/S/S	     Commandoregel op scherm aan/uit
+F3/S/V	     Voorloopnullen in klok aan/uit
+F3/S/L	     Lichtkrant aan/uit
+F3/S/G	     Grote letters in hulpmenu aan/uit
+F3/S/E	     Edit mode aan/uit
+F3/S/A	     Auto-Indent aan/uit
+F3/S/R	     Repeteertoetsen aan/uit
+F3/S/M	     MSX karakterset aan/uit
+F3/S/K	     Karakterset-bestand op disk
+F3/S/I	     Cursorknipperen aan/uit
+F3/S/N	     Cursorknippertijd AAN veranderen
+F3/S/U	     Cursorknippertijd UIT veranderen
+
+F3/H/T	     Hulpmenu naar tekst kopiëren
+F3/H/M	     Tekst naar hulpmenu kopiëren
+
+
+F4 = Commando's
+
+F4/Z	     Zoeken/Vervangen
+F4/N	     Nog eens zoeken/vervangen
+
+F4/G/T	     Ga naar top van de tekst
+F4/G/B	     Ga naar bodem van de tekst
+F4/G/R	     Ga naar regelnummer
+F4/G/S	     Ga naar start van blok
+F4/G/E	     Ga naar einde van blok
+F4/G/0..9    Ga naar markering nr. 0 t/m 9
+
+F4/P	     Print de tekst
+
+F4/B	     Bewaar de tekst
+
+F4/L	     Laad een tekst
+
+F4/0..9      Zet een markering in de tekst
+
+F4/S	     Beëindig TED
+
+
+F5 = Blokfunkties
+
+F5/S	     Markeer startpositie van het blok
+F5/E	     Markeer eindpositie van het blok
+
+F5/W	     Wist het blok (verwijdert het blok uit de tekst)
+
+F5/D	     Wist de definities van blokstart en blokeinde
+
+F5/K	     Kopiëert het blok naar de huidige positie van de cursor
+
+F5/V	     Verplaatst het blok naar de huidige positie van de 
+	     cursor
+
+F5/P	     Drukt het blok af op de printer
+
+F5/T	     Sorteert het blok
+
+F5/L	     Blok laden van disk
+
+F5/B	     Bewaar blok op disk
+
+
+F6 = Eén schermhoogte omhoog
+
+F7 = Toon/verwijder hulpmenu
+
+
+Appendix B - Nieuwtjes in TED versie 2.6
+
+Er is een optie ingebouwd om vaste pagina-grenzen in de tekst te 
+plaatsen, deze vaste pagina-grenzen worden `pagina-stops' genoemd.
+
+Hiertoe zijn de volgende commando's toegevoegd:
+
+	F3/P/P - Plaats een pagina-stop
+	F3/P/V - Verwijder een pagina-stop
+	F3/P/A - Verwijder alle pagina-stops
+	F3/P/N - Schakelt paginanummer indicatie aan/uit
+	F3/P/S - Schakelt pagina-stop indicatie aan/uit
+	F3/P/G - Schakelt pagina-grens indicatie aan/uit
+
+Het is eenvoudiger gemaakt om naar het volgende of het vorige woord 
+in de tekst te springen. Hiertoe zijn toetscombinaties Shift/Links 
+en Shift/Rechts aangepast. Speciale karakters zoals leestekens, 
+liggende streepjes, punten en komma's worden nu als apart staande 
+woorden gezien.
+
+De toetscombinaties Graph/Links en Graph/Rechts zijn toegevoegd. 
+Hiermee kunnen kleine letters worden omgezet in hoofdletters en 
+omgekeerd.
+
+Tijdens het indelen van alinea's (door middel van de HOME toets) 
+worden de tussenfases niet meer op het scherm getoond. Hierdoor 
+ontstaat een rustiger beeld en wordt het indelen versneld. Links 
+boven op het scherm wordt het regelnummer getoond van de regel die 
+momenteel wordt ingedeeld.
+
+Een gelijksoortige verbetering is ingevoerd bij de blokfuncties. De 
+diverse tussenfases tijdens het kopiëren en wissen van tekstblokken 
+worden niet meer op het scherm getoond. De voor verstokte TED ge· 
+bruikers overbekende draai- en schokeffecten tijdens het manipuleren 
+van tekstblokken zijn hiermee verleden tijd.
+
+Tijdens het wissen van blokken wordt links boven op het scherm 
+getoond hoeveel regels nog gewist moeten worden. Dit om het wachten 
+op deze relatief trage functie wat te verzachten.
+
+Indien TED wordt opgestart vanuit een Kanji schermmode - onder 
+MSX-DOS2 of op een Japanse MSX computer - wordt automatisch 
+omgeschakeld naar het MSX-standaard tekstscherm. Na het beëindigen 
+van TED wordt de Kanji mode weer ingeschakeld.
+
+Het printbufferprogramma PB.TSR - dat gepubliceerd is door MSX Com· 
+puter Magazine - wordt door TED ondersteund.
+
+
+Bestellen, informatie etc.
+--------------------------
+
+TED is een product van:
+
+
+      +------------------------------------------------------+
+      | JOS-TEL M.S. BBS				     |
+      | Tel.: 05149-1837				     |
+      | Snelheden:  300 1200/75 1200 en 2400 baud	     |
+      | 						     |
+      | Bereikbaar maandag t/m donderdag van 21.00 tot	7.30 |
+      | 	   vrijdag t/m zaterdag  van 20.00 tot 12.00 |
+      | 	   zondag		 van 20.00 tot	7.30 |
+      +------------------------------------------------------+
+
+TED versie 2.6 kan besteld worden door ƒ 50,= over te maken 
+naar:
+
+MS BBS Jos-Tel
+Boppelâns 24
+8721 GG Warns
+Giro: 2827142, t.n.v. Jos de Boer.
+
+Van dit bedrag wordt ƒ 40,= rechtstreeks overgemaakt op 
+girorekening 6989 van de MS Stichting. Tien gulden wordt 
+gereserveerd voor porto, verpakking en onkosten van het BBS.
+
+Updates zijn te verkrijgen door de originele TED diskette (met 
+sticker) en een geldig betaalmiddel - girocheque of postzegels - 
+te sturen naar bovenstaand adres. Het vereiste bedrag kan ook op 
+het gironummer van Jos-Tel overgemaakt worden.
+
+De update-kosten van versie 2.4 en 2.5 bedragen ƒ 5,-; van 
+versie 2.3 ƒ 10 en van eerdere versies ƒ 15,-. Sluit een aan 
+uzelf geadresseerde en met ƒ 1,50 gefrankeerde enveloppe bij.
+
+Meer informatie en een vrij te verspreiden demo-versie zijn te 
+verkrijgen bij de databank Jos-Tel. De demo mist de print- en 
+bewaarfunctie.
+
+
+Opbouwende kritiek en donaties gaarne tegemoet ziende,
+
+Sysop Jos-Tel:		Jos de Boer
+			Boppelâns 24
+			8721 GG Warns
+
+Programmeur:		Ries Vriend
+			Andijk
+
+			   *** Einde ***
+

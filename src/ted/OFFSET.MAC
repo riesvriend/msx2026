@@ -1,0 +1,160 @@
+false	equ 0
+true	equ not false
+
+demo	equ false	;True = Demoversie
+autoDemo	equ false	;True = Autorun demo versie
+
+nl	equ 0
+duits	equ 1
+
+taal	equ nl	;Huidige taal=Duits/NL
+
+iff taal-nl
+cryptByte	equ 01101011B
+else
+cryptByte	equ 10011001B
+endIf
+
+maxMapSeg	equ 128	;Max. 128 mapper segmenten = 2 MEG
+maxPageStops	equ 200	;Max. aantal harde pagina stops
+
+	;Offset/index definities variabelentabel in (IY +/- Index)
+
+virPos	equ 22
+firstPntSeg	equ 21
+firstDataSeg	equ 20
+flags6	equ 19
+pg1Seg	equ 18
+pg2Slt	equ 17
+flags5	equ 16
+bufPos	equ 15
+bEndPos	equ 14
+bSrtPos	equ 13
+flags4	equ 12
+spCnt	equ 11
+vdpRead	equ 10
+vdpCw	equ 9
+mrkNum	equ 8
+spLinks	equ 7
+namCnt	equ 6
+inhX	equ 5
+inhY	equ 4
+flags3	equ 3
+flags2	equ 2
+spaties	equ 1	;IY-1
+maxMap	equ 0	;IY
+tabMap	equ 1	;IY+1
+dataMap	equ 2
+curMap	equ 3
+curTab	equ 4
+savMap	equ 5
+endSav	equ 6
+bufLen	equ 7
+dskFlg	equ 8
+vdpWrite	equ 9
+prtReg	equ 10
+offSet	equ 11
+xPos	equ 12
+yPos	equ 13
+flags1	equ 14
+minLin	equ 15
+maxLin	equ 16
+bouwNum	equ 17
+regLow	equ 18
+klLinks	equ 19
+klRechts	equ 20
+mapFlag	equ 21
+topMar	equ 22
+botMar	equ 23
+pagLen	equ 24
+tabSav	equ 25
+botMap	equ 26
+afbreek	equ 27
+koppos	equ 28
+voetpos	equ 29
+kopMrg	equ 30
+inspring	equ 31
+savFl	equ 32
+mrgKar	equ 33
+voetMrg	equ 34
+savFl2	equ 35
+rept	equ 36
+numPageStops	equ 37
+savFl3	equ 38
+aantIndent	equ 39
+
+	;Bit-Vlaggen in IY+FLAGSx (IY+14 IY-2 IY-3 IY-12, IY-16 IY-19)
+
+INSFL	equ 0
+CHANGE	equ 1
+RETKEY	equ 2
+SAV	equ 3
+SPACE	equ 4
+BLOKFL	equ 5
+LDFL	equ 6
+TABFL	equ 7
+CSRON	equ 0
+SPATIE	equ 1
+even	equ 2
+spFnd	equ 3
+ktl	equ 4
+afbrFl	equ 5
+afbrEnd	equ 6
+long	equ 7
+voorAch	equ 0
+bovOndk	equ 1
+krt	equ 2
+twee	equ 3
+insp	equ 4
+nKl	equ 5
+aanh	equ 6
+vrLoop	equ 7
+bouw	equ 0
+klaar	equ 1
+pkv	equ 2
+rstH	equ 3
+pBlk	equ 4
+move	equ 5
+onv	equ 6
+d2mm	equ 7
+err	equ 0
+dos2	equ 1
+noLin	equ 2
+blkAp	equ 3
+mted	equ 4
+mMan	equ 5
+chFnd	equ 6
+dispOff	equ 7
+pbTsr	equ 0
+pbTed	equ 1
+vir	equ 2
+
+	;Bitvlaggen op disk TABSAV, SAVFL, IY+SAVFL2, SAVFL3
+
+STOTAB	equ 0
+UITVUL	equ 1
+AFBR	equ 2
+COMLIN	equ 3
+DRIVE	equ 4
+STTAB	equ 5
+LDTAB	equ 6
+CSR	equ 7
+VOORNUL	equ 0
+MRG	equ 1
+FFD	equ 2
+CONT	equ 3
+BKUP	equ 4
+AUTOB	equ 5
+msxK	equ 6
+blkC	equ 7
+bigLet	equ 0
+hlp	equ 1
+edit	equ 2
+ai	equ 3
+pag	equ 4
+svIns	equ 5
+knipper	equ 6
+nPageStop	equ 7
+nPageNum	equ 0
+indDir	equ 1
+

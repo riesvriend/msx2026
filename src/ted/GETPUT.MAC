@@ -1,0 +1,1139 @@
+.comment \
+
+***** Start van Put / Get systeem voor strings *****
+
+Indeling van een segment in MM voor Pointer-Tabel:
+8000H=Bevat laatste bezette adres + 1
+8002H=Start van pointer tabel
+BFFFH=Laatste byte
+
+Pointer = 6 bytes:
+1. Low byte regelnummer
+2. High byte regelnummer
+3. Segnr v.d. Data Page (0-7) is VRAM, 8-255 is Memory Mapper
+4. Lengte v/d regel
+5. Low byte stringadres
+6. High byte stringadres
+
+Data page (in MM of VRAM):
+(8000H) = Einde datagebied+1
+8002H = Start van datagebied
+\
+
+enaSlt	equ 024h
+
+	global clear,clrNoPageTab,get,get2,put,swap,fre
+	global rnPageTab,invoegNoRn,rnPointers
+	global delStr,addStr,addLine,rTabHL,wTabHL,readHL,writeHL
+	global voegIn,zr0a,zr0b,makeTab,mmOut,getBot2
+	global delLines,zoekNum
+
+	;Externals in MAIN.MAC
+
+	ext keyCnt,lastLine,savNam,pageTab,pointers,bf3Pnt
+	ext maxPtr,dCompr,vrmEnd,tedMax,freMem
+	ext mmTabel,csrNum,strBf3,tTab,p2Seg,strBuf,delSpc
+	ext tabel,savFd,savFe,segEnd,buf,getPageStop
+
+	;Externals in SUBTED.MAC
+
+	ext strLen,resetBlok,ldrMv2,ldrVm2,putP2,mmUse2
+	ext memVol,delPageStop,prtSav
+
+
+	include OFFSET.MAC	;Bevat definitie variabelen-offsets
+
+
+; clear
+;
+; Initialiseer geheugen voor pointers+data
+;
+clear:	ld (iy+numPageStops),0	;Geen harde paginagrenzen
+clrNoPageTab:	ld hl,0
+	ld (keyCnt),hl	;Toetsaanslagenteller op 0
+	ld (lastLine),hl	;Laatste regelnummer in tekst = 0
+	ld a,(iy+maxMap)
+	ld (iy+tabMap),a	;Tabel memmap positie
+	ld (iy+curMap),a	;Voor WRITEHL routine
+	call getBot	;Haal beginadres van POINTER seg A
+	ex de,hl	; in reg [HL]
+	call writeHL	;Pointer op begin van segment
+	ld a,(iy+botMap)	;Haal laagste pagina
+	ld (iy+dataMap),a	;Data memmap positie
+	ld (iy+curMap),a
+	call getBot	;Haal beginadres van DATA seg [A]
+	ex de,hl	; in reg [HL]
+	call writeHL
+	xor a
+	ld (savNam),a	;Lengte huidigefilenaam=0
+	call prtSav	;Toon filenaam in statusregel
+	call resetBlok	;Geen blok aanwezig
+	res sav,(iy+flags1)	;Niet: saven j/n?
+	ret
+
+; rnMarks
+;
+; Hernummer de tekstmarkeringen: Blokken, markers & Paginastops
+;
+; In: DE=String nummer
+;     HL=Offset
+;
+; Wijzigt: AF, BC, IX
+;
+rnMarks:	call rnPointers	;Hernummer blokpointers & markers
+
+rnPageTab:	ld b,(iy+numPageStops)	;Zoveel pagina-stops zijn er
+	inc b
+	dec b
+	ret z	;0 is te weinig om te hernummeren
+	ld ix,pageTab	;Begin van page pointer tabel in IX
+	inc de	;PageTab is 1-based, dus DE 1 verhogen
+	call renLp	;Hernummer pagina einde pointers
+	dec de	;Herstel DE
+	ret
+
+rnPointers:	ld ix,pointers	;10 markeringen en 2 blokadressen
+	ld b,12	; = twaalf pointers aanpassen
+
+renLp:	push bc	;Aantal pointers in [B]
+	push hl
+	ld l,(ix+0)
+	ld h,(ix+1)	;Haal pointer
+	ld a,l	;Vergelijk HL met DE
+	cp e
+	ld a,h
+	sbc a,d	;Regel voor pointer?
+	jr c,renPntNoAdd	; Nee, => Pointer niet opschuiven
+	pop bc	;Haal offset
+	push bc
+	add hl,bc	;Tel offset bij pointer op
+	ld (ix+0),l
+	ld (ix+1),h
+renPntNoAdd:	pop hl
+	pop bc
+	inc ix
+	inc ix
+	djnz renLp	;Volgende pointer
+	ret
+
+	;Verwijder een string, en schuif achterliggende regels terug
+	;DE=Stringnummer
+
+delStr:	push de
+	call zoekNum	;Zoek eerste string met nummer [DE]
+	pop de	;Herstel regelnummer
+	ret c	;Klaar indien laatste regel van tekst
+
+	push hl	;Bewaar stringdata adres
+	push bc	;Bewaar stringlengte
+	push ix	;Bewaar pointer adres
+
+	ld hl,1	;1 regel verwijderen
+
+; delLines
+;
+; Verwijdert HL regels uit het geheugen.
+; Paginastops en markeringen worden ook aangepast.
+;
+; In:     HL = Aantal regels
+;         DE = Nummer 1e regel
+;     (SP+0) = Adres 1e pointer
+;     (SP+2) = String lengte
+;     (SP+4) = String adres
+;     (SP+6) = Returnadres
+;(IY+curMap) = String datasegment
+;
+; Pointersegment moet al actief zijn
+;
+delLines:	push hl	;Bewaar aantal regels
+
+delMarkerLp:	push hl	;Bewaar teller
+	push de	;Bewaar regelnummer
+	ex de,hl	;Regelnummer naar HL
+
+	dec hl	;Ga naar bovenliggende regel
+	call getPageStop	;Is dit een paginagrens?
+	jr c,delNoPageStop	; Nee, => Niet weghalen dus
+
+	call getPageStop	;Volgende regel ook een paginagrens?
+	jr c,delNoPageStop	; Niet, => Ze overlappen elkaar niet
+
+	dec hl	; Ja, ga terug naar vorige regel
+	call delPageStop	;Voorkom overlapping van paginagrenzen
+
+delNoPageStop:	pop de	;Haal regelnummer
+	ld hl,-1
+	call rnMarks	;Schuif markers & paginanummers terug
+
+	pop hl	;Haal regelteller
+	dec hl
+	ld a,h
+	or l
+	jr nz,delMarkerLp	;Totdat alles verwijderd is
+
+	pop hl	;Haal aantal regels
+	push hl	;Bewaar aantal regels
+	add hl,hl	;Bereken omvang van te verwijderen
+	add hl,hl	; pointers
+	ex (sp),hl	;Herstel aantal regels
+
+	ld a,h	;HL=-HL
+	cpl
+	ld h,a
+	ld a,l
+	cpl
+	ld l,a
+	inc hl	;HL=Negatieve offset
+
+	ex de,hl	;Offset naar DE
+	ld hl,(lastLine)
+	add hl,de	;Verlaag laatste regelnummer
+	ld (lastLine),hl
+
+	ex de,hl	;Offset naar HL
+	add hl,hl	;*4 bytes per pointer
+	add hl,hl
+	ex de,hl	;Offset naar DE
+
+	call rTabHL	;Verlaag eindadres van dit segment met
+	add hl,de	; 4 bytes per pointer
+	call wTabHL	;4 bytes vrijmaken in pointertabel
+
+	pop bc	;Lengte te verwijderen pointers
+	pop de	;Haal pointeradres in DE
+	or a
+	sbc hl,de	;Bereken aantal op te schuiven bytes
+	jr z,ds1
+
+	push hl	;Bewaar op te schuiven aantal bytes
+
+	ld h,d
+	ld l,e
+	add hl,bc	;Bereken adres 1e terug te schuiven pnt
+
+	pop bc	;Haal aantal op te schuiven bytes
+
+	ldir	;Schuif alle achterliggende pointers
+
+ds1:	pop bc	;Herstel string-data gegevens
+	pop hl
+	jp wisData	;Wis de string data
+
+	;Voeg regel CSRNUM in
+
+ADDLINE:	LD HL,STRBUF
+	SET BLKAP,(IY-FLAGS5)	;Vlag: wel blok aanpassen
+	BIT EDIT,(IY+SAVFL2)	;Edit mode?
+	CALL NZ,DELSPC	; Ja, => Verwijder spaties op regeleind
+	LD DE,(CSRNUM)
+	CALL ADDSTR	;Sla de regel op in het tekstgeheugen
+	RES CHANGE,(IY+FLAGS1)
+	SET SAV,(IY+FLAGS1)	;Saven voor stoppen
+	RET
+
+	;Voeg een string in
+	;DE=Stringnummer
+	;HL=Stringdata
+
+ADDSTR:	LD BC,ZOEKVRIJRAM	;Straks dataruimte zoeken
+	PUSH BC	;Bewaar RET-adres
+
+	;Voeg een stringpointer in
+
+VOEGIN:	PUSH HL	;Bewaar de stringdata
+	LD HL,1
+	CALL RNMARKS	;Hernummer de (blok)-markeringen +1
+	POP HL
+
+invoegNoRn:	PUSH HL	;VoegIn, zonder renumber van markers
+vi1:	PUSH DE	;Bewaar regelnummer
+	CALL ZOEKNUM	;Zoek eerste string met nummer [DE]
+	PUSH IX	;Voeg een pointer in
+	POP DE	;Pointeradres in DE
+	CALL RTABHL	;Haal eind-adres van dit pointer-seg
+	PUSH HL
+	OR A
+	SBC HL,DE	;Bereken eindadr-huidig adr=lengte
+	LD B,H
+	LD C,L	;Verschil in BC
+	POP HL
+	BIT 6,H	;0C000H bereikt?
+	JR NZ,VI3	; Ja, => VI3
+	LD D,H
+	LD E,L
+	INC HL	;Alle bovenliggende pointers 4 bytes
+	INC HL	; omhoog schuiven
+	INC HL
+	INC HL
+	CALL WTABHL	; Nee, vul nieuw pag. einde in
+	LD A,B
+	OR C
+	JR Z,VI2	;Laatste pointer => Niets schuiven
+	EX DE,HL
+	DEC HL
+	DEC DE
+	LDDR
+VI2:	LD (IX+1),0	;Stringlengte = 0
+	LD HL,(LASTLINE)
+	INC HL	;Laatste regel is nu 1 hoger, want we
+	LD (LASTLINE),HL	; hebben er zojuist 1 tussengevoegd
+	POP DE	;Herstel regelnummer
+	POP HL	;(HL)=Stringdata
+	RET	; => Zoek RAM voor stringdata
+
+VI3:	LD A,(IY+CURTAB)	;64 pointers naar volgende segment
+
+VI35:	LD E,(IY+TABMAP)
+	CP E	;Volgende map leeg?
+	JR NZ,VI5	; Nee, => er staan al pointers in
+	LD A,E
+	DEC A
+	CP (IY+DATAMAP)
+	JP Z,MEMVOL
+	CP 7	;0-7 is VRAM
+	JP Z,MEMVOL	;Gebruik geen VRAM
+	LD (IY+TABMAP),A	;Installeer een nieuw pointersegment
+	CALL MMOUT	;Schakel het segment in op 8000h
+	LD (IY+CURMAP),A
+	CALL GETBOT	;Haal beginadr. van dit segment in DE
+	EX DE,HL
+	INC H	;64 Pointers * 4 bytes opschuiven
+VI4:	CALL WRITEHL	;Bewaar nieuwe eindadres v/h segment
+	INC A	;Bereken bron segment
+	LD (IY+CURMAP),A
+	CALL MMOUT
+	CALL READHL	;Lees eindadres van het bronsegment
+	DEC H	;Verlaag eindadres, verhuis 64 pointers
+	CALL WRITEHL	;Bewaar eindadres v/h segment
+	LD DE,BUF
+	LD BC,64*4
+	PUSH DE
+	PUSH BC	;Kopieer de 64 pointers naar 256-byte
+	LDIR	; buffer in page 3
+	DEC A
+	CALL MMOUT	;Schakel het bestemmingssegment in
+	LD D,A
+	CALL GETBOT2	;A wordt D, DE wordt begin
+	POP BC	; adr. v/h segment
+	POP HL
+	LDIR	;Pointers naar 1e 64 entries van het
+	INC A	; segment, eindadres is al aangepast
+	CP (IY+CURTAB)	;Nog een segment?
+	JR NZ,VI6	; Ja, => VI6
+	POP DE	;Haal regelnummer
+	JP VI1	; => en begin weer overnieuw
+VI5:	DEC A	;Ga naar vorige pointer segment, teller
+VI6:	LD (IY+CURMAP),A	; telt van CURTAB omlaag tot TABMAP
+	CALL READHL
+	INC H
+	BIT 6,H	;8000H <= HL < 0C000H ?
+	JR NZ,VI35	;Niet genoeg ruimte, => volgende seg.
+	PUSH HL	;Genoeg ruimte in dit seg.
+	CALL READHL
+	CALL GETBOT	;Haal begin adr. van het segment in DE
+	OR A
+	SBC HL,DE	;Leeg seg? Dan niets opschuiven
+	JR Z,VI7
+	LD A,(IY+CURMAP)
+	CALL MMOUT	;Schakel huidig segment in
+	LD B,H
+	LD C,L
+	CALL READHL
+	POP DE
+	PUSH DE
+	DEC DE
+	DEC HL
+	LDDR	;Maak ruimte voor 64 pointers
+VI7:	POP HL
+	JR VI4
+
+	;Haal string en maak spaties van tabs
+
+MAKESP:	PUSH HL	;Bewaar destination buffer
+	LD HL,STRBF3
+	CALL GET2	;Haal string
+	OR A
+	JR Z,MS4	;Len=0
+	LD B,A	;Bewaar bronstring lengte in [B]
+	LD C,0	;Dest. stringlen. in [C]
+	POP DE
+	PUSH DE	;Destination string in [DE]
+	INC DE	;Skip lengtebyte
+
+MS1:	INC HL
+	LD A,(HL)
+	CP 255	;Tab (=255)?
+	JP NZ,MS3	; Nee, vul teken in
+	PUSH HL
+	LD A,B
+	LD B,0
+	LD HL,TTAB+1	;HL=TAB tabel
+	ADD HL,BC	;Bereken pos in TAB regel
+	LD B,A
+	LD A,(HL)	;Tab op huidige pos+1?
+		;  (hoort niet voor te komen, want dit
+	OR A	;   is gelijk aan 1 'gewone' spatie).
+	JR NZ,MS2B	; Ja, => vul 1 spatie in
+	EX DE,HL	;DE=Pos. TAB-tabel, HL=Dest.
+MS2:	LD (HL),' '             ;Spatie invullen i.p.v tab
+	INC HL
+	INC DE
+	INC C
+	LD A,(DE)
+	OR A	;Is er een TAB-stop?
+	JR Z,MS2	; Nee, => Nog een spatie
+	EX DE,HL
+MS2B:	POP HL
+	LD A,' '
+MS3:	LD (DE),A	;Vul teken in
+	INC DE
+	INC C
+	DJNZ MS1
+	LD A,C
+MS4:	POP HL
+	LD (HL),A	;Vul lengte byte in
+	RET
+
+; Get
+;
+; DE=String nummer
+; HL=Bestemmingsbuffer
+;
+; Uit: HL ongewijzigd
+;
+GET:	BIT STTAB,(IY+TABSAV)	;Tabs opgeslagen?
+	JR NZ,MAKESP	; Ja, => Maak spaties
+GET2:	PUSH HL	;Entry: Tabs niet terugvormen
+	CALL ZOEKNUM
+	INC C
+	DEC C	;Lengte = 0?
+	JR Z,BG3	; Ja, => Klaar
+	POP DE	;String naar STRBUF+1
+	PUSH DE
+	INC DE
+	CP 8	;Datasegmenten 0-7 zijn VRAM
+	JR C,BG1
+	CALL MMOUT	;Schakel Z80-datasegment in
+	LD A,C	;Haal lengtebyte in A
+	LDIR	;Haal stringdata uit datasegment
+	JP BG4
+BG1:	PUSH BC
+	CALL ldrMv2	;Haal (ldir) data uit VRAM-datasegment
+	POP BC
+BG3:	LD A,C	;Herstel lengtebyte
+BG4:	POP HL
+	LD (HL),A	;Lengte in STRBUF+0
+	RET
+
+	;Bewaar eindadres [HL] van segment IY+CURTAB
+
+WTABHL:	PUSH HL
+	PUSH DE
+	PUSH BC
+	EX DE,HL
+	LD BC,SEGEND	;Schrijf eind-adres in tabel
+	LD H,0
+	LD L,(IY+CURTAB)	;HL=Seg. nr.
+	ADD HL,HL	;2 bytes per segment
+	ADD HL,BC	;Tabeladres erbij
+	LD (HL),E
+	INC HL
+	LD (HL),D	;Vul eind-adres in
+	POP BC
+	POP DE
+	POP HL
+	RET
+
+	;Bewaar eindadres [HL] van segment IY+CURMAP
+
+WRITEHL:	PUSH HL
+	PUSH DE
+	PUSH BC
+	EX DE,HL
+	LD BC,SEGEND	;Schrijf eind-adres in tabel
+	LD H,0
+	LD L,(IY+CURMAP)	;HL=Seg. nr.
+	ADD HL,HL	;2 bytes per segment
+	ADD HL,BC	;Tabeladres erbij
+	LD (HL),E
+	INC HL
+	LD (HL),D	;Vul eind-adres in
+	POP BC
+	POP DE
+	POP HL
+	RET
+
+	;Lees eindadres van segment IY+CURTAB in [HL]
+
+RTABHL:	PUSH BC
+	PUSH AF
+	LD BC,SEGEND	;Schrijf eind-adres in tabel
+	LD H,0
+	LD L,(IY+CURTAB)	;HL=Seg. nr.
+	ADD HL,HL	;2 bytes per segment
+	ADD HL,BC	;Tabeladres erbij
+	LD A,(HL)
+	INC HL
+	LD H,(HL)	;Vul eind-adres in
+	LD L,A
+	POP AF
+	POP BC
+	RET
+
+	;Lees eindadres van segment IY+CURMAP in [HL]
+
+READHL:	PUSH BC
+	PUSH AF
+	LD BC,SEGEND	;Schrijf eind-adres in tabel
+	LD H,0
+	LD L,(IY+CURMAP)	;HL=Seg. nr.
+	ADD HL,HL	;2 bytes per segment
+	ADD HL,BC	;Tabeladres erbij
+	LD A,(HL)
+	INC HL
+	LD H,(HL)	;Haal eind-adres op
+	LD L,A
+	POP AF
+	POP BC
+	RET
+
+	;LDIR in ram of Vram
+
+LDIR:	LD A,(IY+CURMAP)
+	CP 8	;MAP 0-7 is VRAM
+	JR C,LD1
+	CALL MMOUT	;OUT (0FEH),A
+	LDIR
+	RET
+LD1:	RES 6,H	;HL=HL-4000H
+	RES 6,D
+
+LD2:	PUSH HL
+	PUSH DE
+	PUSH BC
+	PUSH DE
+	PUSH HL
+	LD HL,100H
+	OR A
+	SBC HL,BC
+	LD DE,100H
+	JR C,LD3
+	LD D,B
+	LD E,C
+LD3:	LD B,D
+	LD C,E
+	LD DE,BUF
+	POP HL
+	PUSH BC
+	LD A,(IY+CURMAP)
+	call ldrMv2
+	POP BC
+	POP DE
+	PUSH BC
+	LD HL,BUF
+	LD A,(IY+CURMAP)
+	CALL ldrVm2
+	POP DE
+	POP HL
+	OR A
+	SBC HL,DE
+	JR Z,LD4
+	LD B,H
+	LD C,L
+	POP HL
+	ADD HL,DE
+	EX (SP),HL
+	ADD HL,DE
+	POP DE
+	JR LD2
+LD4:	POP HL
+	POP HL
+	RET
+
+	;Maak tabs in string (HL)
+	;
+	;* Stringlengte mag niet 0 zijn *
+
+MAKETAB:	LD A,(HL)
+	INC HL
+	PUSH AF	;Bewaar string-lengte
+	LD DE,STRBF3+1
+	LD (BF3PNT),DE	;String naar strbf3
+	XOR A
+	LD (IY-SPCNT),A	;Spatie teller=0
+	LD C,A	;C=positie in bronregel
+	RES AANH,(IY-FLAGS3)	;vlag: Nog geen "-tekens geweest
+
+MT1:	LD A,(HL)
+	CP '"'                  ;Aanhalings teken?
+	JR Z,MT7	; Ja, => Zet vlag
+	CP "'"
+	JR Z,MT7
+	CP ' '                  ;Spatie?
+	JR NZ,MT2	; Nee, => Gewoon verplaatsen
+	BIT AANH,(IY-FLAGS3)	;Stringen tussen '"'?
+	JR NZ,MT2	; Ja, => Geen tabs
+	INC (IY-SPCNT)	;1 spatie meer
+	PUSH HL
+	LD B,0
+	LD HL,TTAB+1
+	ADD HL,BC	;Bereken pos in TAB regel
+	LD A,(HL)
+	OR A	;Is er een TAB-stop?
+	POP HL
+	JR Z,MT6	; Nee, => Volgende teken
+	LD A,(IY-SPCNT)
+	LD (IY-SPCNT),0
+	EX DE,HL	;Bewaar bron
+	DEC A	;Slechts 1 spatie geweest?
+	LD B,' '
+	JR Z,MT4	; Ja, => Vul spatie in
+	LD B,255	; Nee, => Vul Tab(=255) in
+	JR MT4	;Vul Tab in
+MT2:	EX DE,HL
+	LD B,A	;Bewaar teken
+	LD A,(IY-SPCNT)	;Waren er spaties geweest?
+	OR A
+	JR Z,MT4	; Nee, => vul teken in
+	LD HL,(BF3PNT)
+MT3:	LD (HL),' '             ; Ja, eerst spaties invullen
+	INC HL
+MT3B:	DEC A
+	JR NZ,MT3
+	LD (IY-SPCNT),A	;Spatieteller weer op nul
+	JR MT5	;Vul daarna teken in
+MT4:	LD HL,(BF3PNT)
+MT5:	LD A,B
+MT5B:	LD (HL),A	;Sla teken op in buffer
+	INC HL
+	LD (BF3PNT),HL
+	EX DE,HL	;Haal bronpointer
+MT6:	INC C	;Verhoog bron teller
+	INC HL
+	POP AF	;Haal stringlengte
+	PUSH AF
+	CP C	;Alles gehad?
+	JR NZ,MT1	; Nee, => Volgende teken
+	DEC C	;Teller terug
+	LD B,' '
+	LD HL,(BF3PNT)
+	LD A,(IY-SPCNT)	;Staan er nog spaties aan einde?
+	OR A
+	JR NZ,MT3B	; Ja, => vul die ook nog in
+	POP AF	;Herstel stack
+	LD DE,STRBF3+1
+	OR A
+	SBC HL,DE	;Bereken reg. len
+	LD A,L
+	EX DE,HL	;String in STRBF3
+	DEC HL
+	LD (HL),A	;Bewaar lengte
+	RET
+MT7:	SET AANH,(IY-FLAGS3)	;Geen TABs meer
+	JR MT2	;Vul teken in
+
+	;DE=Nummer
+	;HL=Stringdata (LEN,DATA,DATA,....,DATA)
+
+put:	ld bc,zoekVrijRam
+	push bc	;Bewaar RET-adres
+	push hl
+	push de
+	call zoekNum	;Zoek de string pointer
+	pop de	;Herstel regelnummer
+	jr c,addPnt	; Pointer bestaat nog niet => Toevoegen
+
+	ld a,(iy+curTab)	;Huidige pointersegment
+	push af
+	call wisData	;Pointer bestaat al => Wis stingdata
+	pop af
+	ld (iy+curTab),a	;Herstel pointersegment
+
+	pop hl	;Nieuwe stringdata in HL
+	ret	;Stringdata invullen
+
+	;Maak een nieuwe stringpointer aan het einde van de tabel
+
+addPnt:	bit 6,h	;0C000H/Einde van het segment bereikt?
+	jr nz,ap2	; Ja, => AP2
+	inc hl	;HL=Eindadres van laatste segment
+	inc hl	;Pointer van 4 bytes toevoegen.
+	inc hl
+	inc hl
+	call wTabHL	; Nee, vul nieuw pag. einde in
+	inc de	;Eerste niet bestaande regel-pointer is
+	ld (lastLine),de	; laatste regelnummer + 1
+	pop hl	;(HL)=String
+	ret	;Ga naar ZoekVrijRam
+ap2:	ld a,(iy+curTab)
+	dec a
+	cp (iy+dataMap)	;Volgende segment vrij?
+	jp z,memVol
+	cp 7
+	jp z,memVol	; Nee, => gebruik geen VRAM voor pnttab
+	ld (iy+tabMap),a	; Ja, alloceer een nieuw pointersegment
+	ld (iy+curTab),a
+	ex de,hl	;Bewaar regelnummer even in HL
+	call getBot2	;Haal beginadres van het segment in DE
+	ex de,hl
+	push hl
+	pop ix	;Beginadres wordt adres voor nieuwe pnt
+	jr addPnt	; Nu is er ruimte zat
+
+	;Zoek ruimte voor string HL en vul hem in in het datagebied
+
+zoekVrijRam:	ld a,(hl)	;Lege string bewaren?
+	or a
+	jr z,strNul	; Ja, => Zet stringlengte op nul
+zr0a:	bit stTab,(iy+tabSav)	;Store Tab's?
+	call nz,makeTab	; Ja, => Maak string met TAB's
+zr0b:	ld c,a	;BC=Lengte
+	ld b,0
+	inc hl
+	ex de,hl	;DE=Bron positie
+	ld a,(iy+botMap)	;Haal laagste map
+zr1:	ld (iy+curMap),a
+	call readHL	;Haal eindadres van IY+CURMAP
+zr1b:	push hl
+	add hl,bc
+	bit 6,h	;Nog steeds in page 2?
+	jr z,ramFound
+	pop hl
+	inc a
+	cp (iy+tabMap)	;Pointertabel?
+	jr nz,zr2	; Nee, => ZR2
+	ld hl,memVol
+	push hl	;Geef melding "Geheugen vol"
+strNul:	ld a,(iy+curTab)	;Schakel goede pointersegment in
+	call MMout
+	ld (ix+1),0	;Zet stringlengte op nul
+	ret
+zr2:	dec a
+	cp (iy+dataMap)	;Is volgende segment al gealloceerd als
+	inc a	; datasegment?
+	jr c,zr1	; Ja, => ZR1
+	ld (iy+dataMap),a	; Nee, alloceer het nu
+	ld (iy+curMap),a
+	ex de,hl	;Bewaar DE even in HL
+	call getBot	;Haal beginadres van DATA seg A in DE
+	ex de,hl	;Begin adr. naar HL, herstel DE
+	call writeHL
+	jr zr1b
+
+ramFound:	call writeHL	;Schrijf eindadres van datasegment
+	push af
+	ld a,(iy+curTab)	;Schakel pointersegment in
+	call mmOut	;OUT (0FEH),A
+	pop af
+	ld (ix+0),a	;Vul memmap nr in
+	ld (ix+1),c	;Vul stringlengte in
+	pop hl
+	ld (ix+2),l	;Vul adres in
+	ld (ix+3),h
+	ex de,hl	;DE=Dest HL=Bron
+	ld a,(iy+curMap)	;Sla string op
+	cp 8	;MAP 0-7 is VRAM
+	jp c,ldrVm2	;String naar VRAM
+	call mmOut	;OUT (0FEH),A
+	ldir	;String naar datasegment
+	ret
+
+
+; wisData
+;
+; Wis string-data gebied
+;
+; In:  HL	  = Startadres
+;     (iy+curMap) = Segment
+;      BC	  = Lengte
+;
+wisData:	ld a,b
+	or c	;Stringlengte 0?
+	ret z	; Ja, => Dan zijn we snel klaar
+
+	ld (strLen),bc	;Bewaar string lengte
+
+	ld d,h	;Bewaar string data-adres in DE
+	ld e,l
+
+	call readHL	;Lees string-segment eindadres
+	or a
+	sbc hl,bc	;String met lengte BC wordt gewist
+	call writeHL
+
+	or a
+	sbc hl,de	;Was dit laatste string in het segment?
+	ret z	; Ja, => Niets terugschuiven
+
+	push hl	;Bewaar lengte overige strings
+
+	ld h,d	;DE=Startadres gewiste string
+	ld l,e
+	add hl,bc	;HL=Startadres van volgende string
+
+	pop bc	;BC=Lengte van volgende strings
+
+	push de	;Bewaar startadres v/d gewiste string
+	call ldir	;Schuif overige strings terug
+
+
+	;String gewist => pas pointertabel aan
+
+	ld b,(iy+curMap)	;B = Segment van gewiste string
+
+	ld a,(iy+maxMap)	;Begin bij eerste pointersegment met
+pt0:	ld (iy+curTab),a	; vergelijken
+	call mmOut	;Schakel current pointersegment in
+	call rTabHL	;Lees eind-adres van dit segment in HL
+	ld (maxPtr),hl	;Bewaren eind-adres
+	call getBot2	;DE=Laagste adres in dit segment
+	ex de,hl	;HL= ,,
+
+pt1a:	ld de,(maxPtr)	;DE = Eindadres van huidige pntsegment
+
+pt1b:	ld a,h
+	sub d	;Highbytes gelijk?
+	jp nz,pt1e	; Nee, => Test datasegment in pointer
+pt1c:	ld a,l
+	sub e	;Lowbytes gelijk?
+	jr z,pt5	; Ja, => Volgende pagina
+	ld a,(hl)	;Haal segmentnummer uit pointer
+	cp b	;Zelfde datasegment als gewiste string?
+	jr z,pt1h	; Ja, => pas pointer aan
+	inc l	; Nee, volgende pointer
+	inc l	;alleen het lowbyte verhogen, highbyte
+	inc l	; is al getest en is het gelijk (H=D)
+	inc l
+	jp pt1c
+
+pt1e:	ld a,(hl)	;Haal segmentnummer uit pointer
+	cp b	;Zelfde datasegment als gewiste string?
+	jr z,pt1h	; Ja, => pas pointer aan
+	inc l	; Nee, volgende pointer
+	inc l	;Ieder pntadres is een veelvoud van 4
+	inc l	; dus: Lowbyte verhogen tot we bij
+	inc l	; 0 komen
+	jp nz,pt1e	;lowbyte 0?
+	inc h	; Ja, verhoog highbyte
+	jp pt1b
+
+	; Test of het data-adres van de huidige pointer groter is dan 
+	; het  data-adres van  de gewiste  pointer. Zo ja, de stringú 
+	; lengte van  de gewiste pointer aftrekken van het data-adres 
+	; van de huidige pointer
+
+pt1h:	pop de
+	push de	;DE is adres van gewiste string
+	inc hl	; in datasegment
+	inc hl
+	push hl
+	ld a,(hl)	;Haal string-adres uit de pointer
+	inc hl
+	ld h,(hl)
+	ld l,a
+
+	ld a,l	;Adres lager dan van gewiste string?
+	sub e
+	ld a,h
+	sbc a,d	;	Resultaat alleen in carry-flag
+
+	jr c,pt4	; Ja, => Pas niet aan
+
+	ld a,b	;	Bewaar datasegment nr.
+	ld bc,(strLen)	; Nee, verlaag adres met lengte
+	sbc hl,bc	;  van gewiste string
+	ld b,a	;	Herstel datasegment nr.
+
+	ex de,hl	;DE=Aangepast datastartadres
+	pop hl	;HL=pointeradres
+	ld (hl),e	;Aangepaste startadres invullen
+	inc hl
+	ld (hl),d
+	inc hl
+	jp pt1a
+
+pt4:	pop hl	;Haal pointeradres
+	inc hl	;Ga naar volgende pointer
+	inc hl
+	jp pt1a
+
+pt5:	ld a,(iy+curTab)	;Verhoog huidige pointersegment met 1
+	dec a
+	cp (iy+tabMap)
+	jr nc,pt0
+	pop hl	;Verwijder adres gewiste string
+	ret
+
+	;Zoek string no. [DE]
+
+ZOEKNUM:	INC DE	;Regelnummer 1-based maken
+	PUSH DE	;Bewaar te zoeken regelnummer
+	LD A,(IY+MAXMAP)
+ZN1:	LD (IY+CURTAB),A
+	CALL RTABHL	;HL=Bovengrens, laatste element + 1
+	LD D,A	;Bewaar A in D, GETBOT2 herstelt dan A
+	CALL GETBOT2	;Haal ondergrens van dit segment in DE
+	LD B,D
+	LD C,E	;Bewaar ondergrens in BC
+	OR A
+	SBC HL,DE	;Boven-onder = Aantal pointers *4 bytes
+	SRL H	;Deel HL door 4 bytes per pointer
+	RR L
+	SRL H
+	RR L
+	EX DE,HL	;DE=Aantal pointers in dit segment, 1-based
+	POP HL	;Haal op te zoeken regel
+	OR A
+	SBC HL,DE	;Te zoeken regel-aantal regels in seg.
+	JR C,ZN3	; Carry => Regel zat in dit segment
+	JR Z,ZN3
+	PUSH HL	; Geen carry, bewaar aangepaste regnum
+ZN2:	DEC A	;Ga naar volgende pointer-segement
+	CP (IY+TABMAP)	;Laatste pointersegement gehad?
+	JR NC,ZN1	; Nee, => Nog een segment
+	INC A	; Ja, niet gevonden
+	LD (IY+CURTAB),A	;Huidig segmentnummer voor pointertabel
+	CALL MMOUT	;Schakel dit pointer-segment in
+	POP HL	;Herstel stack
+	CALL RTABHL
+	PUSH HL
+	POP IX	;IX=Adres voor nieuwe pointer
+	LD BC,0	;0 bytes gevonden
+	SCF	;Terug met carry
+	RET
+ZN3:	LD (IY+CURTAB),A	;Bewaar segmentnummer van pointertabel
+	CALL MMOUT	;Schakel dit pointer-segment in
+	DEC DE	;Regels in het segment 0-based maken
+	ADD HL,DE	;HL is gezochte regel/pointer nummer
+	ADD HL,HL	;Vermenigvuldigen met 4 bytes per pnt
+	ADD HL,HL
+	ADD HL,BC	;Ondergrens erbij, HL=de gezochte pnt
+	PUSH HL
+	POP IX	;Zet pointeradres in IX
+	LD A,(HL)	;Data-Map/Segmentnummer
+	INC HL
+	LD C,(HL)	;Lengte
+	INC HL
+	LD L,(HL)	;LS Byte Data-Adres
+	LD H,(IX+3)	;Most significant byte
+	LD B,0	;High lengte byte=0
+	LD (IY+CURMAP),A
+	OR A	;Geen carry <=> Regel gevonden
+	RET
+
+	;Haal onderste adres van huidige pagina
+
+GETBOT:	LD D,A	;Bewaar A in D
+	LD A,(IY+CURMAP)
+GETBOT2:	PUSH DE
+	CP 7	;Vram pagina nul?
+	LD DE,VRMEND	; Ja, begin na het 'gewone' scherm
+	JR Z,GB3
+	CP (IY-PG1SEG)	;Segment dat ook in pagina 1 staat?
+	LD DE,8000H	; Nee, begin vooraan op 8000h
+	JR NZ,GB3
+	LD DE,(TEDMAX)	; Ja, begin na TED op ñ 0b000h
+GB3:	POP AF	;Herstel [A]
+	RET
+
+	;Wissel regels HL & DE
+
+SWAP:	PUSH BC
+	PUSH DE
+	PUSH HL
+	CALL ZOEKNUM	;Zoek 1e regel
+	CALL C,SwapAddPnt	;Pointer toevoegen indien niet bestaand
+	POP DE	;Haal 2e regelnummer in DE
+	PUSH DE
+	PUSH IX	;Bewaar pointer adres
+	LD B,(IY+CURTAB)	;Haal pointer segment in B
+	PUSH BC	;Bewaar pointersegment + stringlengte C
+	PUSH AF	;Bewaar datasegment
+	PUSH HL	;Bewaar data adres
+	CALL ZOEKNUM	;Zoek 2e regel
+	CALL C,SwapAddPnt	;Pointer toevoegen indien niet bestaand
+	POP DE	;Haal gegevens van 1e regel in DE
+	LD (IX+2),E	;String adres van regel 1 in vullen in
+	LD (IX+3),D	; pointer 2
+	POP DE
+	LD (IX+0),D	;Datasegment
+	POP DE
+	LD (IX+1),E	;Stringlengte
+	LD B,A	;Bewaar datasegment van regel 2 in [B]
+	LD A,D	;Haal pointersegment van regel 1
+	CALL MMOUT	;Schakel pointersegment van 1e regel in
+	POP IX	;Haal pointeradres van regel 1
+	LD (IX+0),B	;Vul datasegment in
+	LD (IX+1),C	;Stringlengte
+	LD (IX+2),L	;Stringadres
+	LD (IX+3),H
+	POP HL	;Herstel adres regel 2
+	POP DE	; Regel 1
+	POP BC	; En BC
+	RET
+swapAddPnt:	call addPnt	;Voeg pointer toe
+             ;; ret	;Ret niet nodig, addPnt POPt 1e RET
+		; al weg.
+
+	;Bereken geheugen ruimte
+
+	;NC-Vlag=Alles
+	; C-Vlag=Vrij
+
+FRE:	PUSH AF	;Bewaar flag
+	LD HL,0
+	LD (FREMEM),HL	;0 kB vrij
+	LD A,(IY+BOTMAP)	;Haal onderste pag. van mapper/vram
+	DEC A
+BF1:	INC A
+	LD (IY+CURMAP),A
+	CALL GETBOT2	;Haal startadres van segment A in [DE]
+	POP AF
+	PUSH AF
+	JR NC,BF2	;FRE(0) => Tel alles
+	LD A,(IY+CURMAP)	;Leeg blok RAM?
+	CP (IY+TABMAP)
+	JR NC,BF15	; Nee, => Bereken
+	LD B,A
+	LD A,(IY+DATAMAP)
+	CP B
+	JR C,BF2
+BF15:	CALL READHL	;Haal lengte van data in HL
+	EX DE,HL
+BF2:	LD A,080H
+	SUB E	;E=Low byte, carry indien E > 80h
+	LD A,0C0H
+	SBC A,D	;D=Highbyte, A*256 bytes 00H..40h, NC
+	RRA	;A * 512 bytes free
+	SRL A	;A * kilobytes free
+	LD B,0	;BC=Aantal kB vrij in deze PAGE
+	LD C,A
+	LD HL,(FREMEM)	;Tel op bij vrij geheugen
+	ADD HL,BC
+	LD (FREMEM),HL
+	LD A,(IY+CURMAP)
+	CP (IY+MAXMAP)	;Bekijk alle segmenten
+	JR NZ,BF1
+	POP AF
+	RET
+
+	.comment %
+
+	Schakel data segment [A] in page 2
+
+	Bij DOS1 - OUT(0FEH),A
+	Bij DOS2 - Put Page 2 bios routine
+
+	Input: [A] in [8..13] bij 128 kb.
+	              [0.. 7] is Vram
+
+	Seg 0 en 3 zijn voor DOS en TED
+
+	 [A] --> Segment
+	------+---------
+	  8   |   seg 1
+	  9   |   seg 4
+	 10   |   seg 5
+	 11   |   seg 6
+	 12   |   seg 7 (=maximum bij 128k. MM)
+	 13   |   seg 2 (Seg 2 wordt gebruikt van LAATST t/m 0BFFFH)
+
+ FFFFH	+---+
+	| 3 | Page3 - Bevat segment 0, Systeem variabelen & Diskbuffer
+	+---+
+ C000H	+---+
+	| 2 | Page2 - Bevat segment 1 (vrij)
+ 8000H	+---+
+	+---+
+$MEMRY--	| 1 | Page1 - Bevat segment 2, gedeeltelijk vrij
+	+---+         (segnr. =  IY-PG1SEG)
+ 4000H	+---+
+	| 0 | Page0 - Bevat segment 3, Bezet door TED t/m $MEMRY
+ 0000H	+---+         ($Memry = ñ 7000H)
+	%
+
+	;Schakel segment [A] in
+
+MMOUT:	EXX	;Bewaar HL in HL'
+	LD   HL,(P2SEG)	;Haal huidige segement stand in L
+	CP   L	;Staat het goede segment er al?
+	EXX
+	RET  Z	; Ja, => Terug
+	LD   (P2SEG),A	; Nee, bewaar huidige segment nummer
+
+	BIT  MMAN,(IY-FLAGS5)	;MemMan geladen?
+	JR   NZ,MEMUSE	; Ja, => Schakel MemMan
+	BIT  D2MM,(IY-FLAGS4)	;DOS2 Mapper routines?
+	JR   Z,DOS1OUT	; Nee, => DOS1 OUT (C),A
+
+DOS2OUT:	EXX	;Bewaar Main registers
+	LD B,A	;Bewaar A in B
+	LD DE,MMTABEL - 2*8	;Haal segment nummer uit tabel
+	LD H,0
+	LD L,A	;A heeft een offset van 8 vram pagina's
+	ADD HL,HL	; *2 bytes per segment (slot & segnr.)
+	ADD HL,DE	;Dus A=8 wordt MMTABEL+0
+	LD A,(HL)	;Haal slot adres uit tabel
+	CP (IY-PG2SLT)	;Vergelijk dit met de huidige slotstand
+	CALL NZ,PAGEIN	; Ongelijk, => Schakel goede slot in
+	INC HL
+	LD A,(HL)	;Haal segmentnummer
+	CALL PUTP2	;Schakel segment in pagina 2
+	LD A,B	;Herstel [A]
+	EXX	;En main registers
+	RET
+
+PAGEIN:	PUSH HL	;Schakel slot [A] in page 2
+	PUSH BC
+	LD (IY-PG2SLT),A	;Bewaar slotstand
+	LD H,80H
+	CALL ENASLT	;En schakel het slot in
+	LD IY,TABEL	;Herstel alle reg's
+	POP BC
+	POP HL
+	RET
+
+dos1out:	push af	;Bewaar A
+	bit 0,(iy+mapFlag)	;MM vrijhouden voor Ramdisk?
+	jr nz,mmO2	; Ja, => standaardmaps gebruiken
+	cp 10	;A = 8 of 9? (segs 1 & 2) ?
+	jr nc,mmO1
+	dec a	; Ja, 1 eraf (8 wordt seg 1)
+mmo1:	sub 6	;(nog) 5 eraf
+	out (0feh),a	;Schakel RAM-map in page 2
+	pop af
+	ret
+mmo2:	cp (iy-pg1seg)	;Bij ramdisk maar 2 MM pagina's
+	ld a,(savfd)	; gebruiken
+	jr z,mmo3
+	ld a,(savFE)	; Haal 2e mapnr
+mmo3:	out (0feh),a
+	pop af
+	ret
+
+	;Schakel segment via MemMan
+
+memUse:	push hl
+	push de
+	push bc
+	push af
+	ld   de,mmTabel-(2*8)	;[A] heeft offset 8, even compenseren
+	ld   h,0
+	ld   l,a	;A heeft een offset van 8 vram pagina's
+	add  hl,hl	;*2 bytes per segment (slot & segnr.)
+	add  hl,de	;Dus A=8 wordt MMTABEL+0
+	ld   a,(hl)	;Nee, haal segmentcode uit tabel
+	inc  hl
+	ld   h,(hl)
+	ld   l,a	;Segment nr. in HL
+	call mmUse2	;Schakel segment [HL] in page 2
+	pop  af
+	pop  bc
+	pop  de
+	pop  hl
+	ret
+
+	end	;GETPUT
+
+
+

@@ -1,0 +1,7773 @@
+	title TED V#2.6
+
+if1
+	.printx * Assemble: MAIN.MAC *
+endif
+
+	.comment %
+
+	   ************************************
+	  ****		   *****
+	  ***   MSX2 Tekstverwerker/Editor   ***
+	  **    Non-Public Domain  version    **
+	  **    --------------------------    **
+	  **		      **
+	  **  (c) 1988/1989/1990/1991 Jos-Tel **
+	  **        (c) M.J. Vriend	      **
+	  **            Molenweg 45	      **
+	  **            1619 EV Andijk	      **
+	  ***           (02289) 1649	     ***
+	  *****		  *****
+	   ************************************
+
+
+	  Microsoft MSX.Macro80 assembler v1.00/v2.00
+
+	  (c) M.J. Vriend 1988/1989/1990/1991
+	%
+
+	include OFFSET.MAC
+
+bdos	equ 05h
+rdslt	equ 0ch
+calslt	equ 1ch
+enaslt	equ 24h
+fcb1	equ 5ch
+
+nmi	equ 0066h	;Non-maskable interrupt entry
+extRom	equ 015Fh	;Sub-Rom entry in BIOS
+
+msx	equ 2dh
+vdpdr	equ 06h
+vdpdw	equ 07h
+
+hInsD	equ 0f24fh
+ramAd0	equ 0f341h
+ramAd1	equ 0f342h
+linl40	equ 0f3aeh
+crtCnt	equ 0f3b1h
+txtNam	equ 0f3b3h
+txtCol	equ 0f3b5h
+txtCgp	equ 0f3b7h
+csrY	equ 0f3dch
+csrX	equ 0f3ddh
+forClr	equ 0f3e9h
+repCnt	equ 0f3f7h
+putPnt	equ 0f3f8h
+getPnt	equ 0f3fah
+
+buf	equ 0f55eh
+path1Buf	equ buf+125
+path2Buf	equ buf+190
+
+fnkStr	equ 0f87fh
+cgPnt	equ 0f91fh
+namBas	equ 0f922h
+leegBuf	equ 0f975h
+exbrsa	equ 0faf8h
+sftKey	equ 0fbe5h+6
+intVal	equ 0fca0h
+intCnt	equ 0fca2h
+escCnt	equ 0fca7h
+csrSw	equ 0fca9h
+cStyle	equ 0fcaah
+scrMod	equ 0fcafh
+mainRm	equ 0fcc1h
+h.timi	equ 0fd9fh
+h.nmi	equ 0fdd6h	; Hook for NMI
+h.lpto	equ 0ffb6h
+rg9Sav	equ 0ffe8h
+bs	equ 08h
+tab	equ 09h
+lf	equ 0ah
+home	equ 0bh
+clsHm	equ 0ch
+cr	equ 0dh
+ins	equ 12h
+select	equ 18h
+esc	equ 1bh
+right	equ 1ch
+left	equ 1dh
+up	equ 1eh
+down	equ 1fh
+del	equ 127
+nul	equ 0ffh
+ctrlc	equ 03h
+ctrlz	equ 1ah
+
+hlpCnt	equ 9
+open	equ 15
+close	equ 16
+sFirst	equ 11h
+sNext	equ 12h
+delFcb	equ 13h
+create	equ 22
+setDma	equ 26
+getDef	equ 19h
+getAlo	equ 1bh
+rbWrite	equ 38
+rbRead	equ 39
+getTime	equ 2ch
+
+fFirst	equ 40h
+fNext	equ 41h
+openFH	equ 43h
+createFH	equ 44h
+closeFH	equ 45h
+readFH	equ 48h
+writeFH	equ 49h
+seek	equ 4ah
+delD2	equ 4dh
+getCD	equ 59h
+parse	equ 5bh
+pFile	equ 5ch
+term	equ 62h
+dosVer	equ 6fh
+
+memMan	equ 04d00h
+tsrCall	equ 63
+pbClear	equ 1
+
+	;Subroutines in SUBTED.MAC
+
+	ext control,bouwop,haalPrt,prtRg,prtRg2,regNum,insReg
+	ext SCRLUP,GETNAME,MUL16,DIV16,DECTOBIN,ZOEK,AGAIN
+	ext DCSET,DECI2,PRTSAV,PRTSTR,STROUT
+	ext SETVDP,NLDRMV,NSTWRT
+	ext NCHPTI,NCHPUT,NCHGET,MEMVOL,REGLANG,SAVINS,SAVDEF,NOTFOUND
+	ext RECERR,ONDERBR,DSKERR,ERROR
+	ext fullPageTab,findPB,indentBlok
+	ext CHECKAG,INT,GRAPH,P2SEG
+	ext BCDSET,PRTBCD,MAKEKAR,TOACCESS,GETFLEN,LOADIN2
+	ext TOCHECK,CODE,CLEAR,GET,PUT,SWAP,FRE,KARERR,DCBUF
+	ext NAAM2,MAKETXT,SFCB2,SAVEBLOK,SAVE
+	ext LOADBLOK,LOAD,LOAD2
+	ext UPDATE,UPDAT2,MAAKFCB,SAVE1,SV0B,ZOEKMAP
+	ext PUTP2,MMUSE2,FRESEG
+	ext COPYBLOK,MOVEBLOK,WISBLOK,RESETBLOK,STARTBLOK,ENDBLOK
+	ext extBios,deAlloc,ldBlk2
+	ext addStr,delStr,getPageStop,invoegNoRn,rnPointers
+	ext rnPageTab,chkPageTab
+
+	;Schermteksten in TEDSTR.MAC
+
+	ext F2KAR,F3KAR,F4KAR,F5KAR,INHKAR,PRTKAR,SCRKAR,GOKAR,ALIKAR
+	ext kolKar,hlpKar,tabKar,memKar,pageKar
+	ext vrmTF7,xyFnk
+
+	byte ext xAfbreek,xUitvul,xStreep,xInspr,xTabIns
+
+	ext TINTRO,TGETNAME,TGETCODE,TGEBR
+	ext KRTSTART,KRTEND,TNOKRT,TF7
+	ext TSTATUS,THULP0,THULP2,THULP3,THULP4,THULP5
+	ext TAAN,TUIT,TREGNR,TLINKS,TRECHTS,TSELECTIE,TPAD,TINH,TVRIJ
+	ext TVOLUME,TSAVEN,TTABCH,TABCHR,TDIRCHR,TVLDERR,TNOPB
+	ext TNEXTPG,TDRUK
+	ext TMOMENT,TMEER,TZEKER,TMEMMAP,TKEUZE,TALINEA,TSORT
+	ext TKOLOM,TKOLPOS,TGOTO,TKLEUR,TEXT,TBACKUP,TSCHERM,TDRIVER
+	ext TGETDRV,TPRTINS,TPSTAT,TKAART,TPBEGON,TMEM,TAFBR
+	ext TWIS,TCPHULP,tPage
+	ext TTOETS,TACCESS,tStkErr
+
+	;Globale/Public routines van MAIN.MAC
+
+	global CALSUM,DECODE,CODEER,BLKCNT,BLKON,BLKOFF
+	global CHKTED,KANTLIJN,CRLTAB,STMOTR,MMANERR
+	global PRTNUM,CSRNUM,STRBUF,STRBF2,STRBF3,GETPLT,COLORS
+	global BIGFIL,DOS,IVLINE,KOLOMS,HM0,HLPCNT,MMTABEL
+	global BSTARTLN,BENDLN,DCOMPR,TXTCOL,NWRVRM,NRDVRM
+	global DISKBUF,DELLNO,INSLNO,CHECK2,TOCHK,TODOS,AUTOCNT
+	global LASTLINE,INVOER,GETTXT,BUF,path1Buf,BLKPS3
+	global CHKSUM,CHSNS,CHGET,CHPUT,ESCCNT,SAVNAM,CHKSTOP
+	global TOREGEND,TOETS1,TOETS6,TOREGSTART,OMLAAG
+	global REMOVLN,COMLN,NOCTRL,CL0,TOMIDDEN,pbTsrID
+	global MESKEY,GOTOLINE,FKEYNUM,INSERT,AANCSR
+	global STACK,INTCNT,KRTPOS,INICLR,ZOEKBUF,SAVZOEK,VERVBUF
+	global GETCODE,ACCESS,CHECK,ADDCODE,GETCMD,ESCAPE,RECHTS
+	global TEDMAX,VRMEND,POINTERS,TTAB,KLEIN,MIDLINE,TEKEN,LINKS
+	global SEGEND,BF3PNT,EVTOPSLAAN,MSXKAR,TOINHOUD,ENDVAR,TVERSIE
+	global FCB,MAIN,MAIN1,TABEL,INKCRL,CLOSEBF,STARTVAR
+	global MAXPTR,FREMEM,SAVFD,SAVFE,FCB1,ZEKER,DELETE
+	global TEXTENS,SAVESTART,SAVEEND,GETOLD,BEEP,GOLINE2
+	global MESSAGE,BUFPOINT,KEYCNT,CFORMAT,DELSPC
+	global ENDTPA,LOADREG,VRAAGSAVE,OPSLAAN,BSPACE,toCurLine
+	global loadNam,grootte,blok,setBouw,retIns,restScr,tName,tHelp
+	global cmpBlank,pageTab,delPageStop,menuEsc,menuXY,getONr
+
+
+	;Start entry
+
+ini:	ld a,(mainRm)
+	ld hl,msx	;Haal MSX-versie
+	call rdSlt
+	or a
+	ld de,tmsx
+	ld c,9
+	jp z,bDos	;MSX1? => Stop
+	ld hl,(bDos+1)
+	dec hl
+	dec hl	;1 byte marge voor ^Z
+	ld (endTpa),hl	;Bewaar geheugen einde
+	ld de,diskBuf+256	;Minstens 256 bytes buffer (zoek-pos)
+	or a
+	sbc hl,de
+	jp c,noMem	;Te weinig geheugen
+
+	ld sp,stack	;Gebruik eigen stack in pagina 3
+
+	ld hl,$memry + 4003h	;Eindadres van TED (onbekend voor M80)
+	res 0,l	;Moet veelvoud van 4 zijn (Zie:ZOEKNUM)
+	res 1,l
+	ld (tedMax),hl
+
+	in a,(0fdh)	;Bewaar Memmap voor DOS1
+	ld (savFd),a
+	in a,(0feh)
+	ld (savFe),a
+
+	di
+	ld hl,page3code	;Zet nieuwe interrupt routine
+	ld de,intEnt	; en SUBROM call routine
+	ld bc,endPage3-page3code; in page 3
+	ldir
+	ld hl,h.timi	;Bewaar oude interrupt hook
+	ld de,intEnt+(intBuf-intRou) ; in hook-buffer in pagina 3
+	ld bc,5
+	ldir
+	ld a,0c3h
+	ld (h.timi),a	;Vul jump naar interrupt entry in
+	ld hl,intEnt
+	ld (h.timi+1),hl
+
+	ld iy,tabel	;IY bevat baseadres 8-bit variabelen
+	ld c,dosVer
+	call dos	;Haal dos versie op
+	ld a,b
+	cp 2	;Dos 2?
+	jr c,ini0
+	set dos2,(iy-flags5)	; Ja, zet vlag
+ini0:	call zoekMap	;Onderzoek beschikbaar geheugen
+	call findPB	;Kijk of er een printer buffer is
+
+	ld hl,fnkStr
+	ld de,savFnk	;Bewaarruimte voor fkeys
+	push hl
+	ld a,7	;7 Fkeys
+ini1:	ldi	;Bewaar drie tekens
+	ldi
+	ldi
+	ld bc,16-3	;16 kars per fkey
+	add hl,bc	;Naar de volgende fkey
+	dec a	;Fkey 7 gehad?
+	jr nz,ini1	; Nee, => Volgende
+
+	pop hl	;Haal systeem adres van fkeys
+	inc bc	;HL wordt nu nog maar 2 opgehoogd
+	ld d,a	;Afsluit nul = einde tekst
+ini2:	ld (hl),255	;Geef 7 funktietoetsen hun waarde
+	inc hl	;Fkey opcode = 255, daarna het
+	inc a	;  nummer (1..7)
+	ld (hl),a
+	inc hl
+	ld (hl),d	;Nulletje erachter
+	add hl,bc
+	cp 7
+	jr nz,ini2
+
+	ld a,(mainRm)
+	ld hl,vdpDw	;Haal VDP Data Write poort
+	call rdSlt
+	ld (iy+vdpWrite),a
+	inc a
+	ld (iy-vdpCw),a	;VDP adres poort
+	ld a,(mainRm)
+	ld hl,vdpDr	;Haal VDP Read poort
+	call rdSlt
+	ld (iy-vdpRead),a
+	ld hl,krtStart+12
+	ld (krtPos),hl	;Lichtkrant positie
+	xor a
+	ld (csrSw),a	;Geen cursor
+	ld hl,(0f323h)
+	ld (savErr),hl	;Bewaar fatalerror pointer
+	ld hl,dskErr
+	ld (errPnt),hl	;Vul nieuwe error pointer in
+	ld hl,errPnt
+	ld (0f323h),hl	;Geef pointer door aan DOS
+	ld hl,(hInsD)
+	ld (savInD),hl	;Bewaar 'Insert diskette'-hook
+	ld hl,0c9f1h	;POP AF RET
+	ld (hInsD),hl
+
+	call clear	;Initialiseren stringgeheugen
+	call eraFnk	;Wis e.v.t. funktietoetsen
+
+	xor a
+	ld h,a
+	ld l,a
+	ld (strBuf),a	;Huidige regel buffer leeg
+	ld (savZoek),a	;Zoek & vervang buffers leeg
+	ld (zoekBuf),a
+	ld (vervBuf),a
+	ld (fKeyNum),a	;Geen funktietoets ingedrukt
+	ld (csrNum),hl	;Huidige regel=0
+
+	ld de,1100h	;Get Kanji-Mode, A=0
+	call extBios	; via EXTBIO hook
+	ld (savKMode),a	;Bewaar ingestelde Kanji mode
+	or a	;Momenteel ANK mode?
+	jr z,ankAlready
+	xor a	; Nee, stel hem dan nu wel in
+	ld de,1101h	;Set Kanji mode
+	call extBios
+
+ankAlready:	ld a,80	;80 kolommen screen 0
+	ld (linL40),a
+	call iniTxt	;Terugschakelen screen 1 of width 40
+	call disScr	;Disable screen display
+
+	call code	;Decrypt screentext
+
+	ld hl,0	;Scherm base tabellen
+	ld (txtNam),hl	; invullen
+	ld hl,0a00h
+	ld (txtCol),hl
+	ld hl,1000h
+	ld (txtCgp),hl
+
+	call setTxt	;Init base tabellen + colors
+
+	xor a	;Druk dummy karakter af om
+	call chput	; JANSI te deactiveren
+
+	ld hl,0102h	;color 2,1
+	ld (forClr),hl
+	call chgClr	;Set color 2,1
+
+	call iniClr	;Initialiseer kleuren & scherm
+
+	ld a,(rg9Sav)	;26.5 Schermregels
+	set 7,a
+	ld c,9
+	ld b,a
+	call wrtVdp
+	ld bc,430ch	;4=Cursorvoor- 3=Achtergrond
+	call wrtVdp
+	ld bc,0f00dh	;Geen knippering
+	call wrtVdp
+
+	ld h,1
+	ld l,(iy+minLin)	;Intro tekst op 3e tekstregel
+	inc l
+	inc l
+	ld (csry),hl
+	ld de,tIntro	;Print intro
+	call strOut
+
+	call enaScr	;Enable screen display
+
+	call setBouw	;Zet scherm opbouwvlag
+
+if	autoDemo
+
+	ld de,autoFcb	;Indien autorun-demo, open de datafile
+	ld c,open
+	call dos
+	inc a	;Gevonden?
+	jp z,toDos	; Nee, => Datafile niet gevonden
+	ld hl,1
+	ld (dfGr),hL	;Blokgrootte=1
+
+else		;Geen autorun-demo maar gewone TED
+
+	bit dos2,(iy-flags5)	;DOS2 aanwezig?
+	jr z,ini2m	; Nee, => Haal naam uit FCB1
+	ld hl,80h	; Ja, haal path/naam uit commandline
+	ld a,(hl)
+	ld c,a
+	inc hl
+	or a	;Len=0?
+	jr z,main	; Ja, => Klaar
+ini2b:	ld a,(hl)	;Haal karakter
+	cp ' '+1                ;Letterteken?
+	jr nc,ini2c	; Ja, => INI2C
+	inc hl
+	dec c
+	jr nz,ini2b	;Zoek verder naar 1e letter
+	jr main	;Geen letter geweest => Klaar
+ini2c:	inc c
+	dec hl
+	ld (hl),c	;Vul nieuwe lengte byte in
+	push hl
+	ld b,c
+ini2d:	inc hl
+	ld a,(hl)
+	call groot
+	ld (hl),a	;Alle letters worden hoofdletters
+	djnz ini2d
+	pop hl
+	call naam2	;Zet evt. extensie in naam
+	jr c,main	; Foute naam => Doe niets
+	jr ini3	;En laad bestand in
+
+ini2m:	ld a,(fcb1+1)	;Is er een naam ingetypt?
+	cp ' '
+	jr z,main	; Nee, => Niets laden
+	ld a,(fcb1+9)
+	cp ' '                  ;Extensie opgegeven?
+	jr nz,ini3	; Ja, => Ini 3
+	ld hl,80h
+	ld e,(hl)	; Nee, kijk of laatste teken in command line
+	ld d,0	;   een punt is
+	add hl,de
+	ld a,(hl)
+	cp '.'
+	call nz,makeTxt	; Nee, => Vul default in
+ini3:	call load2	;Laad opgegeven tekst
+
+endif
+
+	;Hoofdlus
+
+main:	ld sp,stack	;Zet stack boven in de eigen stack
+	ld hl,$	;Keer terug op dit punt
+	push hl
+	ei
+	call rstScr2	;Bouw evt. scherm op nieuw op
+	call autoSav	;Test of automatisch bewaren aan staat
+	ld a,(iy+xpos)
+	ld (csrx),a
+	ld a,(iy+ypos)
+	ld (csry),a
+	ld a,(fkeyNum)	;Is er een funktietoets aktief?
+	or a
+	jp nz,funktie	; Ja, => Voer funktie uit
+	call nChGet
+	cp 255	;Funktietoets ingedrukt?
+	jp z,fKey
+	ld b,a	;Bewaar teken in B
+	ld a,(sftKey)
+	rra	;SHIFT ingedrukt?
+	jp nc,shift
+	rra	;CTRL ingedrukt?
+	jp nc,control	; Ja, => Naar ctrl verwerking
+	rra	;GRAPH ingedrukt?
+	jp nc,graph
+	ld a,b
+main1:	cp left	;Verwerk besturings toets
+	jp z,links
+	cp right
+	jp z,rechts
+	cp down
+	jp z,omlaag
+	cp up
+	jp z,omhoog
+	cp ins
+	jp z,insert
+	ld hl,(keyCnt)	;Verhoog de toetsaanslagen teller
+	inc hl
+	ld (keyCnt),hl
+	cp bs
+	jp z,bSpace
+	cp 1
+	jp z,grafik
+	cp del
+	jp z,delete
+	cp cr
+	jp z,return
+	cp tab
+	jp z,toTab
+	cp select
+	jp z,ctrlCod
+	cp clsHm
+	jp z,iFormat
+	cp home
+	jp z,format
+	cp esc
+	jp z,escCod	;ESC mag wel, = printercode
+	cp ' '
+	ret c	;Onbekende toets
+
+	;Vul het teken in de huidige regel in
+
+teken:	ld c,a
+	res ktl,(iy-flags2)
+	ld a,(iy+xPos)
+	add a,(iy+offset)
+	ld b,a	;B=X-pos
+	cp 255
+	jp z,regLang	;Regel te lang
+	cp 1	;Cursor op 1e teken?
+	jr nz,tk3
+	cp (iy+klLinks)	;Cursor voor linkerkantlijn?
+	jr nc,tk3	; Nee, => Ga verder
+	bit nkl,(iy-flags3)	;Negeer kantlijn?
+	jr nz,tk3	; Ja, => TK3
+	ld a,(strBuf)
+	ld e,a
+	add a,(iy+klLinks)
+	jp c,regLang	;Zin te lang
+	dec a
+	cp 254
+	jp nc,regLang
+	ld (strBuf),a
+	push bc
+	ld b,0
+	ld c,e
+	ld h,0
+	ld l,e
+	ld a,e
+	or a
+	jr z,tk1	;Hoeft niet opgeschoven te worden
+	ld de,strBuf	;1 minder want HL is 1 te hoog
+	add hl,de
+	push hl
+	ld d,0
+	ld e,(iy+klLinks)
+	dec e
+	add hl,de
+	ex de,hl
+	pop hl
+	lddr
+tk1:	ld b,(iy+klLinks)
+	dec b
+	ld hl,strBuf+1
+tk2:	ld (hl),' '
+	inc hl
+	djnz tk2
+	ld b,(iy+klLinks)
+	dec b
+	xor a
+	scf
+	call blkPs3	;Evt. BLOKpos aanpassen
+	ld a,(iy+klLinks)
+	ld (iy+xPos),a
+	ld (iy+offset),0
+	pop bc
+	set ktl,(iy-flags2)	;Zet l.ktl. vlag
+tk3:	res nKl,(iy-flags3)	;Kl. niet negeren
+	ld a,(strBuf)
+	cp 254
+	jp z,regLang	;Zin te lang
+	ld l,a
+	inc a
+	ld (strBuf),a	;1 teken erbij
+	sub b	;Cursor op reg.einde?
+	jr z,tk6	; Ja, => Niet invoegen
+	bit ktl,(iy-flags2)	;Linkerkantlijn opgeschoven?
+	jr nz,tk4	; Ja, invoegen aan
+	bit insfl,(iy+flags1)	;Insert aan?
+	jr z,tk5	; Nee, => TK5
+tk4:	push bc
+	ld b,0
+	ld c,a
+	ld h,high strBuf
+	ld d,h
+	ld e,l
+	inc de
+	lddr	;Voeg teken in
+	pop bc
+	jr tk6
+tk5:	ld hl,strBuf
+	dec (hl)	;Ten onrechte verhoogd
+tk6:	push bc
+	ld a,(iy+xPos)
+	add a,(iy+offset)
+	push af
+	scf
+	bit insFl,(iy+flags1)
+	call nz,blkPos	;Blok aanpassen als INS aan staat
+	pop af
+	ld h,high strBuf
+	ld l,a	;Geen STRBUF+1 want XPOS is al 1 teveel
+	pop bc
+	ld (hl),c	;Vul het teken in
+	set change,(iy+flags1)
+	call rechts
+	ld a,(iy+Xpos)
+	add a,(iy+offset)
+	ld e,(iy+klRechts)
+	inc e
+	cp e	;Cursor verder dan rechter kantlijn?
+	ret c	; Nee, => Terug
+	push af
+	ld h,high strBuf
+	ld l,e
+tk7:	dec e
+	jr z,tk8
+	dec hl
+	ld a,(hl)
+	cp ' '
+	jr nz,tk7
+	ld a,e
+	cp (iy+klLinks)
+	jr nc,tk9
+tk8:	pop af
+	push af
+	dec a
+	ld e,a
+tk9:	inc e
+	ld (iy+xPos),e	;E = Xpos inclusief Offset
+	xor a	;Dus offset wordt 0
+	cp (iy+offset)	;Was offset al 0?
+	ld (iy+offset),a	;    Nu wel
+	call nz,setBouw	; Nee, scherm moet opnieuw opgebouwd
+	pop af	;Haal oude cursor positie
+	sub e	; Bereken nieuwe cursor positie
+	push af
+	call retIns	;Voeg regel tussen
+	pop af
+	call toMidden	;Zet cursor op scherm
+	ld a,(iy+klLinks)	;Evt linkerkantlijn aanpassen
+	cp 2
+	ret c
+	add a,(iy+xPos)
+	ret c
+	dec a
+	add a,(iy+offset)
+	ret c
+	cp 254
+	ret nc
+	ld a,(strBuf)	;Verleng regel met linkerkantlijnlengte
+	add a,(iy+klLinks)
+	jp c,regLang
+	dec a
+	ld (strBuf),a
+	ld a,(iy+xPos)
+	add a,(iy+klLinks)
+	dec a
+	ld (iy+xPos),a
+	ld a,(strBuf)
+	sub (iy+klLinks)	;Trek kantlijn van regellengte af
+	inc a	;Is regel leeg?
+	jr z,tk10
+	ld b,0
+	ld c,a
+	ld h,high strBuf
+	ld l,a
+	push hl
+	ld d,b
+	ld e,(iy+klLinks)
+	dec de
+	add hl,de	;DE=bestemming
+	ex de,hl
+	pop hl
+	lddr	;Maak ruimte voor kantlijnspaties
+tk10:	ld hl,strBuf+1
+	ld b,(iy+klLinks)
+	dec b
+mn11:	ld (hl),' '             ;Vul kantlijnspaties in
+	inc hl
+	djnz mn11
+	ld a,(iy+xPos)
+	add a,(iy+offSet)
+	dec a
+	jp toMidden
+
+	;Haal grafisch teken
+
+grafik:	call nChget
+	sub 'A'-1               ;Decodeer
+	jp teken	; en verwerk het teken
+
+	;Vul escape in
+
+escCod:	xor a	;CHR$(0)=ESCape
+	jp teken
+
+ctrlCod:	ld a,127	;127=Control-voorloopteken
+	jp teken
+
+	;Negeer linkerkantlijn
+
+negKtl:	set nKl,(iy-flags3)
+	jp beep
+
+	;Verwerk shift/toetsdruk
+
+shift:	ld a,(sftKey+1)
+	bit 3,a	;Tab ingedrukt?
+	jp z,negKtl
+	ld a,b
+	cp del
+	jp z,delToEnd	;Wis tot regeleinde
+	cp right
+	jp z,wordRight	;Een woord naar rechts
+	cp left
+	jp z,wordLeft
+	cp up
+	jp z,pgUp	;Page up
+	cp down
+	jp z,pgDown	;Page down
+	jp main1	;Gewone toetsdruk
+
+	;Verwerk druk op funktie-toets
+
+FKEY:	CALL NCHGET	;Haal nummer van funktietoets
+	CP 1
+	JP Z,TOETS1	;F1 & F6 direkt uitvoeren
+	CP 6
+	JP Z,TOETS6
+	CP 7
+	JP Z,HELPMENU	;F7=Hulpmenu
+	RET NC	;Onbekende code => Stoppen
+	LD (FKEYNUM),A	;Toetsnummer (1..5) opslaan
+	JP COMLN	;Druk mogelijke commandos af
+
+	;Voer een funktie uit
+
+FUNKTIE:	LD HL,COMLN
+	PUSH HL	;Na uitvoering commandoregel afdrukken
+	CALL NCHGET	;Haal kommando op
+	CALL KLEIN
+	LD C,A
+	CP ESC	;Escape ingedrukt?
+	JR NZ,FNK1	; Nee, => Verwerk toetsdruk
+	XOR A	; Ja, wis aktieve funktietoets
+	LD (FKEYNUM),A
+	RET
+FNK1:	LD HL,XYFNK	;Haal positie op van 'F4/'
+	INC H	;Ga drie posities naar rechts, dus
+	INC H	; tot achter het '/'-teken
+	INC H
+	LD (CSRY),HL
+	CALL GROOT	;Hoofdletter
+	CP 'A'
+	CALL NC,NCHPUT	;Toon letter in statusregel
+	LD A,(FKEYNUM)
+	DEC A
+	ADD A,A	;Bereken adres
+	LD D,0
+	LD E,A
+	LD HL,FNKTAB	;HL=Beginadres sprongtabel
+	ADD HL,DE
+	LD E,(HL)
+	INC HL
+	LD H,(HL)
+	LD L,E
+	JP (HL)	;Spring naar routine
+
+
+	;Routines voor funktietoets kommando's
+
+	;Omlaag
+
+TOETS1:	CALL EVTOPSLAAN
+	XOR A
+	LD (FKEYNUM),A
+	LD A,(IY+MAXLIN)	;Ga 1 pagina omlaag
+	SUB (IY+MINLIN)
+	LD D,0
+	LD E,A
+	LD HL,(CSRNUM)
+	ADD HL,DE
+	LD DE,(LASTLINE)
+	CALL DCOMPR	;Staat de cursor voorbij laatste regel?
+	JP C,GOTOLINE	; Nee, => Regelnummer O.k.
+	EX DE,HL	; Ja, ga naar de laatste regel
+	JP GOTOLINE
+
+	;Instellingen
+
+TOETS2:	XOR A
+	LD (FKEYNUM),A
+	LD A,C	;Haal commando
+	LD BC,F2KAR	;BC=Tabel met mogelijke karakters/commando's
+	LD HL,F2ADR	;HL=Tabel met bijhorende subroutine adressen
+	CALL DOCMD	;Spring naar subroutine behorende bij [A]
+	LD A,2	;[A] bevatte geen toegestaan karakter
+	LD (FKEYNUM),A	; dus de F2-commandline blijft aktief
+	JP BEEP	;Geef foutmeldings-beep
+
+	;Systeem
+
+TOETS3:	XOR A
+	LD (FKEYNUM),A
+	LD A,C
+	LD BC,F3KAR	;BC=Tabel met karakters/commando's
+	LD HL,F3ADR	;HL=Tabel met subroutine adressen
+	CALL DOCMD	;Spring naar subroutine cmd in [A]
+	LD A,3
+	LD (FKEYNUM),A
+	JP BEEP
+
+	;Commando's
+
+TOETS4:	XOR A
+	LD (FKEYNUM),A
+	LD A,C	;Haal commando
+	CP '0'
+	JR C,T41	;Getal tussen 0 en 9?
+	CP '9'+1
+	JP C,SETMARK	; Ja, => Zet markering
+T41:	LD BC,F4KAR	;BC=Tabel met mogelijke karakters/commando's
+	LD HL,F4ADR	;HL=Tabel met bijhorende subroutine adressen
+	CALL DOCMD	;Spring naar subroutine behorende bij [A]
+	LD A,4	;[A] bevatte geen toegestaan karakter
+	LD (FKEYNUM),A	; dus de F4-commandline blijft aktief
+	JP BEEP	;Geef foutmeldings-beep
+
+	;Blok funkties
+
+TOETS5:	XOR A
+	LD (FKEYNUM),A
+	LD A,C
+	LD BC,F5KAR	;BC=Tabel met mogelijke karakters/commando's
+	LD HL,F5ADR	;HL=Tabel met bijhorende subroutine adressen
+	CALL DOCMD	;Spring naar subroutine behorende bij [A]
+	LD A,5
+	LD (FKEYNUM),A
+	JP BEEP
+
+	;Omhoog
+
+TOETS6:	CALL EVTOPSLAAN
+	XOR A
+	LD (FKEYNUM),A
+	LD A,(IY+MAXLIN)
+	SUB (IY+MINLIN)
+	LD D,0
+	LD E,A
+	LD HL,(CSRNUM)
+	OR A
+	SBC HL,DE
+	JP NC,GOTOLINE	;Ga naar regel
+	LD HL,0
+	JP GOTOLINE
+
+	;Haal een karakter van toetsenbord en ga door naar DOCMD
+	;Invoer: [BC] = Karaktercommando tabel
+	;        [HL] = Jump-adres tabel
+	;        [A] 0=Toon geen cursor
+	;            1=Toon wel cursor
+
+GETCMD:	LD (SAVKAR),BC	;Bewaar karakter- en adrestabellen
+	LD (SAVADR),HL
+	LD (SAVCSR),A	;Bewaar wel/geen cursor
+GCM1:	OR A	;Toon cursor?
+	JR Z,GCM5	; Nee, => GCM4
+GCM3:	CALL INKCRL	;Wacht op toets en toon cursor
+	CP 255	;Funktietoets?
+	JR Z,GCM4	; Ja, => Negeer
+	CALL KLEIN	;Maak onderkast
+	CALL DOCMD	;Voer commando uit indien het karakter ok is
+	LD BC,(SAVKAR)	;Karakter niet uitvoerbaar, herstel HL en BC
+	LD HL,(SAVADR)
+	LD A,(SAVCSR)
+	JR GCM1	;Lees een nieuw karakter in
+GCM4:	CALL NCHGET	;Skip fkey nummer
+	JR GCM1
+GCM5:	PUSH HL
+	PUSH BC
+GCM6:	CALL INT	;Toon klok
+	CALL CHSNS	;Kijk of er een toets in de buffer zit
+	JR Z,GCM6	;Geen toets ingedrukt => Probeer opnieuw
+	POP BC
+	POP HL
+	JR GCM3	;Haal de toets uit de buffer
+
+	;Zoek karakter [A] op in karaktertabel (BC)
+	;[HL] jump vector-tabel met een entry voor elk karaker
+	; Kar. gevonden => spring naar de bijbehorende routine, doe geen RET
+	; Niet gevonden, => Keer terug d.m.v. een RET
+
+DOCMD:	LD E,A	;Bewaar op tezoeken kar. in [E]
+	LD A,(BC)	;Haal kar. uit tabel
+	INC BC
+	OR A	;Einde van de tabel?
+	RET Z	; Ja, => Terug
+	CP E	;Karakter gevonden?
+	LD A,E	;  Bewaar te zoeken kar weer in [A]
+	LD E,(HL)	;  Haal adres van subroutine alvast in [DE]
+	INC HL
+	LD D,(HL)
+	INC HL
+	JR NZ,DOCMD	; Niet gevonden, => Onderzoek volgende element
+	POP HL	; Gevonden, haal return adres van de stack
+	EX DE,HL	;  en spring naar de subroutine
+	JP (HL)
+
+	;Adresvectors van de funktietoets subroutines
+	;De bijhorende karakters verschillen per Taal en staan in de tabel
+	; F1KAR, F2KAR .. F5KAR
+	;De FnKAR en FnADR tabellen dienen in dezelfde volgorde ingevuld
+	; en uitgelezen te worden
+
+	;Funktietoets 2
+
+F2ADR:	dw CHLEFT	;Linkerkantlijn
+	dw CHRIGHT	;Rechterkantlijn
+	dw CHALINEA	;Alinea instellingen
+	dw ZETTAB	;TAB +
+	dw WISTAB	;TAB -
+	dw SAVETAB	;Spaties worden TABs
+	dw CHMEM	;Change Memorymapper
+	dw PRTINS	;Printer instelling
+	dw SORTINS	;Sorteer instelling
+	dw DRIVER	;Printerdriver
+	dw SAVINS	;Bewaar instellingen
+	dw FKEY	;Funktietoets
+
+	;Funktietoets 3
+
+F3ADR:	dw GEHEUGEN	;Geheugen vrij
+	dw WISTP	;wis Tekst/Buffer
+	dw TOINHOUD	;Naar Disk Inhoud
+	dw BACKUP	;Backup aan/uit
+	dw PAGE	;Pagina stop / indikatie aan/uit
+	dw KLEUR	;Kleur instellen
+	dw EXTENSIE	;Verander '.TXT'
+	dw CHKOL	;Kolominstellen
+	dw SCHERM	;Scherm
+	dw COPYHELP	;Kopi‰er hulpmenu
+	dw FKEY	;Funktietoets
+
+	;Funktietoets 4
+
+F4ADR:	dw AGAIN	;Nog eens zoeken
+	dw ZOEK	;Zoek
+	dw SAVE	;Bewaar
+	dw LOAD	;Load
+	dw GOTO	;Ga naar regel
+	dw PRINT	;Print de tekst
+	dw TOSTOP	;Stop
+	dw FKEY	;Funktietoets
+
+	;Funktietoets 5
+
+F5ADR:	dw STARTBLOK	;Zet startblok
+	dw ENDBLOK	;Zet eindeblok
+	dw RESETBLOK	;Wis blokdef's
+	dw COPYBLOK	;Kopieer blok
+	dw WISBLOK	;Wis blok
+	dw MOVEBLOK	;Verplaats blok
+	dw PRTBLOK	;Print blok
+	dw QSORT	;sorTeer blok
+	dw LOADBLOK	;Laad blok
+	DW saveBlok	;Bewaar blok
+	dw indentBlok	;Inspringen
+	dw FKEY	;Funktietoets
+
+	;Funktietoets verwerkroutines, adrestabel
+
+FNKTAB:	dw TOETS1
+	dw TOETS2
+	dw TOETS3
+	dw TOETS4
+	dw TOETS5
+	dw TOETS6
+
+	;Insert aan/uit
+
+INSERT:	LD A,(IY+FLAGS1)
+	XOR 1
+	LD (IY+FLAGS1),A
+PRTINV:	XOR A
+	BIT BLKC,(IY+SAVFL)	;Blok cursor?
+	JR NZ,INS1	; Ja, => Blok
+	BIT INSFL,(IY+FLAGS1)
+	JR Z,INS1	; Nee, invoeg aan?
+	INC A	;  Ja, lijn
+INS1:	LD (CSTYLE),A
+	LD HL,0801H
+	BIT INSFL,(IY+FLAGS1)
+	JP AANCSR	;Print AAN/UIT
+
+	;Return-/Pijlomlaag toets
+
+RETURN:	BIT INSFL,(IY+FLAGS1)
+	JP Z,RE4	;Return met insert uit
+	SET RETKEY,(IY+FLAGS1)	;Vlag: Echte return aanslag
+	LD A,(IY+KLLINKS)	;Neem linkerkantlijn als uitvul startpunt
+	LD (IY-SPLINKS),A
+	JR RE0
+RETINS:	LD A,(IY+KLLINKS)	;Neem linkerkantlijn als uitvul
+	LD (IY-SPLINKS),A	; startpunt
+RETINS2:	RES RETKEY,(IY+FLAGS1)	;Vlag: Alleen return nabootsen
+re0:	bit nPageStop,(iy+savFl2);Paginaindikatie aan?
+	jr nz,re0b
+	set bouw,(iy-flags4)	; Ja, Bouw scherm op
+re0b:	ld a,(iy+xPos)
+	add a,(iy+offSet)
+	ld c,a
+	ld b,0
+	ld hl,strBuf+1
+	ld de,strBf2+1
+	ldir	;BC expres 1 te hoog (dus nooit 0)
+	dec a	;Pas lengtebyte aan
+	ld (strBf2),a	;1e helft naar 2e buffer
+	cp 3
+	jp c,vu6	;Lege regel, => Uitvullen klaar
+	bit edit,(iy+savFl2)	;Edit mode?
+	jp nz,vu6	; Ja, => Niet uitvullen
+	bit uitVul,(iy+tabSav)	;Uitvullen aan?
+	jp z,vu6	; Nee, => Klaar
+	dec de
+	dec de	;Ga naar regeleinde
+	ld a,(de)	;Haal laatste teken
+	cp ' '                  ; Spatie?
+	jp nz,vu6	;  Nee, => Niet uitvullen
+	dec de
+vu1:	ld a,(de)
+	cp ' '                  ;Nog een spatie?
+	jr nz,vu2	; Nee, Ok
+	LD A,(STRBF2)	;Wis overbodige spaties aan regeleinde
+	PUSH AF
+	PUSH DE
+	OR A
+	CALL BLKPOS	;Blokaanpassen
+	POP DE
+	POP AF
+	DEC DE
+	DEC A
+	LD (STRBF2),A
+	CP 2	;Regel < 2 tekens?
+	JP C,VU6	; Ja, => Stop
+	JR VU1
+
+VU2:	LD A,(STRBF2)
+	SUB (IY-SPLINKS)	;Regel < linkerkantlijn?
+	JP C,VU6	; Ja, => Niet uitvullen
+	LD B,A	;B=Reglen
+	LD A,(IY+KLRECHTS)
+	SUB (IY-SPLINKS)	;Bereken gewenste regellengte
+	SUB B	;Bereken aantal toe te voegen spaties
+	JP Z,VU6	;Regel vol => Klaar
+	JP C,VU6
+	LD C,A
+	LD A,(IY-FLAGS2)
+	XOR 100B	;Wissel even/oneven spatie vlag
+	AND 11111101B	;Nog geen spatie gevonden
+	LD (IY-FLAGS2),A
+	ld (iy-spaties),0	;Nul spaties geweest
+	set spFnd,(iy-flags2)	;Geen spaties vooraan de regel invullen
+	ld hl,strBf2+1
+	ld e,(iy-spLinks)
+	dec e	;E=Positie in regel
+	ld d,0
+	add hl,de	;Begin bij linkerkantlijn
+VU4:	ld a,(hl)
+	cp ' '                  ;Spatie?
+	jr nz,vu5	; Nee, => Zoek verder
+	bit spFnd,(iy-flags2)	;Tussen 1 woord 2 spaties?
+	jr nz,vu5b	; Ja, => Niet nog een
+	set spatie,(iy-flags2)	;Spatie geweest
+	set spFnd,(iy-flags2)	;Hier-al-spatie-ingevuld-vlag
+	inc (iy-spaties)	;Tel spatie
+	ld a,(iy-spaties)
+	rra	;Even => Vlag NC
+	bit even,(iy-flags2)	;Oneven of even invullen?
+	jr z,vu4b	; Even => VU4B
+	ccf	; Oneven => Wissel C-vlag
+vu4b:	jr c,vu5b	;Niet goed, => volgende spatie
+	push hl
+	push bc
+	push de
+	ld hl,strBf2
+	ld a,(hl)
+	sub e	;Bereken op te schuiven lengte
+	jr z,vu6
+	ld b,0
+	ld c,a
+	ld d,0
+	ld e,(hl)
+	inc (hl)	;Lengte:++1
+	add hl,de	;Bereken laatste teken
+	ld d,h
+	ld e,l
+	inc de
+	lddr	;Maak ruimte in regel
+	pop de
+	push de
+	ld a,e	;Positie in A
+	scf
+	call blkPs2	;Blokbegin/einde opschuiven
+	pop de
+	pop bc
+	pop hl
+	ld (hl),' '             ;Voeg spatie in
+	inc hl
+	inc e
+	dec c
+	jr z,vu6	;Alle spaties geweest? => Klaar
+	jr vu5b
+vu5:	res spFnd,(iy-flags2)	;Teken was geen spatie
+vu5b:	inc hl	;Volgende teken
+	inc e
+	inc e	;E expres 1 te hoog want
+	ld a,(strBf2)
+	dec a	; laatste spatie telt niet mee
+	cp e	;Regeleinde bereikt?
+	dec e	;  Herstel E
+	jr nc,vu4	; Nee, zoek verder
+	bit spatie,(iy-flags2)	;Wel spaties in regel?
+	jp nz,vu2	; Ja, opnieuw
+
+VU6:	LD HL,STRBF2	;Bewaar 2e buffer (bovenste zin)
+	LD A,(HL)	;Bewaar lengte van die zin
+	PUSH AF	; om straks blok aan te kunnen passen
+	RES BLKAP,(IY-FLAGS5)	;Geen blok aanpassen, wordt zometeen
+	CALL OPSLAAN3	; gedaan
+	LD HL,(CSRNUM)
+	LD (PRTNUM),HL	;Print goede regelnummer
+
+	LD HL,STRBF2	;2e regelbuffer
+	LD A,(IY+YPOS)
+	CALL PRTRG2	;Zet string op scherm
+	INC (IY+YPOS)
+
+	LD DE,(CSRNUM)	;DE=Regelnummer
+	LD HL,1	;HL=Offeset
+	CALL RNPAGETAB	;Hernumer de pagina tabel
+	INC DE	;Naar volgende regel
+	CALL RNPOINTERS	;Hernummer de pointertabel
+
+	call invoegNoRn	;Voeg regelpointer tussen op regel DE
+	call insReg	;Rol scherm 1 omlaag
+
+	pop af	;Haal lengte van bovenste regel, want
+	push af	;STRBF2 kan veranderd zijn in EDIT mode
+	call knipBlk	;Pas blok aan
+	pop de	;Regellengte in [D]
+
+	RR C
+	JR NC,RE1
+	LD HL,(BSTARTLN)	;Blokstart naar volgende regel
+	INC HL
+	LD (BSTARTLN),HL
+	LD A,(IY-BSRTPOS)
+	SUB D
+	LD (IY-BSRTPOS),A
+RE1:	RR C
+	JR NC,RE2
+	LD HL,(BENDLN)	;Blokeinde naar volgende regel
+	INC HL
+	LD (BENDLN),HL
+	LD A,(IY-BENDPOS)
+	SUB D	;Trek lengte van 1e helft van blokeinde af
+	LD (IY-BENDPOS),A
+RE2:	LD HL,(CSRNUM)
+	INC HL
+	LD (CSRNUM),HL
+	LD A,(STRBUF)
+	LD D,0
+	LD E,A
+	LD HL,STRBUF+1
+	ADD HL,DE
+	PUSH HL
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)
+	LD L,A
+	LD H,0
+	LD DE,STRBUF	;Geen STRBUF+1 want XPOS is 1-based
+	ADD HL,DE
+	EX DE,HL	;DE=Positie in STRBUF
+	POP HL	;HL=Einde STRBUF
+	OR A
+	SBC HL,DE
+	LD A,L
+	LD (STRBUF),A
+	JR Z,RE3
+	LD B,H
+	LD C,L
+	LD H,D
+	LD L,E
+	LD DE,STRBUF+1
+	LDIR	;Verplaats rest v/d regel naar begin van zin 2
+	SET CHANGE,(IY+FLAGS1)
+RE3:	LD (IY+XPOS),1
+	XOR A
+	CP (IY+OFFSET)
+	JR Z,RE3A
+	LD (IY+OFFSET),A
+	SET BOUW,(IY-FLAGS4)	;Scherm opnieuw opbouwen
+RE3A:	BIT AI,(IY+SAVFL2)	;Auto Indent AAN?
+	RET Z
+	BIT RETKEY,(IY+FLAGS1)	;Echte return aanslag?
+	RET Z	; Nee, => Niet inspringen
+	LD HL,STRBF2
+	LD A,(HL)	; Ja, spring in tot onder begin
+	OR A	;  van vorige reg.
+	RET Z
+	LD B,A
+	LD C,0	;[C] = spaties teller
+RE3B:	INC HL
+	LD A,(HL)
+	CP ' '                  ;Spatie in vorige regel?
+	JR NZ,RE3C
+	INC C
+	DJNZ RE3B	; Ja, => Zoek verder
+RE3C:	LD A,C
+	OR A
+	RET Z
+	SET NKL,(IY-FLAGS3)	;Negeer linkerkantlijn
+	LD B,C
+RE3D:	LD A,' '                ;Spring C spaties in
+	PUSH BC
+	CALL TEKEN
+	POP BC
+	DJNZ RE3D
+	RET
+
+RE4:	CALL OPSLAAN	;Return zonder Insert
+RE5:	LD HL,(CSRNUM)
+	LD (PRTNUM),HL	;Print huidige regel
+	INC HL
+	LD (CSRNUM),HL
+	PUSH HL
+	LD HL,STRBUF	;Regelbuffer
+	LD A,(IY+YPOS)
+	CALL PRTRG2	;Zet string op scherm
+	POP DE
+	LD HL,STRBUF
+	CALL GET	;Haal string op
+	INC (IY+YPOS)
+	LD A,(IY+MAXLIN)
+	CP (IY+YPOS)
+	CALL C,INSREG	;Onderste regel => Scroll 1 omhoog
+	LD (IY+XPOS),1
+	XOR A
+	CP (IY+OFFSET)
+	RET Z
+	LD (IY+OFFSET),A
+	SET BOUW,(IY-FLAGS4)	;OFFSET veranderd, scherm opnieuw opbouwen
+	RET
+
+; Pagina omlaag
+;
+pgDown:	call evtOpslaan
+
+	ld hl,(csrNum)	;Vergelijk regelnummer met teksteinde
+	inc hl	;Minstens 1 regel vooruit
+
+	call getPageStop	;Haal voorgaande paginagrens in DE
+
+	ld a,(iy+pagLen)
+	or a	;No carry, test op 0
+	jr z,toNextPageStop	;Paglen=0 => Naar volgende harde grens
+
+	sbc hl,de	;HL=regelnummer vanaf harde grens
+
+	ld d,0
+	ld e,a	;DE=Paginalengte
+
+	call div16	;Rest=Regel nr. in zachte pagina
+
+	ld hl,(csrNum)	;Regelnr. weer in HL
+	inc hl
+
+	inc e	;Regelnr in pagina=0?
+	dec e
+	jp z,midLine	; Ja, => Zachte grens
+
+	ld a,(iy+pagLen)
+	sub e	;Bereken regels tot einde zachte pagina
+
+	ld e,a	;Regels tot volgende pagina in DE
+	add hl,de	;HL=Volgende zachte paginagrens
+
+	jr pageBeforeEnd
+
+toNextPageStop: ld hl,(lastLine)	;Voorbij teksteinde, Teksteinde in HL
+
+pageBeforeEnd:	push hl	;Bewaar volgende zachte paginagrens
+
+	push ix	;Tabelpointer naar HL
+	pop hl
+
+	ld de,pageTab	;Begin van de tabel in DE
+	or a
+	sbc hl,de	;Bereken entrynummer in de tabel
+	srl h	;Delen door 2 bytes per entry
+	rr l
+
+	ld a,(iy+numPageStops)	;Haal huidig aantal enties
+	sub l	;Laatste entry?
+
+	pop hl	;	Haal volgende zachte grens
+
+	jp z,midLine	; Ja, => Naar zachte grens
+
+	ld e,(ix+0)	; Nee, haal volgende harde grens
+	ld d,(ix+1)
+	dec de	;Nummer 0-based maken
+
+	call dCompr	;Harde grens voor zachte?
+	jp c,midLine	; Nee, => Naar zachte grens
+	ex de,hl	; Ja, harde grens in HL
+	jp midLine	;Naar schermmidden, test op teksteinde
+
+
+; Pagina omhoog
+;
+pgUp:	call evtOpslaan
+	ld hl,(csrNum)
+	ld a,h
+	or l
+	ret z
+
+	dec hl	;Minstens 1 regel omhoog
+
+	call getPageStop	;Haal voorgaande paginagrens in DE
+
+	ld a,(iy+pagLen)
+	or a	;No carry, test op 0
+	jr z,toPrevPageStop	;Paglen=0 => Naar volgende harde grens
+
+	sbc hl,de	;HL=regelnummer vanaf harde grens
+
+	ld d,0
+	ld e,a	;DE=Paginalengte
+
+	call div16	;Rest=Regel nr. in zachte pagina
+
+	ld hl,(csrNum)	;Regelnr. weer in HL
+	dec hl
+
+	ld a,e	;Regelnr in zachte pagina = 0?
+	or a	;Test op 0, clear carry
+	jp z,midLine	; Ja, => Zachte grens
+
+	sbc hl,de	;HL=Vorige zachte paginagrens
+	jr nc,pageAfterStart
+
+toPrevPageStop: ld hl,0	;Voorbij tekstbegin, naar regel 0
+
+pageAfterStart: ld e,(ix-2)	;Haal vorige harde paginagrens
+	ld d,(ix-1)
+	ld a,e	;Begin van de tabel?
+	or d
+	jr z,noPrevstop	; Ja, => 0 vasthouden
+	dec de	;Paginagrens 0-based maken
+
+noPrevStop:	call dCompr	;Vergelijk zachte grens met harde grens
+	jp nc,midLine	; => Zachte grens komt eerst
+	ex de,hl	;Harde grens naar HL
+	jp midLine	;Naar schermmidden, test op teksteinde
+
+
+	;Pijl omlaag toets
+
+OMLAAG:	CALL EVTOPSLAAN
+	LD HL,(CSRNUM)
+	LD DE,(LASTLINE)	;Staat de cursor voorbij de laatste tekstregel?
+	OR A
+	SBC HL,DE
+	RET Z	; Ja, => Klaar
+	BIT BOUW,(IY-FLAGS4)	;Bewaar schermopbouwvlag
+	PUSH AF
+	LD B,(IY+XPOS)
+	LD C,(IY+OFFSET)
+	PUSH BC
+	CALL RE5	;Return zonder insert
+	POP BC
+	LD (IY+XPOS),B	;Herstel Offset en Xpos
+	LD (IY+OFFSET),C
+	LD A,B
+	ADD A,C
+	LD E,A	;Bereken cursorpos
+	DEC E	; 0-based in E
+	pop af	;Herstel schermopbouwvlag
+	jr nz,omlBouw
+	res bouw,(iy-flags4)	;Was gezet door "re5"
+omlBouw:	ld a,(strBuf)
+	cp e	;Past cursor op nieuwe regel?
+	jr nc,toVirPos	; Ja, naar evt. virtuele positie
+
+	bit vir,(iy-flags6)	; Nee, is er al een virtuele cursor?
+	jr nz,toRegEnd	;  Ja, => Laten staan
+	set vir,(iy-flags6)	;  Nee, nu dus wel
+	ld (iy-virPos),e	;En opslaan
+	jr toRegEnd	;Naar regeleinde
+
+
+	;Omhoog toets
+
+OMHOOG:	LD HL,(CSRNUM)
+	LD A,H
+	OR L
+	JR Z,OH2
+	PUSH HL
+	CALL EVTOPSLAAN	;Regel bewaren
+	POP HL
+	DEC HL
+	LD (CSRNUM),HL
+	PUSH HL
+	LD A,(IY+YPOS)
+	CP (IY+MINLIN)
+	JR NZ,OH1
+	CALL INSREG	;Scroll omlaag
+	INC (IY+YPOS)
+OH1:	DEC (IY+YPOS)
+	POP DE
+	LD HL,STRBUF
+	CALL GET
+oh2:	ld a,(iy+xPos)
+	add a,(iy+offSet)
+	dec a
+	ld b,a
+	ld a,(strBuf)	;Bepaal cursor positie
+	cp b	;Past cursor op nieuwe regel?
+	jr nc,toVirPos	; Ja, naar evt. virtuele positie
+	bit vir,(iy-flags6)	; Nee, is er al een virtuele cursor?
+	jr nz,toRegEnd	;  Ja, => Laten staan
+	set vir,(iy-flags6)	;  Nee, nu dus wel
+	ld (iy-virPos),b	;En opslaan
+	jr toRegEnd	;Naar regeleinde
+
+
+; toVirPos
+;
+; Keer terug naar virtuele cursorpositie
+;
+toVirPos:	bit vir,(iy-flags6)	;Is de virtuele cursor actief?
+	ret z	; Nee, => Cursor goed waar ie nu is
+	ld a,(strBuf)	;Haal regellengte
+	cp (iy-virPos)	;Lang genoeg?
+	jr c,toRegEnd	; Nee, => Naar regeleinde
+	res vir,(iy-flags6)	; Ja, geen virtuele cursor meer
+	ld a,(iy-virPos)
+	jr toMidden	;Naar virtuele positie
+
+
+	;Cursor naar regelbegin
+
+TOREGSTART:	XOR A
+	JR TOMIDDEN
+
+	;Cursor naar regeleinde
+
+TOREGEND:	LD A,(STRBUF)
+
+	;Cursor naar midden van scherm, positie in A
+
+TOMIDDEN:	LD HL,(STRBUF)	;Haal regellengte in L
+	INC L	;Reglen 1 based maken
+	CP L	;Willen we voorbij het regeleinde?
+	JR NC,TOREGEND	; Ja, => Ga naar regeleinde
+	CP 79	;Past de regel op het scherm?
+TOMID2:	LD B,(IY+OFFSET)	;     Bewaar oude offsetwaarde
+	JR C,TM1	; Ja, => Geen offset nodig
+	LD (IY+XPOS),61
+	SUB 60
+	LD (IY+OFFSET),A
+	JR TM2
+TM1:	LD (IY+OFFSET),0
+	INC A
+	LD (IY+XPOS),A
+TM2:	LD A,(IY+OFFSET)
+	CP B	;Offset ongewijzigd?
+	RET Z	; Ja, => Scherm niet opnieuw opbouwen
+SETBOUW:	SET BOUW,(IY-FLAGS4)	;Zet scherm opbouw vlag
+	RET
+
+	;Wis tot aan regeleinde
+
+DELTOEND:	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)	;Bereken csr pos
+	DEC A
+	LD (STRBUF),A	;Vul nieuwe lengte in
+	SET CHANGE,(IY+FLAGS1)
+	JR DELBL1
+
+	;Wis regel
+
+removLn:	xor a
+	ld (strBuf),a	;Stringlengte=0
+	res vir,(iy-flags6)	;Geen virtuele cursor meer
+	call delBLn	;Verwijder blokregel
+	call toRegStart	;Naar regelbegin (xpos 1)
+	jp delete	;Verwijder regel
+
+	;Delete blokline, zet blokbegin en -einde op 0
+
+DELBLN:	XOR A
+DELBL1:	CALL KNIPBLK
+	RR C	;Blokbeg. veranderd?
+	JR NC,DELBL2
+	LD (IY-BSRTPOS),B	; Ja, Zet blokbegin op nul
+DELBL2:	RR C
+	RET NC
+	LD (IY-BENDPOS),B
+	RET
+
+KNIPBLK:	LD B,A
+KNIPB2:	LD C,0
+	LD HL,(BENDLN)	;Knip regel weg vanaf pos. B
+	LD DE,(CSRNUM)
+	OR A
+	SBC HL,DE
+	JR NZ,KB1
+	SET 3,C	;Huidige regel is blok einde regel
+	LD A,B
+	CP (IY-BENDPOS)
+	JR NC,KB1
+	SET 1,C	;Regeleinde ligt voor blokeinde
+KB1:	LD HL,(BSTARTLN)
+	OR A
+	SBC HL,DE
+	RET NZ
+	SET 2,C	;Huidige regel is blok start regel
+	LD A,(IY-BSRTPOS)
+	CP B
+	RET C
+	SET 0,C	;Vlag: Blokstart klopt niet meer
+	RET
+
+	;Backspace/Delete
+
+BSPACE:	LD HL,(CSRNUM)
+	LD A,H
+	OR L	;Cursor op regel 0?
+	JR NZ,BS1
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)	;Regel 0 & Xpos = 1?
+	DEC A
+	RET Z	; Ja, => Begin van tekst, dus geen Backspace
+BS1:	CALL LINKS
+DELETE:	LD A,(STRBUF)
+	LD D,0
+	LD E,A
+	LD HL,STRBUF+1
+	ADD HL,DE
+	PUSH HL
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)
+	LD L,A
+	LD H,0
+	LD DE,STRBUF	;Geen STRBUF+1 want XPOS is al 1 teveel
+	ADD HL,DE
+	EX DE,HL	;DE=Positie in STRBUF
+	POP HL	;HL=Einde STRBUF
+	SET CHANGE,(IY+FLAGS1)
+	OR A
+	SBC HL,DE
+	JR Z,DEL1
+	LD B,H
+	LD C,L
+	LD H,D
+	LD L,E
+	INC HL
+	LDIR
+	CALL BLKPOS	;Pas Blokpos aan, A=Xpos, geen carry <=> Delete
+	LD HL,STRBUF
+	DEC (HL)
+	RET
+DEL1:	PUSH DE	;Plak volgende zin eraan
+	LD DE,(CSRNUM)
+	INC DE
+	LD HL,STRBF2	;Eerst naar 2e buffer
+	CALL GET	;Haal regel op
+	POP DE
+	LD A,(STRBF2)
+	INC A	;1 te hoog, maxlen=254
+	LD C,A
+	LD A,(STRBUF)
+	PUSH AF
+	ADD A,C	;Regel niet > 254 tekens?
+	JP C,REGLANG
+	DEC A
+	LD (STRBUF),A
+	DEC C
+	JR Z,DEL2	;Lege 2e zin
+	LD B,0
+	LD HL,STRBF2+1
+	LDIR
+DEL2:	POP BC
+	LD HL,(CSRNUM)
+	INC HL
+	LD (CSRNUM),HL
+	PUSH HL
+	INC (IY-BSRTPOS)
+	INC (IY-BENDPOS)	;Maak 1-based
+	XOR A
+	SCF
+	CALL BLKPS3	;Blokbegin/einde aanpassen
+	DEC (IY-BSRTPOS)
+	DEC (IY-BENDPOS)
+	POP HL
+	DEC HL
+	LD (CSRNUM),HL
+	INC HL
+	EX DE,HL
+	CALL DELSTR	;Verwijder string
+	BIT PAG,(IY+SAVFL2)	;Paginaindikatie aan?
+	JR Z,DEL3	; Nee, => DEL3
+	SET BOUW,(IY-FLAGS4)	; Ja, Bouw scherm op
+	RET
+DEL3:	LD A,(IY+YPOS)
+	CP (IY+MAXLIN)	;Cursor onderaan?
+	RET Z	; Ja, => klaar
+	LD L,A
+	INC L	;Start scroll bij volgende regel
+	OR A	;Geen carry
+	CALL SCRLUP	;Wis regel van scherm
+	LD A,(IY+MAXLIN)
+	LD (IY+PRTREG),A
+	JP HAALPRT	;Haal en print onderste regel
+
+	;Pas Xpos van blokbegin en -einde aan; A=Xpos, NC=Delete, C=Insert
+
+BLKPOS:	DEC A	;Xpos 0-based
+BLKPS2:	LD B,1	;1 teken opschuiven
+BLKPS3:	PUSH AF
+	LD A,B
+	OR A
+	JR Z,BP5
+	LD C,B	;Bewaar B na DJNZ
+	LD HL,(BENDLN)
+	LD DE,(CSRNUM)
+	SBC HL,DE	;Laatste regel?
+	JR Z,BP3
+BP1:	LD HL,(BSTARTLN)
+	LD DE,(CSRNUM)
+	OR A
+	SBC HL,DE
+	JR NZ,BP5
+	LD B,C
+	POP AF
+	PUSH AF
+	CP (IY-BSRTPOS)	;Xpos voor BlokStartPositie?
+	JR NC,BP5
+	POP AF	; Ja, pas blokstart aan
+	JR C,BP2
+BP1B:	DEC (IY-BSRTPOS)	;Delete teken
+	DJNZ BP1B
+	RET
+BP2:	INC (IY-BSRTPOS)	;Insert teken
+	DJNZ BP2
+	RET
+BP3:	POP AF
+	PUSH AF
+	CP (IY-BENDPOS)	;Xpos na BlokEindePos?
+	JR NC,BP1
+	POP AF
+	PUSH AF
+	JR C,BP4
+BP3B:	DEC (IY-BENDPOS)
+	DJNZ BP3B
+	JR BP1
+BP4:	INC (IY-BENDPOS)
+	DJNZ BP4
+	JR BP1
+BP5:	POP AF
+	RET
+
+	;Naar tabulatie-stop
+
+TOTAB:	BIT AI,(IY+SAVFL2)	;Auto Indent aan?
+	JR Z,TT0C
+	LD HL,STRBF2
+	LD DE,(CSRNUM)	; Ja, haal vorige regel op
+	LD A,D	;Regel nul heeft geen vorige regel
+	OR E
+	LD (HL),E
+	JR Z,TT0C
+	DEC DE
+	CALL GET
+TT0C:	BIT INSFL,(IY+FLAGS1)
+	JR NZ,TT1	;Insert aan => Spaties invullen
+	CALL RECHTS	;Insert uit => Cursor naar rechts
+	JR TT2
+TT1:	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)	;Op eerste positie?
+	CP (IY+KLLINKS)
+	JR C,TT3	;Ja, => TT3
+TT1B:	LD A,' '
+	CALL TEKEN	;Voeg spaties in
+	LD A,(STRBUF)	;Regel te lang?
+	CP 254
+	JP NC,REGLANG	; Ja, => Stop
+TT2:	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)	;Cursor op kantlijn?
+	CP (IY+KLLINKS)
+	RET Z	;Ja, => Klaar
+	CP 1
+	RET Z
+	CP (IY+KLRECHTS)
+	RET Z
+	LD D,0
+	LD E,A
+	LD HL,TTAB-1
+	ADD HL,DE
+	LD A,(HL)
+	OR A	;Cursor op tabstop?
+	RET NZ	; Ja, => klaar
+	BIT AI,(IY+SAVFL2)	;Autoindent?
+	JR Z,TT0C	; Nee, => Zoek verder
+	LD HL,STRBF2
+	LD A,(HL)	;Vorige regel < cursor positie?
+	CP 2
+	JR C,TT0C	; Ja, => Zoek verder
+	CP E	;Is vorige regel < huidige regel?
+	JR C,TT0C	; Ja, => Zoek verder
+	ADD HL,DE
+	LD A,' '
+	CP (HL)	; Nee, kijk of cursor onder een spatie staat
+	JR Z,TT0C	; Ja, => Zoek verder
+	DEC HL
+	CP (HL)	;Kijk of teken voor de cursor een spatie is
+	RET Z	; Ja, => Klaar
+	JR TT0C
+TT3:	DEC A	;Cursor op 1e positie in regel?
+	JR NZ,TT1B	;Nee, => Volg normale procedure
+	LD A,' '
+	CALL TEKEN	;Voeg spatie toe, cursor springt naar KLLINKS
+	JP BSPACE	;En weer 1 terug
+
+	;Vraag of tekst bewaard moet worden
+
+vraagSave:	bit sav,(iy+flags1)
+	ret z
+	call restScr	;Herstel scherm
+	ld hl,buf
+	ld de,path2Buf
+	ld bc,65
+	ldir	;Bewaar path/filename van DOS2
+	ld hl,tSaven
+	ld c,1	;1 regel
+	call invoer	;Vraag saven voor stoppen
+vrgS1:	call inkCrl
+	cp 'N'
+	ret z
+	cp 'J'
+	jr nz,vrgS1
+	call save
+	bit sav,(iy+flags1)	;Saven gelukt?
+	jr nz,vraagSave
+	ld hl,path2Buf
+	ld de,buf
+	ld bc,65
+	ldir	;Herstel path/filename van DOS2
+restScr:	ld hl,(csrNum)	;Restore screen
+	call gotoLine
+rstScr2:	call prtRg	;Toon in ieder geval de huidige regel
+	jp bouwOp	;Bouw evt. scherm opnieuw op
+toCurLine:	ld hl,(csrNum)	;Haal huidige regel
+	call goLine2	;Er naar toe, behoud csr. positie
+	jr rstScr2
+
+; stop
+;
+; Stop TED en ga naar MSX-Dos
+;
+stop:	call zeker	;Zeker weten? (ACCESS: Hier moet CALL)
+	ret c	; Nee, => Terug
+	call evtOpslaan
+	call rstScr2	;Bouw scherm op
+	call vraagSave	;Saven voor stoppen
+toDos:	xor a
+	ld (cStyle),a	;Blok cursor
+	ld (csrSw),a	;Cursor uit, kan aan staan in autodemo
+	di
+	ld hl,(savInd)	;Herstel 'Insert diskette
+	ld (HInsd),hl	; for drive B:'
+	ld hl,(savErr)	;Wis disk-error routine
+	ld (0f323h),hl
+	ld a,24
+	ld (crtcnt),a
+	ld a,(rg9sav)	;Standaard scherm 0
+	res 7,a
+	ld c,9
+	ld b,a
+	call wrtVdp
+	ld bc,13
+	call wrtVdp
+	call sdfScr	;Herstel palette
+
+	call iniFnk	;Herstel funktietoetsen
+	ld de,tIntro
+	ld a,(linl40)	;Meer dan veertig tekens op scherm?
+	cp 41
+	call nc,strOut	; Ja, => Toon (c) melding
+	di
+	ld hl,intEnt+(intBuf-intRou)
+	ld de,h.timi	;Herstel oude interrupt hook
+	ld bc,5
+	ldir
+
+if	not (demo or autodemo)
+
+	LD DE,TGEBR
+	LD A,(LINL40)	;Meer dan veertig tekens op scherm?
+	CP 41
+	JR NC,STP0
+	LD A,' '                ; Nee, skip extra tab
+	LD (TGEBR+2),A
+STP0:	CALL STROUT
+	LD C,(IY+VDPWRITE)
+	LD H,HIGH TNAME - 1
+	LD L,LOW  TNAME
+	INC H
+	LD D,0
+	LD E,(HL)
+	ADD HL,DE
+	LD B,E
+STP1:	LD A,(HL)	;Toon username
+	CPL	;Decrypt dmv XOR CRYPTBYTE
+	AND CRYPTBYTE	;Maar dat doen we niet op een te
+	LD D,A	; alledaagse manier
+	LD A,(HL)	;Want A xor B =
+	AND NOT CRYPTBYTE	; ((not A) and B) or (A and (not B))
+	OR D	;In dit geval is B het cryptbyte
+	OUT (C),A
+	DEC HL
+	DJNZ STP1
+endif
+
+	BIT MMAN,(IY-FLAGS5)	;Memman mapper i/o?
+	JR NZ,STP4
+	BIT D2MM,(IY-FLAGS4)	;Dos2 mapper i/o?
+	JR NZ,STP2
+
+	LD A,(SAVFE)	; Nee, herstel Memmap via poort 0FEH
+	OUT (0FEH),A
+	JR STP7
+
+STP2:	LD A,(MMTABEL+2)	;Op +0,+1 staat segment van page 1
+	LD H,80H
+	CALL ENASLT	; Ja, schakel primary mapper RAM in
+	LD A,(MMTABEL+3)
+	CALL PUTP2	;Herstel page2 segment
+	LD A,(IY+MAXMAP)
+	SUB 9	;Aantal Mapper seg's= MAXMAP-8VRAM-2SYS+1
+	JR Z,STP7	; Geen extra segmenten => Klaar
+	LD D,A	;D=Segment teller
+	LD HL,MMTABEL+4	;HL=Mapper tabel
+STP3:	LD B,(HL)	;Haal slotbyte
+	INC HL
+	LD A,(HL)	;Haal segmentnummer
+	INC HL
+	CALL FRESEG	;Geef segment vrij (vanwege DOS1)
+	DEC D	;Klaar?
+	JR NZ,STP3	; Nee, => Volgende segment
+	JR STP7
+
+STP4:	LD A,(IY+MAXMAP)	;Geef MemMan segmenten weer vrij
+	SUB 8	;Aantal Mapper seg's= MAXMAP-8VRAM-3SYS+1
+	LD D,A	;D=Segmentteller
+	LD HL,MMTABEL
+	LD A,(IY-PG1SEG)
+	INC A	;Pagina 1 segment in gebruik?
+	JR Z,STP5	; Nee, => Curseg van pg2 staat op mmTabel+0
+	INC HL	; Ja, curseg op mmTabel+2
+	INC HL
+	DEC D	;Pagina1 seg. niet vrijgeven
+STP5:	PUSH DE
+	LD E,(HL)
+	INC HL
+	LD D,(HL)
+	INC HL
+	PUSH HL
+	EX DE,HL	;HL=DOS segment voor pagina 2
+	CALL MMUSE2	;Schakel dat segment in via MemMan
+	POP HL	;HL seg ID tabel
+	POP AF	;A aantal vrij te geven segmenten
+	OR A
+	JR Z,STP7	; Nul seg's => Klaar
+STP6:	LD E,(HL)	;Haal seg ID
+	INC HL
+	LD D,(HL)
+	INC HL
+	PUSH HL
+	PUSH AF
+	EX DE,HL
+	LD DE,MEMMAN+DEALLOC
+	CALL EXTBIOS	;Geef MemMan segment [HL] vrij
+	POP AF
+	POP HL
+	DEC A
+	JR NZ,STP6
+
+STP7:	ld de,tCrlf
+	ld c,9	;Zet cursor op DOS kantlijn
+	call dos
+
+	ld a,(savKMode)	;Haal ingestelde Kanji mode
+	or a	;Kanji gewenst?
+	jr z,noKanji
+	ld de,1101h	; Ja, herstel hem
+	call extBios	;Set Kanji mode
+
+noKanji:	ld bc,term	;Terug zonder foutmelding
+	bit dos2,(iy-flags5)	;DOS2 bdos?
+	jp nz,bDos	; Ja, => BDOS
+	rst 0	; Nee, => adres 0
+
+
+	;1 woord naar links
+
+wordLeft:	res chFnd,(iy-flags5)	;Nog geen teken geweest
+	jr wrl2
+wrl1:	set chFnd,(iy-flags5)
+wrl2:	call links	;Altijd 1 naar links
+	ld a,(iy+xPos)
+	add a,(iy+offset)	;Haal cursor pos.
+	cp 1
+	ret z
+	ld e,a
+	ld a,(strBuf)	;Haal regel einde
+	sub e
+	ret c	;Reg end => Klaar
+	ld h,high strBuf
+	ld l,e
+	ld a,(hl)
+	cp ' '                  ;Csr op spatie?
+	jr z,wrl3	; Ja, => test vlag
+	call cmpBlank	;Csr op `blank' anders dan spatie?
+	jr nz,wrl1	; Nee, => Vlag: "karakter gepasserd"
+	bit chFnd,(iy-flags5)	;Als eens een kar. gevonden?
+	ret z	; Nee, => Zet cursor op de `blank'
+	jp rechts	; Ja, => Zet cursor op char na blank
+wrl3:	bit chFnd,(iy-flags5)	;Al eens een char gevonden?
+	jp nz,rechts	; Ja, => csr naar begin van het woord
+	jr wrl2
+
+	;Pijl naar links
+
+links:	res vir,(iy-flags6)	;Geen virtuele cursor meer
+	ld a,(iy+xPos)
+	dec a
+	jr z,li1
+	ld (iy+xPos),a
+	ret
+LI1:	LD A,(IY+OFFSET)
+	OR A
+	JR Z,LI2
+	DEC (IY+OFFSET)
+	JP SETBOUW	;Bouw scherm op
+LI2:	LD HL,(CSRNUM)
+	LD A,H
+	OR L
+	RET Z
+	LD (IY+XPOS),79
+	LD (IY+OFFSET),255-79
+	call omhoog
+	res vir,(iy-flags6)	;Virtuele cursor weer uitschakelen
+	jp toRegEnd
+
+	;1 woord naar rechts
+
+wordRight:	res spFnd,(iy-flags2)	;Nog geen spatie gevonden
+	res chFnd,(iy-flags5)	;Ook nog geen kar. gevonden
+wrr1:	ld a,(iy+xPos)
+	add a,(iy+offset)	;Haal cursor pos.
+	ld l,a	;strBuf staat op 0C000h
+	ld h,high strBuf	;Bereken adres van huidige teken
+	ld a,(hl)
+	cp ' '                  ;Echte spatie?
+	jr z,wrr2	; Ja, => Zet flag
+	bit spFnd,(iy-flags2)	;Als eens een spatie gevonden?
+	ret nz	; Ja, => Begin van een nieuw woord
+	call cmpBlank	;Csr op `blank' anders dan spatie?
+	jr nz,wrr3	; Nee, => Onderzoek deze letterpositie
+	bit chFnd,(iy-flags5)	;Al eens een karakter gevonden?
+	ret nz	; Ja, => Blank gevonden na een woord
+wrr2:	set spFnd,(iy-flags2)	;Vlag: Spatie gepasseerd
+	jr wrr4
+
+wrr3:	bit spFnd,(iy-flags2)	;Als eens een spatie gevonden?
+	ret nz	; Ja, => Begin van een nieuw woord
+wrr4:	set chFnd,(iy-flags5)	;Vlag: Karakter gevonden
+	call rechts	;Cursor 1 naar rechts
+	ld a,(iy+xpos)
+	add a,(iy+offset)	;Haal cursor pos.
+	cp 1
+	ret z	;Reg beg=>Klaar
+	ld e,a
+	ld a,(strBuf)	;Haal regel einde
+	sub e
+	ret c	;Reg end=>Klaar
+	jr wrr1	;Test volgende teken
+
+; cmpBlank
+;
+; Kijkt op karakter in [A] een spatie (of andere `blank') is.
+;
+; In:       A=Kar
+; Uit:      Z indien blank
+;          NZ indien karakter
+; Wijzigt:  B, HL
+;
+cmpBlank:	ld hl,blankTab	;Tabel met `blanks'
+	ld b,a	;Karakter naar B
+cmpBlankLp:	ld a,(hl)	;Haal blank uit tabel
+	cp -1	;Einde tabel?
+	jr z,blankNotFound	; Ja, => Geen blank
+	cp b	; Nee, vergelijk met kar.
+	ret z	;Terug met Z-flag indien gelijk, A=B
+	inc hl
+	jr cmpBlankLp	;Volgende `blank' testen
+blankNotFound:	dec a	;NZ flag zetten (A was -1)
+	ld a,b	;Karakter terug in A
+	ret
+
+	;Tabel met blanks, -1=End of table
+
+blankTab:	db ' ^*()-_=+\|[];:,./`''"@#$%&',-1
+
+
+	;Pijltoets naar rechts
+
+RECHTS:	res vir,(iy-flags6)	;Geen virtuele cursor meer
+	ld a,(iy+xPos)
+	add a,(iy+offset)
+	cp 255
+	jr z,rech1
+	ld b,a
+	ld a,(strBuf)
+	cp b
+	jr c,rech1
+	ld a,(iy+xPos)
+	cp 79
+	jr z,rech2	;Zin is langer als het scherm
+	inc (iy+xPos)
+	ret
+rech1:	ld (iy+xPos),1
+	ld a,(iy+offset)
+	ld (iy+offset),0
+	or a
+	jr z,rechGeenB	;Wel/niet opnieuw opbouwen
+	set bouw,(iy-flags4)
+rechGeenB:	call omlaag
+	res vir,(iy-flags6)	;Virtuele cursor weer uitschakelen
+	ret
+rech2:	inc (iy+offset)	;Scherm 1 pos. opschuiven
+	jp setBouw	;Bouw scherm op
+
+
+	;Ga_Naar menu
+
+GOTO:	LD HL,TGOTO
+	LD C,3
+	CALL INVOER	;Toon menu tekst, 3 regels
+	LD HL,TKEUZE
+	CALL MESSAGE	;'Maak uw keuze'
+GOTO1:	CALL INKCRL	;Wacht op toets en toon cursor
+	CP 255	;Funktietoets?
+	JR Z,GOTO3	; Ja, => Negeer
+	CP '0'                  ;Cijfer tussen 0 en 9?
+	JR C,GOTO2
+	CP '9'+1
+	JP C,TOMARKERS	; Ja, => naar mark{ring
+GOTO2:	CALL KLEIN	;Maak onderkast
+	LD HL,GOADR
+	LD BC,GOKAR
+	CALL DOCMD	;Zoek kar. op en voer commando uit
+	JR GOTO1	;Onbekend kar => Wacht op nieuwe toets
+GOTO3:	CALL NCHGET	;Negeer Fkey nummer
+	JR GOTO1
+
+	;Jump-adres tabel voor GOTO
+
+GOADR:	dw ESCAPE	;ESCape
+	dw GETLINE	;Naar regel
+	dw TOTOP	;Naar top
+	dw TOBOTTOM	;Naar bodem
+	dw TOBLOKS	;Naar blokstart
+	dw TOBLOKE	;Naar blokeinde
+
+TOTOP:	CALL EVTOPSLAAN
+	LD HL,0	;Naar regel 0
+	JP GOTOLINE
+
+TOBOTTOM:	CALL EVTOPSLAAN
+	LD A,(IY+MAXLIN)
+	LD (IY+YPOS),A	;Cursor onder aan het scherm
+	LD HL,(LASTLINE)	;Eerste regelnummer waar geen pointer
+	JP GOTOLINE	; van bestaat
+
+TOBLOKS:	CALL EVTOPSLAAN
+	res vir,(iy-flags6)	;Geen virtuele cursor meer
+	LD A,(IY-BSRTPOS)
+	CALL TOMIDDEN	;Zet xpos
+	LD HL,(BSTARTLN)
+	JP GOLINE2
+
+TOBLOKE:	CALL EVTOPSLAAN
+	res vir,(iy-flags6)	;Geen virtuele cursor meer
+	LD A,(IY-BENDPOS)
+	CALL TOMIDDEN	;Zet xpos
+	LD HL,(BENDLN)
+	JP GOLINE2
+
+	;Naar markering 0..9
+
+TOMARK:	LD A,(IY-MRKNUM)	;Haal nummer
+TOMARKERS:	PUSH AF
+	CALL EVTOPSLAAN
+	POP AF
+	SUB '0'
+	ADD A,A	;Bereken adres
+	LD D,0
+	LD E,A
+	LD HL,MARKTAB	;HL=Beginadres sprongtabel
+	ADD HL,DE
+	LD E,(HL)
+	INC HL
+	LD H,(HL)
+	LD L,E
+	JP GOTOLINE	;Spring naar markering
+
+	;Markeer een regel 0..9
+
+SETMRK:	LD A,(IY-MRKNUM)	;Haal nummer
+SETMARK:	SUB '0'
+	ADD A,A	;Bereken adres
+	LD D,0
+	LD E,A
+	LD HL,MARKTAB	;HL=Beginadres sprongtabel
+	ADD HL,DE
+	LD DE,(CSRNUM)
+	LD (HL),E
+	INC HL
+	LD (HL),D
+	RET
+
+	;Haal regelnummer
+
+GETLINE:	CALL RSTSCR2	;Herstel het scherm
+	CALL EVTOPSLAAN	;Bewaar regel
+	LD HL,TREGNR	;Haal=regelnummer
+	LD C,1	;1 regel tekst
+	CALL INVOER
+	CALL GETNR
+	LD A,H
+	OR L
+	JP Z,GOTOLINE
+	DEC HL	;0-Based maken
+	JP GOTOLINE
+
+; page (f3/p)
+;
+; Menu: - Plaats paginastop
+;       - Verwijder paginastop
+;       - Paginaindicatie aan/uit
+;
+page:	ld c,7	;C=Aantal menuregels
+	ld hl,tPage
+	call invoer	;Toon menutekst
+
+	ld hl,(csry)	;Bewaar xypos. van pag. indicatie
+pageLp:	push hl
+
+	bit pag,(iy+savFl2)	;Pagina-grens indicatie aan/uit
+	call aanCsr	;AAN/UIT tonen
+	dec l	;Regel omhoog
+	bit nPageStop,(iy+savFl2);Pagina-stop indicatie aan/uit
+	call notAanCsr
+	dec l
+	bit nPageNum,(iy+savFl3);Paginanummer indicatie aan/uit
+	call notAanCsr
+
+	ld hl,tKeuze
+	call message
+	ld bc,pageKar
+	ld hl,pageAdr
+	ld a,1	;Toon cursor
+	call getCmd	;Haal karakter/doe commando
+	pop hl	;Herstel xy pos. voor aan/uit printen
+	jr pageLp	;Toon waardes opnieuw
+
+	;Jump-adres tabel voor "page"
+
+pageAdr:	dw pageEsc
+	dw setPageStop
+	dw resPageStop
+	dw resStopsEntry
+	dw pageNumFlip
+	dw pageStopFlip
+	dw pageEndFlip
+
+
+; setResStop
+;
+; Plaats een pagina-stop op huidige regel indien er nog niet 1 staat
+; Verwijder stop indien er wel een staat
+;
+; Wordt aangeroepen door een control-toetsdruk (^M)
+;
+setResStop:	push hl	;Dummy RET addr & XY pos op de stack
+	push hl	; zetten
+
+	ld hl,(csrNum)	;Haal huidige regel
+	call getPageStop	;Staat hier een paginastop?
+	jr nc,resPageStop	; Ja, => Verwijderen
+
+
+; setPageStop
+;
+; Plaats een paginastop
+;
+; In: XY positie en RET addr. naar menu-routine op de stack
+;
+setPageStop:	ld hl,(csrNum)	;Haal huidige regel
+	call getPageStop	;Staat hier een paginastop?
+	jr nc,pageEsc	; => Regel staat al in de tabel
+
+	push ix	;Tabelpointer naar HL
+	pop hl
+
+	ld de,pageTab	;Begin van de tabel in DE
+	or a
+	sbc hl,de	;Bereken entrynummer in de tabel
+	srl h	;Delen door 2 bytes per entry
+	rr l
+
+	ld a,l	;Entry nummer in A (0-based)
+	cp maxPageStops	;Laatste tabel entry + 1? (1-based)
+	jp z,fullPageTab	; Ja, => Tabel zit vol
+
+	ld a,(iy+numPageStops)	;Haal huidig aantal enties
+	sub l	;Bereken aantal op te schuiven entries
+	jr z,setLastPageElm	; Nul, => Plaats element bovenop stapel
+
+	ld b,0
+	ld c,a	;Aantal op te schuiven entries in BC
+	sla c	;Keer 2 bytes per entry
+	rl b
+
+	ld l,(iy+numPageStops)	;HL=Aantal entries in tabel (H=nog 0!!)
+	sla l	;Keer 2 bytes per entry
+	rl h
+	add hl,de	;Begin+aantal=Eindadres+1 van de tabel
+	ld d,h	;DE=Ook eind-adres+1
+	ld e,l
+
+	inc de	;DE=Eindadres+1.5, wijst naar highbyte
+	dec hl	;HL wijst naar highbyte van last entry
+	lddr	;Maak ruimte in de tabel
+
+setLastPageElm: ld hl,(csrNum)	;Haal huidige regel
+	inc hl	;1-based maken
+	ld (ix+0),l	;Regelnr. invullen in de tabel
+	ld (ix+1),h
+	inc (iy+numPageStops)	;Verhoog `aantal entries' teller
+
+pageEsc:	set sav,(iy+flags1)	;Bij stoppen vraag: Saven? (j/n)
+	call setBouw	;Bouw scherm opnieuw op
+	pop hl	;Cursor XY van de stack
+	pop hl	;Returnadres naar "page" van de stack
+	ret	;Terug naar de main-loop
+
+
+; resPageStop
+;
+; Verwijder een paginastop
+;
+; In: XY positie en RET addr. naar menu-routine op de stack
+;
+resPageStop:	ld hl,(csrNum)	;Haal huidige regel
+	call delPageStop	;Verwijder paginastop
+	jr pageEsc	;Verlaat het menu
+
+
+; delPageStop
+;
+; Wis paginastop op regel HL
+;
+; In: HL=Regelnummer
+;
+delPageStop:	call getPageStop	;Bereken positie in paginastoptabel
+	ret c	; => Regel is geen paginagrens
+
+	dec (iy+numPageStops)	;Verlaag `aantal entries' teller
+
+	push ix	;Tabelpointer naar HL
+	pop hl
+
+	ld de,pageTab	;Begin van de tabel in DE
+	or a
+	sbc hl,de	;Bereken entrynummer in de tabel
+	srl h	;Delen door 2 bytes per entry
+	rr l
+
+	ld a,(iy+numPageStops)	;Haal aantal entries - 1
+	sub l	;Huidig entry nummer eraf
+	ret z	;Laatste entry, => Niets schuiven
+
+	ld b,0
+	ld c,a	;Aantal op te schuiven entries in BC
+	sla c	;Keer 2 bytes per entry
+	rl b
+
+	push ix	;Positie van de te wissen pointer
+	pop de	; in DE
+
+	ld h,d	;HL=Bron Pointer
+	ld l,e
+	inc hl	;Skip het te wissen entry
+	inc hl
+
+	ldir	;Schuif het entry uit de tabel
+	ret	;Pagianastop verwijderd
+
+
+	;Verwijder alle paginastops
+
+resAllStops:	push hl	;Dummy RET addr & XY pos op de stack
+	push hl	; zetten
+
+resStopsEntry:	call zeker	;Zeker weten?
+	jr c,pageEsc	; => Nee
+	ld (iy+numPageStops),0	; Ja, zet aantal paginastops op 0
+	jr pageEsc	;Terug naar het menu
+
+
+	;Wissel pagina-nummer indicatie in statusregel
+
+pageNumFlip:	bit nPageNum,(iy+savFl3);Staat de indicatie nu AAN?
+	jr z,pageNumUit	; Ja, => Zet hem uit
+
+	;Pagina-stop indikatie aan
+
+pageNumAan:	res nPageNum,(iy+savFl3)
+	jp setBouw	;Bouw scherm opnieuw op
+
+	;Pagina-grens indikatie uit
+
+pageNumUit:	set nPageNum,(iy+savFl3)
+	jp setBouw
+
+
+	;Wissel pagina-stop indicatielijn
+
+pageStopFlip:	bit nPageStop,(iy+savFl2);Staat de indicatie-lijn nu AAN?
+	jr z,pageStopUit	; Ja, => Zet hem uit
+
+	;Pagina-stop indikatie aan
+
+pageStopAan:	res nPageStop,(iy+savFl2)
+	jp setBouw	;Bouw scherm opnieuw op
+
+	;Pagina-grens indikatie uit
+
+pageStopUit:	set nPageStop,(iy+savFl2);Page stop indicatie uit
+	res pag,(iy+savFl2)	;Pagina grens indicatie ook uit
+	jp setBouw
+
+
+	;Wissel pagina-grens indicatielijn
+
+pageEndFlip:	bit pag,(iy+savFl2)	;Staat de indicatie-lijn nu AAN?
+	jr nz,pagUit	; Ja, => Zet hem uit
+
+	;Pagina-grens indikatie aan
+
+pagAan:	set pag,(iy+savFl2)	;Pagina grenzen tonen
+	res nPageStop,(iy+savFl2); dus ook de paginastops
+	jp setBouw	;Bouw scherm opnieuw op
+
+	;Pagina-grens indikatie uit
+
+pagUit:	res pag,(iy+savFl2)
+	jp setBouw
+
+
+	;Kleur instellen
+
+KLEUR:	LD HL,TKLEUR
+	LD C,5
+	CALL INVOER	;Kleur menu op scherm
+	LD A,(IY+MINLIN)
+	INC A
+	LD (CSRY),A	;Zet cursor klaar
+	LD A,1	;Haal kleur no. 1
+KLR1:	PUSH AF
+	CALL PRTKLEUR	;Print blauw rood groen
+	LD HL,CSRY	;Volgende regel
+	INC (HL)
+	POP AF
+	INC A
+	CP 5	;Tot kleur 5
+	JR C,KLR1
+	LD L,(IY+MINLIN)
+	INC L
+	LD H,37
+	LD (CSRY),HL	;Zet cursor op 1e teken
+
+KLR2:	CALL INKEY	;Haal toets
+	CP LEFT	;Links?
+	JR NZ,KLR4	; Nee, => KLR4
+	LD B,44
+	LD A,(CSRX)
+	CP 50	;Cursor op 50?
+	JR Z,KLR3	; Ja, naar 44
+	LD B,37
+	CP 44
+	JR Z,KLR3
+	LD A,50	;Cursor op 37?
+	LD (CSRX),A	; Dan naar 50
+	JR KLR6	; en omhoog
+KLR3:	LD A,B	;Zet cursor x-as
+	LD (CSRX),A
+	JR KLR2
+
+KLR4:	CP RIGHT	;Rechts?
+	JR NZ,KLR5	; Nee, => KLR5
+	LD A,(CSRX)
+	LD B,44
+	CP 37
+	JR Z,KLR3	;Net als naar links
+	LD B,50
+	CP 44
+	JR Z,KLR3
+	LD A,37
+	LD (CSRX),A
+	JR KLR8	;Omlaag
+
+KLR5:	CP UP
+	JR NZ,KLR7
+KLR6:	LD HL,CSRY
+	LD A,(HL)
+	DEC A
+	CP (IY+MINLIN)	;Kan cursor nog omhoog?
+	JR Z,KLR2	; Nee, => terug
+	LD (HL),A
+	JR KLR2
+
+KLR7:	CP DOWN
+	JR NZ,KLR9
+KLR8:	LD A,(IY+MINLIN)
+	ADD A,4
+	LD B,A
+	LD HL,CSRY
+	LD A,(HL)
+	CP B	;Cursor onderaan
+	JP Z,KLR2	; Ja, => terug
+	INC A
+	LD (HL),A
+	JP KLR2
+
+KLR9:	CP ESC	;Stoppen?
+	RET Z	; Ja, => Klaar
+	CP '0'                  ;Is teken wel cijfer?
+	JP C,KLR2	; Nee, => Terug
+	CP '8'
+	JP NC,KLR2
+	CALL NCHPUT	;Zet teken op scherm
+	SUB '0'                 ;A=Kleur
+	LD H,A
+	LD A,(CSRY)	;Bereken kleurnr.
+	SUB (IY+MINLIN)
+	PUSH AF
+	CALL GETPLT	;Haal palet
+	LD A,(CSRX)
+	CP 50	;Groen?
+	JR NZ,KLR10	; Nee, => KLR10
+	LD E,H
+	LD A,B
+	JR KLR12
+KLR10:	CP 37	;Blauw?
+	JR NZ,KLR11
+	LD A,B
+	AND 11110000B
+	OR H	;Vul blauw in
+	LD E,C	;Vul groen in
+	JR KLR12
+KLR11:	LD A,H	;Vul rood in
+	OR A
+	RLA
+	RLA
+	RLA
+	RLA
+	LD H,A
+	LD A,B
+	AND 00001111B
+	OR H	;Vul rood in
+	LD E,C
+KLR12:	POP BC	;Haal kleurnummer
+	LD D,B	; in D
+	CALL SETPLT	;Schrijf pallette
+	JP KLR2	; En opnieuw
+
+PRTKLEUR:	CALL GETPLT	;Haal palette
+	LD A,36
+	LD (CSRX),A	;Zet x-cursor
+	CALL SETVDP
+	LD A,B
+	AND 00001111B	;Haal kleur blauw
+	PUSH BC
+	CALL PRTBCD	;Druk waarde af
+	LD A,43
+	LD (CSRX),A
+	CALL SETVDP
+	POP BC
+	LD A,B
+	RRCA	;Haal rood
+	RRCA
+	RRCA
+	RRCA
+	AND 00001111B
+	PUSH BC
+	CALL PRTBCD
+	LD A,49
+	LD (CSRX),A
+	CALL SETVDP
+	POP BC
+	LD A,C	;Haal groen
+	AND 00001111B
+	JP PRTBCD
+
+	;Verander voorkeurexensie
+
+EXTENSIE:	LD C,1
+	LD HL,TEXT
+	CALL INVOER
+	LD HL,TEXTENS-1
+	LD E,1	;Alleen hoofdletters
+	LD B,3	;Maximaal 3 tekens
+	CALL GETOLD	;Laat voorkeur-extensie zien
+	LD HL,TEXTENS
+	LD A,' '
+	LD (HL),A	;Wis oude extensie
+	INC HL
+	LD (HL),A
+	INC HL
+	LD (HL),A
+	LD A,C
+	OR A	;Niets ingevuld?
+	RET Z	; Ja, => Klaar
+	LD B,0
+	LD HL,BUF+1
+	LD DE,TEXTENS
+	LDIR	;Vul nieuwe extensie in
+	RET
+
+	;Scherm instellingen
+
+SCHERM:	LD C,9
+	LD HL,TSCHERM
+	CALL INVOER
+SCRMENU:	LD DE,1008H
+	CALL MENUXY	;Locate cursor op 16,8 in menu
+	LD HL,(CSRY)
+	PUSH HL
+	LD HL,KARNAM
+	CALL PRTSTR	;Karakterset bestand
+	POP HL	;Haal XY pos
+	DEC L	;Regel omhoog
+	BIT MSXK,(IY+SAVFL)
+	CALL AANCSR	;MSX karakterset aan/uit
+	DEC L
+	DEC L
+	LD H,34
+	BIT BIGLET,(IY+SAVFL2)	;Grote letters
+	CALL AANCSR
+	DEC L	;Regel omhoog
+	BIT KRT,(IY-FLAGS3)
+	CALL AANCSR	;Lichtkrant
+	DEC L	;Regel omhoog
+	BIT VOORNUL,(IY+SAVFL)	;Voorloopnullen in klokje
+	CALL AANCSR
+	DEC L	;Regel omhoog
+	BIT COMLIN,(IY+TABSAV)
+	CALL AANCSR	;Commandoregel
+	DEC L	;Regel omhoog
+	BIT BLKC,(IY+SAVFL)	;Blok cursor
+	CALL AANCSR
+	DEC L	;Regel omhoog
+	BIT CSR,(IY+TABSAV)
+	CALL AANCSR	;Kleuren-cursor
+	LD H,62
+	BIT EDIT,(IY+SAVFL2)
+	CALL AANCSR	;Edit mode
+	INC L	;Regel omlaag
+	BIT AI,(IY+SAVFL2)
+	CALL AANCSR	;Auto indent
+	INC L
+	LD A,(REPFL)
+	OR A
+	CALL AANCSR	;Repeteer toetsen
+	INC L
+	BIT KNIPPER,(IY+SAVFL2)
+	CALL AANCSR	;Knipperende cursor aan/uit
+	LD HL,CSRX
+	LD (HL),3EH
+	DEC HL
+	PUSH HL
+	INC (HL)
+	LD A,(BLKON)	;Cursor knippertijd AAN
+	CALL BCDSET
+	POP HL
+	INC (HL)
+	LD A,(BLKOFF)	;Cursor knippertijd UIT
+	CALL BCDSET
+
+	LD HL,TKEUZE
+	CALL MESSAGE
+	LD BC,SCRKAR
+	LD HL,SCRADR
+	LD A,1	;Toon cursor
+	CALL GETCMD	;Haal karakter/doe commando
+	JP SCRMENU	;Toon waardes opnieuw
+
+SCRADR:	dw MENUESC	;Escape
+	dw SCHERM1	;Commandoregel op scherm
+	dw CURSOR	;Kleuren cursor
+	dw CSRBLK	;Blok cursor
+	dw KLOK	;Voorloop nul
+	dw KRANT	;Lichtkrant
+	dw GROLET	;Grote letters
+	dw MSXSET	;MSX set
+	dw EDITM	;Edit mode
+	dw SETAI	;Auto-indent
+	dw REPKEY	;Repeteer toetsen
+	dw GETKNAM	;Karakterset naam
+	dw CSRKNIP	;Cursor blink on/off toggle
+	dw CSRBON	;Cursor blink on time
+	dw CSRBOFF	;Cursor blink off time
+
+GETKNAM:	LD DE,1008H	;Karakterset naam
+	CALL MENUXY	;Vul xy-pos. in
+	LD HL,KARNAM
+	LD E,1
+	CALL GETFLEN	;Haal bestandsnaam
+	CALL GETOLD
+	LD B,0
+	INC C
+	LD HL,BUF
+	LD DE,KARNAM
+	LDIR	;Bewaar naam
+LOADKAR:	BIT MSXK,(IY+SAVFL)	;MSX set in gebruik?
+	RET NZ	; Ja, => Terug
+	LD HL,KARNAM	;Entry: Laad karakterset van disk
+	LD DE,BUF
+	LD BC,64
+	LDIR
+	LD HL,BUF
+	CALL NAAM2	;Controleer naam
+	RET C	;Foute naam => terug
+	LD A,OPEN
+	CALL MAAKFCB	;Open de file
+	JP C,KARERR	; Karakterset niet gevonden
+	LD HL,(TXTCGP)
+	CALL NSTWRT	;Zet VDP klaar voor output naar karset VRAM
+	CALL UPDATE	;Vul de diskbuffer
+	LD HL,DISKBUF
+	LD A,(HL)
+	CP 0FEH	;Is het een BLOAD file?
+	JP NZ,KARERR
+	LD DE,7
+	ADD HL,DE	;Sla header met adresinfo etc. over
+	LD DE,2048	;Karset = 2 kb.
+	LD C,(IY+VDPWRITE)	;C=VDP write poort
+SC4:	LD A,(HL)	;Haal byte uit buffer
+	OUT (C),A	;Naar VRAM
+	DEC DE
+	LD A,D	;Alle tekens gehad?
+	OR E
+	JR Z,SC5	; Ja, => Klaar
+	PUSH DE
+	LD DE,(ENDTPA)
+	CALL DCOMPR	;Einde van diskbuffer?
+	POP DE
+	CALL NC,UPDATE	; Ja, vul buffer opnieuw
+	INC HL
+	JR SC4
+SC5:	CALL CTRLESC	;Zet het escape en ctrl teken in de karset
+CLOSEBF:	LD B,(IY+DSKFLG)	;   Haal file handle
+	INC B
+	DEC B
+	RET Z	;Nummer 0 => Niets open
+	LD (IY+DSKFLG),0	;   Geen file meer open
+	BIT DOS2,(IY-FLAGS5)	;DOS2?
+	JR Z,CB1	; Nee, => Sluit FCB
+	LD C,CLOSEFH
+	JP DOS	; Ja, sluit file handle
+CB1:	LD DE,FCB
+	LD C,CLOSE
+	JP DOS	;Sluit bestand
+
+MSXSET:	LD A,(IY+SAVFL)	;Wel/Geen gebruik van MSX kar. set
+	XOR 1 SHL MSXK
+	LD (IY+SAVFL),A
+	BIT MSXK,(IY+SAVFL)	;Staat MSX set nu uit?
+	JP Z,LOADKAR	; Ja, => Laad karakters van schijf
+MSXKAR:	LD HL,(TXTCGP)	; Nee, lees MSX-set uit ROM
+	CALL NSTWRT	;Zet VDP klaar voor output naar karset VRAM
+	LD HL,(CGPNT+1)
+	LD BC,2048
+MS1:	PUSH BC
+	LD A,(CGPNT)
+	CALL RDSLT	;Lees byte uit ROM
+	LD C,(IY+VDPWRITE)
+	OUT (C),A	;Zet byte in VRAM
+	POP BC
+	INC HL
+	DEC BC
+	LD A,B
+	OR C
+	JR NZ,MS1
+CTRLESC:	LD HL,1000H+127*8
+	LD DE,CTRLKAR	;Ascii 127=Controlteken
+	CALL MAKEKAR
+	LD HL,1000H
+	JP MAKEKAR	;Ascii 0=Escape teken
+
+KRANT:	LD A,(IY-FLAGS3)
+	XOR 1 SHL KRT	;Wissel vlag aan/uit
+	LD (IY-FLAGS3),A
+	RET
+
+GROLET:	LD HL,SCHERM	;Straks menu opnieuw opbouwen
+	EX (SP),HL	;Wis oude returnadres
+GROLET2:	LD A,1 SHL BIGLET	;Wel/geen grote letters in hulpmenu
+	CALL SFL2TOGGLE	;Wissel bit in IY+SAVFL2
+	BIT HLP,(IY+SAVFL2)
+	RET Z	;Geen menu op scherm => Klaar
+	LD A,(IY+MINLIN)
+	SUB HLPCNT
+	LD L,A
+	CALL HM0	;Toon hulptekst
+	JP PRTRG	; of grote letters
+
+REPKEY:	LD A,(REPFL)
+	CPL	;Wel/Geen repteer toetsen
+	LD (REPFL),A
+	LD (IY+REPT),A	;Copieer vlag in werkgebied
+	RET
+
+EDITM:	LD A,1 SHL EDIT	;Wel/geen edit mode
+	JR SFL2TOGGLE
+
+SETAI:	LD A,1 SHL AI	;Wel/geen autoindent
+	JR SFL2TOGGLE
+
+CSRKNIP:	LD A,1 SHL KNIPPER	;Wel/geen knipperende cursor
+SFL2TOGGLE:	XOR (IY+SAVFL2)	;Wissel bit in IY+SAVFL2
+	LD (IY+SAVFL2),A
+	RET
+
+CURSOR:	LD A,(IY+TABSAV)	;Wel / Geen kleuren cursor
+	XOR 1 SHL CSR
+	LD (IY+TABSAV),A
+	RET
+
+CSRBON:	LD DE,3E04H
+	CALL MENUXY
+	LD A,(BLKON)	;Cursor knipper AAN tijd
+	CALL GETONR
+	LD A,L
+	LD (BLKON),A
+	RET
+
+CSRBOFF:	LD DE,3E05H
+	CALL MENUXY
+	LD A,(BLKOFF)	;Cursor knipper UIT tijd
+	CALL GETONR
+	LD A,L
+	LD (BLKOFF),A
+	RET
+
+SCHERM1:	LD HL,SCHERM	;Straks menu opnieuw opbouwen
+	EX (SP),HL	;Wis oude returnadres
+SCHERM2:	LD A,(IY+TABSAV)
+	XOR 1 SHL COMLIN	;Groot/klein scherm
+	LD (IY+TABSAV),A
+
+	;Initialiseer scherm
+
+INIS:	CALL EVTOPSLAAN
+	LD BC,031AH
+	BIT COMLIN,(IY+TABSAV)
+	JR Z,IS1	;Klein scherm? => IS1
+	LD BC,0519H
+IS1:	LD A,C
+	LD (IY+MAXLIN),A	;Vul bodem regel in
+	LD (CRTCNT),A
+	LD A,B
+	BIT HLP,(IY+SAVFL2)	;Help menu aan?
+	JR Z,IS2
+	LD L,A
+	ADD A,HLPCNT	; Ja, tel HELP COUNT regels erbij
+	SET RSTH,(IY-FLAGS4)	;Restore Help Flag: Vul helpscherm opnieuw in
+is2:	ld (iy+minLin),a	;Vul topregel in
+	add a,(iy+maxLin)
+	sra a	;Bereken schermmidden
+	ld (iy+yPos),a	;Cursor op schermmidden
+
+	LD HL,(NAMBAS)
+	LD BC,27*80
+	LD A,' '
+	CALL BIGFIL	;Hele scherm leeg
+	CALL INVERSE	;Kleur scherm in
+	CALL STATUS	;Statusregel
+	LD HL,-1
+	LD (INTVAL),HL	;Interruptteller maximum
+	LD HL,-50	;50 tellen geweest =>
+	LD (INTCNT),HL	; toon klok
+	CALL INT	;Toon klok & lichtkrant
+	LD B,(IY+MINLIN)
+	DEC B
+	LD A,17H
+	CALL DRAWLINE	;Streep onder statusregel
+	call prtSav	;Toon filenaam
+	call comLn	;Print commandoregel
+	jp toCurLine	;Bouw scherm op, behoud csr. pos.
+
+	;Printer-driver
+
+DRIVER:	LD C,18
+	LD HL,TDRIVER
+	CALL BIGINV
+	LD A,45
+	BIT DRIVE,(IY+TABSAV)
+	CALL PAANUIT	;Driver aan/uit
+	CALL PDRTEK
+	LD HL,TGETDRV
+	CALL MESSAGE	;Vraag om letter
+	LD A,32
+	LD (CSRX),A
+DR3:	CALL NCHGET	;Haal toets
+	CP ESC
+	RET Z
+	CP CR	;Return?
+	JR NZ,DR3B
+	LD A,(IY+TABSAV)
+	XOR 10000B	;Wissel drivergebruik
+	LD (IY+TABSAV),A
+	JR DRIVER
+DR3B:	CP 1
+	JR NZ,DR4
+	CALL NCHGET	;Haal grafisch
+	SUB 64
+	JR DR5B
+DR4:	CP 255	;Fkey?
+	JR NZ,DR5
+	CALL NCHGET	; Ja, negeren
+	JR DR3
+DR5:	CP DEL	;Delete toets negeren
+	JR Z,DR3
+	CP SELECT	;Control-code?
+	JR NZ,DR5A
+	LD A,DEL	; Ja, vul ASCII 127 in
+DR5A:	CP ' '
+	JR C,DR3
+DR5B:	LD C,A	;Bewaar teken
+	LD HL,DRVTAB
+	LD DE,11
+	LD B,32
+DR6:	LD A,(HL)	;Zoek teken op in tabel
+	OR A	;Lengte=0?
+	JR Z,DR7
+	INC HL
+	LD A,(HL)
+	DEC HL
+	CP C
+	JR Z,DR9	;Gevonden
+DR7:	ADD HL,DE	;Volgende
+	DJNZ DR6
+	LD HL,DRVTAB	;Niet gevonden
+	LD B,32	; zoek lege plaats
+DR8:	LD A,(HL)
+	OR A
+	JR Z,DR9
+	ADD HL,DE
+	DJNZ DR8
+	CALL BEEP	;Mem vol
+	JR DR3
+DR9:	LD B,(HL)	;Haal lengtebyte
+	INC HL
+	LD (HL),C	;Vul het teken in
+	INC HL
+	LD A,C
+	CALL NCHPUT	;Toon op scherm
+	LD A,(CSRX)
+	ADD A,3
+	LD (CSRX),A
+	LD C,B	;C=Bestaande lengte
+	CALL GTCODES	;Haal code op
+	DEC HL	;Lengtebyte staat voor teken
+	LD (HL),A	;Vul lengte in
+	JP DRIVER
+
+	;Haal rijtje van 9 codes
+
+GTCODES:	LD B,9	;Haal 9 codes
+GC1:	PUSH BC
+	PUSH HL
+	XOR A
+	LD (BUF+9),A
+	LD A,(CSRX)
+	PUSH AF
+	LD A,9
+	SUB C
+	CP B	;Lengte=>C?
+	JR NC,GC2	; Ja, nul in buf
+	LD A,(HL)	; Nee, haal oude kar.
+	CP ' '                  ;Getal?
+	JR C,GC3	; Ja, haal nummer
+	CP DEL
+	JR NC,GC3
+	LD HL,BUF+9	;String naar buffer
+	LD (HL),3	;3 bytes
+	INC HL
+	LD (HL),'"'
+	INC HL
+	LD (HL),A
+	INC HL
+	LD (HL),'"'
+GC2:	LD HL,BUF+9
+	LD E,0
+	LD B,3
+	CALL GETOLD	;Toon string
+	JR GC4
+GC3:	LD E,0	;Alles mag
+	CALL GETONUM2	;Haal nummer op
+GC4:	POP AF
+	ADD A,4
+	LD (CSRX),A
+	LD HL,BUF
+	LD C,(HL)
+	LD A,C
+	OR A	;Iets ingetypt?
+	JR Z,GC9	; Nee, => Klaar
+	INC HL
+	LD A,(HL)
+	CP '0'                  ;Cijfer?
+	JR C,GC5
+	CP '9'+1
+	JR C,GC7	; Ja => haal getal
+GC5:	CP '"'                  ;'"'?
+	JR NZ,GC6	; Nee, haal letter
+	LD A,C
+	CP 2	;Alleen '"'?
+	JR C,GC9	; Stop
+	INC HL
+	LD A,(HL)
+GC6:	OR A	;Escape?
+	JR NZ,GC8
+	LD A,ESC
+	JR GC8
+GC7:	CALL DECTOBIN	;Haal getal
+	LD A,L
+GC8:	POP HL
+	POP BC
+	LD (HL),A	;Vul code in
+	INC HL
+	DEC B
+	JP NZ,GC1	;Haal volgende code
+	JR GC10
+GC9:	POP HL
+	POP BC
+GC10:	LD A,9
+	SUB B
+	LD D,0
+	LD E,A	;DE=Lengte
+	OR A
+	SBC HL,DE
+	DEC HL	;HL=Lengte byte
+	RET
+
+PDRTEK:	LD H,3
+	LD L,(IY+MINLIN)
+	INC L
+	LD (CSRY),HL
+	LD HL,DRVTAB
+	LD B,32	;32 tekens
+PD1:	PUSH BC
+	PUSH HL
+	LD A,(HL)	;Haal lengte
+	INC HL
+	OR A
+	JR Z,PD6
+	LD B,A	;Max 9 codes
+	LD DE,(CSRY)
+	PUSH DE
+	LD A,(HL)	;Toon teken
+	INC HL
+	CALL NCHPTI
+	LD A,':'
+	CALL NCHPTI
+	LD A,' '
+	CALL NCHPTI
+	CALL PCODES	;Print de codes
+	POP HL	;Haal cursor adres
+	LD A,H
+	ADD A,40
+	LD H,A
+	CP 80	;Regel vol?
+	JR C,PD5
+	INC L	; Ja, volgende
+	LD H,3
+PD5:	LD (CSRY),HL
+PD6:	POP HL	;Haal adres in driver
+	LD DE,11
+	ADD HL,DE
+	POP BC
+	DJNZ PD1	;Volgende rij
+	RET
+
+PCODES:	PUSH BC
+	CALL SETVDP
+	LD A,(HL)
+	INC HL
+	PUSH HL
+	CP ' '                  ;Code<" "?
+	JR C,PC1
+	CP DEL
+	JR NC,PC1
+	LD E,'"'                ; Nee, toon "A"
+	OUT (C),E
+	EX (SP),HL	;Wachtlus
+	EX (SP),HL
+	OUT (C),A
+	EX (SP),HL
+	EX (SP),HL
+	OUT (C),E
+	JR PC2
+PC1:	CALL PRTBCD	;Toon code in cijfers
+PC2:	LD A,(CSRX)
+	ADD A,4	;Verplaats cursor
+	LD (CSRX),A
+	POP HL
+	POP BC
+	DJNZ PCODES
+	RET
+
+	;Kolommen instellen
+
+CHKOL:	LD C,8
+	LD HL,TKOLOM
+	CALL INVOER
+	LD B,'1'
+CK1:	PUSH BC
+	LD DE,TKOLPOS	;Print 6 kolomposities
+	CALL STROUT
+	POP BC
+	LD A,B
+	CALL NCHPTI	;Print nummer
+	LD A,':'
+	CALL NCHPTI
+	INC B
+	LD A,B
+	CP '7'
+	JR C,CK1
+CHKOLOOP:	LD L,(IY+MINLIN)	;Zet cursor weer boven
+	LD H,42
+	LD (CSRY),HL
+	LD HL,CSRY
+	PUSH HL
+	LD A,(KOLOMS)
+	CALL BCDSET	;Aantal kolommen
+	POP HL
+	INC (HL)
+	LD DE,KOLTAB	;Toon de kolomposities
+	LD B,6
+CK2:	PUSH BC
+	INC (HL)
+	PUSH HL
+	LD A,(DE)
+	PUSH DE
+	CALL BCDSET
+	POP DE
+	POP HL
+	POP BC
+	INC DE
+	DJNZ CK2
+
+CK3:	LD HL,TKEUZE
+	CALL MESSAGE
+	CALL INKCRL	;Wacht op toets en toon cursor
+	LD HL,CSRX
+	LD (HL),42	;Vul x-pos. in
+	DEC HL
+	LD B,(IY+MINLIN)	;Naar bovenste schermregel
+	LD (HL),B
+	CP 255	;Funktietoets?
+	JR Z,CK3D	; Ja, => Negeer
+	CP '1'                  ;Kolomnummer?
+	JR C,CK3B	; Nee, => Test [A]antal kolommen
+	CP '7' + 1
+	JR C,CK4	; Ja, => Stel die kolom in
+CK3B:	CALL KLEIN	;Maak onderkast
+	LD HL,CHKOLOOP
+	PUSH HL	;DOCMD keert terug naar CHKOLOOP
+	LD HL,KOLADR	; de stack gemikt
+	LD BC,KOLKAR	;A<>0 => Toon cursor
+	CALL DOCMD	;Voer commando uit met CALL (Stack=RET)
+	RET	;Niet gevonden => Naar CK3
+CK3D:	CALL NCHGET	;Negeer Fkey nummer
+	JR CK3
+
+CK4:	INC (HL)	;Regel omlaag
+	SUB '0'                 ;Stel positie in van kolom [A]
+	LD B,A
+	LD DE,KOLTAB-1
+CK5:	INC (HL)
+	INC DE
+	DJNZ CK5
+	PUSH DE
+	LD A,(DE)
+	LD B,3	;3 cijfers
+	CALL GON1	;Haal kolompositie
+	POP DE
+	JR Z,CHKOLOOP
+	INC H	;Getal > 255?
+	DEC H
+	JR NZ,CHKOLOOP	; Ja, => Negeeer
+	LD A,L
+	OR A
+	JR Z,CHKOLOOP
+	LD (DE),A	;Bewaar nieuwe kol. positie
+	JR CHKOLOOP
+
+	;Stel aantal kolommen in
+
+NUMKOL:	LD A,(KOLOMS)
+	CALL GETONR	;Aantal kolommen
+	RET Z
+	LD A,L
+	OR A
+	RET Z
+	CP 7
+	RET NC
+	LD (KOLOMS),A	;Bewaar het aantal kolommen
+	RET
+
+	;Jump-adres tabel voor CHKOL
+
+KOLADR:	dw MENUESC	;ESCape
+	dw NUMKOL	;Aantal kolommen
+
+INCMAC	macro
+	POP HL
+	INC (HL)	;Regel omlaag
+	PUSH HL
+	endm
+
+	;Printer instelling
+
+PRTINS:	CALL EVTOPSLAAN
+	LD HL,TPRTINS
+	LD C,13
+	CALL BIGINV	;Tekst op scherm
+PRTSCR:	LD L,(IY+MINLIN)	;Zet cursor weer boven
+	LD H,17
+	LD (CSRY),HL
+	LD HL,CSRY
+	PUSH HL
+	LD HL,TSETPRT
+	CALL PRTSTR	;Setup string
+	INCMAC
+	LD A,(IY+TOPMAR)
+	CALL BCDSET	;Topmarge
+	INCMAC
+	LD A,(IY+BOTMAR)
+	CALL BCDSET	;Ondermarge
+	INCMAC
+	LD A,(IY+PAGLEN)
+	CALL BCDSET	;Print paginalengte
+	POP HL
+	INC (HL)
+	INC (HL)
+	INC (HL)
+	INC HL
+	LD (HL),2
+	DEC HL
+	PUSH HL
+	LD HL,KOPTXT
+	CALL PRTSTR	;Kopregel
+	INCMAC
+	LD HL,VOETTXT
+	CALL PRTSTR	;Voetregel
+	POP HL
+	INC (HL)
+	INC (HL)
+	PUSH HL
+	LD A,17
+	BIT MRG,(IY+SAVFL)
+	CALL PAANUIT	;Mail-merge aan/uit
+	POP HL
+	INC (HL)
+	INC HL
+	LD (HL),17
+	PUSH HL
+	LD HL,MRGNAM
+	CALL PRTSTR	;Merge bestand
+	POP HL
+	LD (HL),40
+	DEC HL
+	DEC (HL)
+	PUSH HL
+	LD HL,(MSTART)	;1e mail-merge kaart
+	CALL DCSET
+	POP HL
+	INC (HL)
+	INC (HL)
+	INC HL
+	LD (HL),17
+	PUSH HL
+	LD HL,TRECEND
+	LD B,(HL)
+	INC HL
+	CALL PCODES	;Einde-record codes
+	POP HL
+	LD (HL),17
+	DEC HL
+	INC (HL)
+	INC HL
+	PUSH HL
+	LD HL,TVLDEND
+	LD B,(HL)
+	INC HL
+	CALL PCODES	;Einde-veld codes
+	POP HL
+	LD (HL),47
+	DEC HL
+	LD A,(IY+MINLIN)	;Zet cursor weer boven
+	INC A
+	LD (HL),A
+	PUSH HL
+	LD HL,(PSTART)	;Print paginabegin
+	CALL DCSET
+	INCMAC
+	LD A,(IY+KOPPOS)	;Kopreg. pos
+	CALL BCDSET
+	INCMAC
+	LD A,(IY+VOETPOS)
+	CALL BCDSET	;Pag. regel
+	POP HL
+	DEC (HL)
+	DEC (HL)
+	INC HL
+	LD (HL),76
+	DEC HL
+	PUSH HL
+	LD A,(IY+KOPMRG)
+	CALL BCDSET	;Kopregel marge
+	INCMAC
+	LD A,(IY+VOETMRG)	;Voetregel marge
+	CALL BCDSET
+	INCMAC
+	BIT FFD,(IY+SAVFL)
+	CALL AANUIT2	;Form-feed
+	POP HL
+	INC (HL)
+	INC HL
+	LD (HL),76
+	PUSH HL
+	BIT CONT,(IY+SAVFL)
+	CALL AANUIT2	;Continue printen
+	POP HL
+	LD (HL),76
+	DEC HL
+	INC (HL)
+	INC (HL)
+	INC (HL)
+	INC (HL)
+	INC (HL)
+	LD A,(IY+MRGKAR)
+	CALL NCHPUT	;Merge teken
+	LD HL,TKEUZE
+	CALL MESSAGE	;Print 'Maak uw keuze'
+	LD BC,PRTKAR
+	LD HL,PRTADR
+	LD A,1	;Toon cursor
+	CALL GETCMD	;Haal een toets en voer commando uit
+	JP PRTSCR	;Vul het menu opnieuw in
+
+	;Printer-instellingen subroutines
+
+PRTADR:	dw MENUESC	;Escape
+	dw PRTSET	;Setup string
+	dw PRTBM	;Bovenmarge
+	dw PRTOM	;Ondermarge
+	dw PRTPL	;Paginalengte
+	dw PRTKR	;Kopregel tekst
+	dw PRTVR	;Voetregel tekst
+	dw PRTMM	;Mail aan/uit
+	dw PRTMN	;Mailmerge Naam
+	dw PRTKE	;Kaart einde
+	dw PRTVE	;Veld einde
+	dw PRTEP	;Eerste paginanummer
+	dw PRTKP	;Kopregel pos.
+	dw PRTVP	;Voetregel pos.
+	dw PRTFF	;Formfeed
+	dw PRICP	;Continue printen
+	dw PRTKM	;Kopregel marge
+	dw PRTVM	;Voetregel marge
+	dw PRTMT	;Mail-Merge teken
+	dw PRTEK	;1e mail-merge kaart
+
+MENUXY:	LD HL,CSRX	;Locate cursor relatief tov. IY+MINLIN
+	LD (HL),D	;Xpos invullen
+	DEC HL
+	LD A,E
+	ADD A,(IY+MINLIN)	;Tel 1e menuregel bij ypos op
+	LD (HL),A	;Vul ypos in
+	RET
+
+MENUESC:	POP HL	;Wis returnadres van stack
+	RET	;Terug naar de tekst
+
+PRTSET:	LD DE,1100H	;Setup string
+	CALL MENUXY	;Locate cursor op 11H,0
+	LD HL,TSETPRT
+	LD E,0
+	LD B,40	;Haal 40 tekens setup string
+	CALL GETOLD
+	LD B,0
+	INC C	;Lengtebyte ook meenemen
+	LD HL,BUF
+	LD DE,TSETPRT
+	LDIR	;Vul setupstring in
+	RET	;Bouw scherm weer op
+
+PRTBM:	LD DE,1101H	;Bovenmarge
+	CALL MENUXY
+	LD A,(IY+TOPMAR)
+	CALL GETONR	;Haal bovenmarge
+	RET Z
+	LD (IY+TOPMAR),L
+	RET
+
+PRTOM:	LD DE,1102H	;Ondermarge
+	CALL MENUXY
+	LD A,(IY+BOTMAR)
+	CALL GETONR	;Ondermarge
+	RET Z
+	LD (IY+BOTMAR),L
+	RET
+
+PRTPL:	LD DE,1103H	;Paginalengte
+	CALL MENUXY
+	LD A,(IY+PAGLEN)
+	LD B,3	;3 cijfers
+	CALL GON1	;Haal paginalengte
+	RET Z
+	LD (IY+PAGLEN),L
+	RET
+
+PRTKR:	LD DE,0206H	;Kopregel tekst
+	CALL MENUXY
+	LD HL,KOPTXT
+	LD E,0
+	LD B,78	;Haal koptekst
+	CALL GETOLD
+	LD B,0
+	INC C
+	LD HL,BUF
+	LD DE,KOPTXT
+	LDIR
+	RET
+
+PRTVR:	LD DE,0207H	;Voetregel tekst
+	CALL MENUXY
+	LD HL,VOETTXT
+	LD E,0
+	LD B,78	;Haal voettekst
+	CALL GETOLD
+	LD B,0
+	INC C
+	LD HL,BUF
+	LD DE,VOETTXT
+	LDIR
+	RET
+
+PRTMN:	LD DE,110AH	;Mailmerge Naam
+	CALL MENUXY
+	LD HL,MRGNAM
+	LD E,1
+	CALL GETFLEN	;Haal merge-bestandsnaam
+	CALL GETOLD
+	LD B,0
+	INC C
+	LD HL,BUF
+	LD DE,MRGNAM
+	LDIR
+	RET
+
+PRTKE:	LD DE,110BH	;Kaart einde
+	CALL MENUXY
+	LD HL,TRECEND
+	LD C,(HL)
+	INC HL
+	CALL GTCODES	;Codes voor kaart-einde
+	OR A
+	RET Z	;Lengte nul mag niet
+	LD (HL),A	;Vul lengte byte in
+	POP HL	;Haal returnadres van stack
+	JP PRTINS	; en bouw scherm opnieuw op
+
+PRTVE:	LD DE,110CH	;Veld einde
+	CALL MENUXY
+	LD HL,TVLDEND
+	LD C,(HL)
+	INC HL
+	CALL GTCODES	;Codes voor veld-einde
+	OR A
+	RET Z
+	LD (HL),A
+	POP HL
+	JP PRTINS
+
+PRTEP:	LD DE,2F01H	;Eerste paginanummer
+	CALL MENUXY
+	LD E,2
+	LD B,5
+	LD HL,(PSTART)
+	CALL GN0	;Lees nummer in
+	CALL DECTOBIN
+	LD A,(BUF)
+	OR A
+	RET Z
+	LD (PSTART),HL
+	RET
+
+PRTKP:	LD DE,2F02H	;Kopregel pos.
+	CALL MENUXY
+	LD A,(IY+KOPPOS)
+	CALL GETONR
+	RET Z
+	LD A,L
+	OR A
+	RET Z
+	LD (IY+KOPPOS),A
+	RET
+
+PRTVP:	LD DE,2F03H	;Voetregel pos.
+	CALL MENUXY
+	LD A,(IY+VOETPOS)
+	CALL GETONR
+	RET Z
+	LD A,L
+	OR A
+	RET Z
+	LD (IY+VOETPOS),A
+	RET
+
+CSRBLK:	LD HL,PRTINV	;Toon invoegstand/Nieuwe cursor
+	PUSH HL
+	LD B,10000000B	;Wel/geen blok cursor
+	db 11H	;Opcode LD DE,nn
+KLOK:	LD B,1	;Wel / Geen extra nul in klok
+	db 11H
+PRTMM:	LD B,10B	;Mail-Merge aan/uit
+	db 11H
+PRTFF:	LD B,100B	;Formfeed masker
+	db 11H
+PRICP:	LD B,1000B	;Continue printen
+	LD A,(IY+SAVFL)
+	XOR B	;Wissel bitvlag in SAVFL
+	LD (IY+SAVFL),A
+	RET
+
+PRTKM:	LD DE,4C01H
+	CALL MENUXY
+	LD A,(IY+KOPMRG)	;Kopregel marge
+	CALL GETONR
+	RET Z
+	LD (IY+KOPMRG),L
+	RET
+
+PRTVM:	LD DE,4C02H	;Voetregel marge
+	CALL MENUXY
+	LD A,(IY+VOETMRG)
+	CALL GETONR
+	RET Z
+	LD (IY+VOETMRG),L
+	RET
+
+PRTMT:	LD DE,4C09H	;Mail-Merge teken
+	CALL MENUXY
+	CALL NCHGET	;Merge-teken
+	CP 1
+	JR NZ,PRI14
+	CALL NCHGET
+	SUB 'A'-1               ;Grafisch teken
+	JR PRI15
+PRI14:	CP ' '
+	RET C
+	CP DEL
+	RET Z
+	CP 255	;Negeer f-key
+	JR NZ,PRI15
+	JP NCHGET
+PRI15:	LD (IY+MRGKAR),A
+	RET
+
+PRTEK:	LD DE,2809H	;1e mail-merge kaart
+	CALL MENUXY
+	LD E,2
+	LD B,4
+	LD HL,(MSTART)
+	CALL GN0	;Lees nummer in
+	CALL DECTOBIN
+	LD A,H
+	OR L
+	RET Z
+	LD (MSTART),HL
+	RET
+
+	;Print een blok
+
+PRTBLOK:	CALL EVTOPSLAAN
+	LD HL,(BSTARTLN)
+	LD DE,(BENDLN)
+	CALL DCOMPR	;Is blok aanwezig?
+	JR C,PB1
+	JP NZ,BEEP
+	LD A,(IY-BSRTPOS)
+	SUB (IY-BENDPOS)
+	JP NC,BEEP	; Nee, => Terug
+PB1:	LD (PRTSTART),HL	;Startregel
+	INC DE
+	LD (PRTEND),DE	;Laatste regel (wordt niet meer afgedrukt)
+	SET PBLK,(IY-FLAGS4)	;Vlag: Blok printen
+	JR PRINT1	;Print blok
+
+	;Print tekst uit
+
+PRINT:	CALL EVTOPSLAAN
+	LD HL,(LASTLINE)	;Haal laatste regel
+	LD (PRTEND),HL
+	LD HL,0
+	LD (PRTSTART),HL
+	RES PBLK,(IY-FLAGS4)
+
+PRINT1:
+
+if	DEMO or AUTODEMO
+	LD HL,TDEMOPR	;Niet printen in demo-versie
+	JP MESKEY
+TDEMOPR:	db TAB,'*** Demoversie - printen niet mogelijk',NUL
+
+else
+	call getPageStop	;Kijk of dit paginagrens is
+
+	or a
+	sbc hl,de	;Bereken regelafstand tot pagina einde
+
+	ld d,0	;DE=Paginalengte
+	ld e,(iy+pagLen)
+	inc e
+	dec e
+	jr z,prtStartCol1	;Paginalengte=0 => Kolom=1
+
+	call div16	;Deel regelnummer door paglengte
+
+	ld de,(koloms)
+	dec e	;Slechts 1 kolom ingesteld?
+	jr z,prtStartCol1	; Ja, => Begin niet bovenaan de pagina
+	inc e
+	call div16	;Bereken huidige kolomnummer in DE
+
+	ld h,d	;H=D=0
+	ld l,(iy+pagLen)
+	call mul16	;HL=(Kol-1)*Paglen=Start van kolom
+
+	ex de,hl
+	ld hl,(prtStart)
+	or a
+	sbc hl,de	;Regelpointer altijd in 1e kolom
+
+	push hl	;Zet startregel op de bovenste
+	ld d,0	; regel van de pagina
+	ld e,(iy+pagLen)
+	call div16	;Deel startregel door paginalengte
+	pop hl	;DE = Rest = Huidige regel in pagina
+	or a
+	sbc hl,de	;Bereken de 1e regel van de pagina
+	ld (prtStart),hl
+
+prtStartCol1:	ld hl,1
+	ld (curKol),hl	;Huidige kolom = 1
+
+	ld hl,tPStat
+	ld c,1
+	call invoer	;Printer statusbalk
+	ld hl,(prtEnd)
+	call dcSet	;Toon laatste regelnummer
+	bit mrg,(iy+savfl)	;Print met mail-merge?
+	jr z,prt0	; Nee, => Start met printen
+	ld hl,mrgNam	;Haal merge naam
+	ld de,buf
+	ld bc,65	;63 tekens + 1 lengtebyte + 1 nul
+	ldir
+	ld hl,buf
+	call naam2	;Controleer naam
+	jr nc,pr0h
+nfErr:	call notFound
+	jp error	;Foute naam => terug
+PR0H:	LD A,OPEN
+	CALL MAAKFCB	;Open de file
+	JR C,NFERR	; Error
+	CALL UPDATE	;Vul de diskbuffer
+	LD HL,DISKBUF
+	LD (RECSTAR),HL	;Record begint bij begin van diskbuffer
+	LD HL,1
+	LD (CURREC),HL	;Huidig record
+	LD A,53
+	LD (CSRX),A
+	LD DE,TKAART
+	CALL STROUT	;Print "Huidige kaart:"
+PR0K:	LD HL,(CURREC)
+	LD DE,(MSTART)
+	CALL DCOMPR	;Goede kaart om te beginnen?
+	JR Z,PR0M
+	CALL GETNEXT	; Nee, haal de volgende kaart
+	JR NC,PR0K
+	RET	;  Bestaat niet, => Klaar
+PR0M:	CALL PCURREC	;Druk huidig record af
+	LD A,(RECSTAR)
+	CP CTRLZ	;Eerste record=laatste record?
+	RET Z	; Ja, => Klaar
+
+PRT0:	LD HL,TPBEGON
+	CALL MESSAGE	;Printen begonnen
+	LD HL,TSETPRT
+	CALL TOPRINTER	;Ini. string naar printer
+	LD HL,(PSTART)
+	LD (PAGNUM),HL	;Pag. beginnr.
+	LD HL,(PRTSTART)	;Eerste regel=huidige regel
+	LD (CURPLIN),HL
+
+prt1:	bit cont,(iy+savFl)	;Continue printen?
+	jr nz,prt2
+
+	ld hl,tNextPg
+	call mesKey	; Nee, wacht op toets
+	call chkStp2	;Check ESC en CTRL-C
+	ld hl,tPBegon
+	call message	;Printen begonnen
+
+prt2:	call pKopMar	;Boven marge op blad
+
+	ld hl,(curPLin)	;Haal huidige regelnummer
+
+	call getPageStop	;Bereken positie in paginastoptabel
+	jr nc,stopIsHere	; => Deze regel is laatste regel
+
+	push ix	;Tabelpointer naar HL
+	pop hl
+
+	ld de,pageTab	;Begin van de tabel in DE
+	or a
+	sbc hl,de	;Bereken entrynummer in de tabel
+	srl h	;Delen door 2 bytes per entry
+	rr l
+
+	ld a,(iy+numPageStops)	;Haal aantal entries
+	sub l	;Huidig entry nummer eraf
+	ld hl,(prtEnd)	;Indien geen stops, volgende = laatste
+	jr z,stopIsHere	;Laatste entry, => Geen stops meer
+
+	ld l,(ix+0)	;Haal volgende paginastop
+	ld h,(ix+1)	; uit de tabel
+
+stopIsHere:	ld (startNextPage),hl	;Tot hier loopt de huidige pagina
+
+prt3:	ld a,(curKol)	;Regel-loop
+	ld hl,kolTab-1
+prt3a:	inc hl
+	dec a
+	jr nz,prt3a
+	ld b,(hl)	;Haal positie huidige kol.
+	ld a,' '
+	jr prt3c
+prt3b:	call prtChr	;Ga naar goede kolompositie
+prt3c:	djnz prt3b
+	ld l,(iy+minLin)
+	ld h,24
+	ld (csrY),hl
+	ld hl,(curPLin)
+	push hl
+	inc hl
+	call dcSet	;Toon huidige regelnummer
+	pop hl
+
+	ld a,(iy+pagLen)
+	or a
+	jr z,prt3d	;Paglen=0 => Geen kolommen
+
+	push hl
+	ld hl,(curKol)
+	dec hl
+	ld d,0
+	ld e,a
+	call mul16	;Bereken regel van huidige kolom
+	pop de
+	add hl,de
+
+prt3d:	ld de,(startNextPage)	;Haal volgende regel na paginagrens
+	call dCompr	;Huidige regel op de volgende pagina?
+	jr nc,prt3l	; Ja, => Regel niet afdrukken
+
+	push hl	;HL=Op te halen regel
+	ex de,hl	;Regel nr. naar DE
+	ld hl,strBf2
+	call get	;Haal regel op
+	pop de
+	bit pBlk,(iy-flags4)
+	jr z,prt3k	;Geen blokprint => Druk de regel af
+	ld hl,(bEndLn)	;Ligt deze regel voorbij
+	or a	; het einde van het blok?
+	sbc hl,de
+	ld hl,strBf2
+	jr c,prt3l	; Ja, => Druk regel niet af
+	jr nz,prt3f	; Nee, => Ligt ervoor, wel afdrukken
+	ld a,(iy-bendPos)	; Nee, ligt erop,druk 2e deel van regel niet af
+	ld (hl),a
+prt3f:	push hl
+	ld hl,(bStartLn)
+	or a
+	sbc hl,de	;Is deze regel onderdeel van blok?
+	POP HL
+	JR C,PRT3K	; Ja, => Druk de regel helemaal af
+	JR NZ,PRT3L	; Nee, => druk niet regel af
+	LD A,(HL)	;Blok begin, print alleen laatste gedeelte
+	LD B,0
+	LD C,(IY-BSRTPOS)
+	ADD HL,BC
+	SUB C
+	LD (HL),A	;Druk 1e deel niet af
+PRT3K:	CALL TOPRINTER	;Druk regel af
+
+prt3l:	ld hl,curKol
+	ld a,(iy+pagLen)
+	or a
+	jr z,prt3m	;Paglen=0 => Geen kolommen
+	inc (hl)	;Volgende kolom
+	ld a,(koloms)
+	cp (hl)
+	jr c,prt3m
+	ld a,cr
+	call prtChr	;Alleen carriage return
+	jp prt3
+
+prt3m:	ld (hl),1	;Huidige kolom=1
+	call prtCrLf
+
+	ld hl,(curPLin)	;Haal huidige regel
+
+	call getPageStop	;Haal einde van vorige pagina in DE
+	jr c,prtNotPageEnd	; => Dit is geen stop, vorige zit DE
+
+	ld e,(ix-2)	;Pagina einde was hier, haal einde
+	ld d,(ix-1)	; van vorige pagina uit de tabel
+
+prtNotPageEnd:	or a
+	sbc hl,de	;Bereken regelnummer in deze pagina
+
+	ld d,1	;DE <> 0 indien paginalengte = 0
+	ld e,(iy+pagLen)	;Haal paginalengte op
+	inc e
+	dec e
+	jr z,testHardPage	;Paglen=0? => Alleen testen op pagestop
+
+	dec d	;D wordt 0, dus paginalengte in DE
+
+	call div16	;Deel regelnummer door paginalengte
+
+testHardPage:	push de	;Bewaar regelnummer in deze pagina
+
+	ld hl,(curPLin)	;Haal huidige regel
+	inc hl
+	ld (curPLin),hl	;Naar volgende regel
+
+	ld de,(startNextPage)	;Volgende harde paginagrens bereikt?
+	call dCompr
+	pop de	;	Regelnr in DE
+	jr nc,toNextPage	; Ja, => Ga naar volgende pagina
+
+	ld a,d	;Pagina vol?
+	or e
+	jp nz,prt3	; Nee, => Volgende regel ophalen
+
+toNextPage:	ld a,(iy+botMar)
+	or a	;Is er een bodemmarge?
+	jr z,doFormFeed	; Nee, => Direkt een FormFeed
+
+	ld a,d	;Regel nummer = 0?
+	or e
+	jr z,doFormFeed	; Ja, => Pagina vol
+
+	ld a,(iy+pagLen)
+	sub e	;Aantal nog te printen regels in A
+	jr c,doFormFeed	; => Paginalengte 0, niet doorschuiven
+	jr z,doFormFeed	;   tot einde pagina
+
+toBotMarLp:	call prtCrLf	;Ga naar einde van pag
+	dec a
+	jr nz,toBotMarLp
+
+doFormFeed:	call pBotMar	;Print bodemmarge
+
+	ld hl,(curPLin)	;Haal huidige regel
+	ld de,(prtEnd)
+	call dCompr	;Klaar?
+	jr nc,printNextRecord	; Ja, => Begin opnieuw met mailmerge
+
+	ld hl,(koloms)	; Nee, ga naar kol 1 van volgende page
+	dec l
+	ld d,0
+	ld e,(iy+pagLen)
+	call mul16	;HL=Regels/pagina
+	ld de,(curPLin)
+	add hl,de	;Sla reeds geprintte kolommen over
+
+	ld de,(startNextPage)	;Haal beginregel van volgende pag.
+	call dCompr	;Al voorbij begin van volgende pagina?
+	jr c,noNewPageStop	; Nee, => Blijf op deze regel staan
+
+	ex de,hl	; Ja, huidige regel wordt paginabegin
+
+noNewPageStop:	ld de,(prtEnd)
+	call dCompr	;Klaar?
+	jr nc,printNextRecord	; Ja, => Gooi laatste pagina eruit
+
+	ld (curPLin),hl	; Nee, bewaar volgende regelnummer
+
+	jp prt1	;Volgende pagina
+
+printNextRecord:bit mrg,(iy+savFl)	;Mail-Merge aan?
+	ret z	; Nee, => We zijn klaar!
+	call getNext	;Haal volgende kaart
+	jp nc,prt0	;Volgende pati‰nt
+	ld hl,(csrNum)
+	call goLine2	;Klaar
+	bit mrg,(iy+savFl)	;Print met mail-merge?
+	call nz,closeBf	; Ja, sluit file
+	ret
+
+	;Haal volgende kaart voor mail-merge
+
+GETNEXT:	LD HL,(RECSTAR)	;Haal begin van huidig record
+	DEC HL
+GE1:	LD DE,(ENDTPA)
+	CALL DCOMPR	;Einde van buffer bereikt?
+	CALL NC,UDMRG	; Ja, => Update buffer
+	INC HL
+	LD A,(HL)
+	CP CTRLZ	;Einde van bestand?
+	SCF
+	RET Z	; Ja, => Klaar
+	LD DE,TRECEND
+	CALL CPHLDE	;Record einde bereikt?
+	JR NZ,GE1	; Nee, => Zoek verder
+	INC HL
+	LD (RECSTAR),HL
+	LD A,(HL)
+	CP CTRLZ	;Leeg record?
+	SCF
+	RET Z	; Ja, => Terug
+	LD HL,(CURREC)	;Verhoog huidig record
+	INC HL
+	LD (CURREC),HL
+PCURREC:	LD A,68
+	LD (CSRX),A
+	LD A,(IY+MINLIN)
+	LD (CSRY),A
+	LD HL,(CURREC)
+	CALL DCSET	;Druk huidige kaart af
+	OR A
+	RET
+
+	;Print kopmarge/kopregel
+
+PKOPMAR:	XOR A
+KM1:	CP (IY+TOPMAR)
+	RET NC	;Klaar
+	INC A
+	CP (IY+KOPMRG)	;Haal voetregel
+	JR NZ,KM2
+	LD B,(IY+KOPPOS)	;Haal pag. pos
+	LD HL,KOPTXT
+	CALL KOPVOET	;Printvoetregel
+KM2:	CALL PRTCRLF	;Regelopvoer
+	JR KM1
+
+	;Print bodemmarge
+
+PBOTMAR:	XOR A
+BM1:	CP (IY+BOTMAR)
+	JR NC,BM3	;Klaar
+	INC A
+	CP (IY+VOETMRG)	;Haal voetregel
+	JR NZ,BM2
+	LD B,(IY+VOETPOS)	;Haal pag. pos
+	LD HL,VOETTXT
+	CALL KOPVOET	;Printvoetregel
+BM2:	CALL PRTCRLF	;Regelopvoer
+	JR BM1
+BM3:	LD HL,(PAGNUM)	;Verhoog pagina nummer
+	INC HL
+	LD (PAGNUM),HL
+	BIT FFD,(IY+SAVFL)
+	RET Z
+	LD A,CLSHM
+	JP PRTCHR	;Bladzijopvoer
+
+	;Print kop/voet regel
+
+KOPVOET:	PUSH AF
+	JR KV2
+KV1:	LD A,' '
+	CALL PRTCHR	;Ga naar goede positie
+KV2:	DJNZ KV1
+	SET PKV,(IY-FLAGS4)
+	CALL TP0	;Druk string af
+	POP AF
+	RET
+
+	;String (HL) naar printer
+
+TOPRINTER:	RES PKV,(IY-FLAGS4)	;Geen kop/voetregel
+TP0:	LD A,(HL)
+TP1:	OR A
+	RET Z	;Lengte 0 => Klaar
+	INC HL
+	DEC A
+	PUSH AF
+	PUSH HL
+	LD A,(HL)	;Haal teken op
+	BIT MRG,(IY+SAVFL)	;Mail-merge?
+	JP Z,TP2
+	CP (IY+MRGKAR)	;Merge karakter?
+	JP NZ,TP2	; Nee, => druk teken gewoon af
+	POP HL
+	POP AF	;Haal lengte van regel
+	PUSH AF
+	PUSH HL
+	CP 3	;Minder dan 3 tekens over?
+	JR C,NOMRG	; Ja, => Dan geen veld indikatie
+	LD B,A	;Bewaar lengte
+	INC HL
+	LD A,(HL)
+	INC HL
+	CP '('                  ;Haakje openen?
+	JR NZ,NOMRG	; Nee, => Geen merge commando
+	LD A,(HL)
+	INC HL
+	CALL GROOT
+	CP 'V'                  ;$(V)?
+	JR NZ,MRG0
+	POP DE
+	POP AF
+	SUB 3
+	PUSH AF
+	PUSH HL	;	Bewaar HL op ")"
+	CALL GETNEXT	; Ja, haal volgende kaart
+	JP TP6
+MRG0:	CP '0'                  ;Cijfer?
+	JR C,NOMRG
+	CP '9'+1
+	JR NC,NOMRG
+	LD DE,BUF+1	;Cijfers naar buffer
+	LD (DE),A
+	INC DE
+	LD C,1	;1 cijfer geweest
+	DEC B
+	DEC B
+	DEC B	;Alleen nog haakje sluiten?
+	JR Z,MRG1	; Ja, => Bereken veld-nummer
+	LD A,(HL)	;Haal tweede karakter
+	CP '0'                  ;Cijfer?
+	JR C,MRG1	; Nee, => Geen tweede cijfer
+	CP '9'+1
+	JR NC,MRG1
+	LD (DE),A	; Ja, vul tweede cijfer in
+	DEC B
+	INC C
+	INC HL	;(HL) staat nu op ')'
+MRG1:	LD A,C
+	LD (BUF),A	;Vul bufferlengte in
+	POP DE
+	POP AF
+	LD A,B
+	PUSH AF	;Bewaar nieuwe lengte
+	PUSH HL	;Bewaar nieuwe stringpointer
+	CALL DECTOBIN	;Bereken het getal in HL
+	LD A,L
+	OR A	;Nul?
+	JR Z,TP6	; Ja, => Niets afdrukken
+	CALL GETMRG	;Haal veld A in STRBUF
+	LD HL,STRBUF
+	LD A,(HL)	;Haal veldlengte
+	OR A	;Nul?
+	JR Z,TP6	; Ja, => Merge klaar
+	LD B,A
+MRG2:	INC HL
+	LD A,(HL)
+	CALL PRTCHR	;Print het veld
+	DJNZ MRG2
+	JR TP6
+NOMRG:	POP HL
+	POP AF	;Haal lengte van regel
+	PUSH AF
+	PUSH HL
+	LD A,(HL)	;Herstel teken
+TP2:	BIT PKV,(IY-FLAGS4)	;Kop/voet regel?
+	JR Z,TP2E
+	CP '$'                  ;$P?
+	JR NZ,TP2E
+	POP HL
+	POP AF
+	PUSH AF
+	OR A
+	JR Z,TP2D
+	INC HL
+	LD A,(HL)
+	DEC HL
+	CALL GROOT
+	CP 'P'                  ;$P?
+	JR NZ,TP2D	; Nee, geen paginanummer afdrukken
+	INC HL
+	POP AF
+	DEC A	;Pas lengte aan
+	PUSH AF
+	PUSH HL
+	LD HL,(PAGNUM)
+	CALL DECI2	; Ja, nummer naar DCBUF
+	LD HL,DCBUF
+	LD B,5
+TP2B:	LD A,(HL)
+	CP ' '
+	JR Z,TP6
+	CALL PRTCHR	;Druk nummer af
+	INC HL
+	DJNZ TP2B
+	JR TP6
+TP2D:	PUSH HL
+	LD A,(HL)
+TP2E:	CALL CHKDRV	;CHecK DRiVer
+	CP DEL	;^-Teken?
+	JR NZ,TP3
+	LD A,'^'
+TP3:	CP ' '                  ;Grafisch teken?
+	JR NC,TP5	; Nee, => Ok
+	OR A	;Escape?
+	JR NZ,TP4
+	LD A,ESC
+	JR TP5
+TP4:	PUSH AF
+	LD A,1
+	CALL PRTCHR	;Druk grafisch teken af
+	POP AF
+	ADD A,'A'-1
+TP5:	CALL PRTCHR	;Print teken
+TP6:	POP HL
+	POP AF
+	JP TP1
+
+	;Haal veld A van huidig record van disk in STRBUF
+
+GETMRG:	PUSH AF	;Bewaar veldnummer
+	LD HL,(RECSTAR)	;Haal begin van huidig record
+	DEC HL
+GM1:	POP AF	;Haal veldnummer
+	DEC A	;Te zoeken veld?
+	JR Z,GM4	; Ja, => Gevonden
+	PUSH AF
+GM2:	LD DE,(ENDTPA)
+	CALL DCOMPR	;Einde van buffer bereikt?
+	CALL NC,UDMRG	; Ja, => Update buffer
+	INC HL
+	LD A,(HL)
+	CP CTRLZ
+	JR Z,GM3	; Ja, => Druk lege string af
+	LD DE,TRECEND
+	CALL CPHLDE	;Record einde bereikt?
+	JR Z,GM3	; Ja, => Druk een lege string af
+	LD DE,TVLDEND
+	CALL CPHLDE	;Veldeinde bereikt?
+	JR Z,GM1	; Ja, => Volgende veld
+	JR GM2	;=> Volgende karakter
+	RET
+GM3:	POP AF
+	XOR A
+	LD (STRBUF),A	;Stuur een lege string terug
+	RET
+GM4:	LD B,254	;Max 254 tekens
+	LD DE,STRBUF+1
+GM5:	PUSH DE	;String naar STRBUF
+	LD DE,(ENDTPA)
+	CALL DCOMPR	;Einde van buffer bereikt?
+	CALL NC,UDMRG	; Ja, => Update buffer
+	INC HL
+	LD A,(HL)
+	CP CTRLZ	;File einde?
+	JR Z,GM6	; Ja, => Klaar
+	LD DE,TRECEND
+	CALL CPHLDE	;Record einde bereikt?
+	JR Z,GM6	; Ja, => Klaar
+	LD DE,TVLDEND
+	CALL CPHLDE	;Veldeinde bereikt?
+	JR Z,GM6	; Ja, => Klaar
+	POP DE
+	LD (DE),A	;Vul teken in string in
+	INC DE
+	DJNZ GM5
+	PUSH DE
+GM6:	POP DE
+	LD A,254	;Bereken stringlengte
+	SUB B
+	LD (STRBUF),A	;Vul stringlengte in
+	RET
+
+	;Update merge buffer
+
+UDMRG:	LD DE,(RECSTAR)	;Haal begin op van huidige record
+	LD HL,DISKBUF
+	OR A
+	CALL DCOMPR	; = Begin van buffer?
+	JP NC,RECERR	;  Ja, => 1 kaart past niet in het geheugen
+	PUSH BC	;BC bewaren
+	LD BC,UMRET	;Zet RET adres op stack
+	PUSH BC
+	LD (RECSTAR),HL	;Kaart komt aan begin van buffer
+	LD HL,(ENDTPA)
+	INC HL	;Altijd 1 teken meenemen
+	OR A
+	SBC HL,DE	;Bereken eind-huidig
+	LD B,H	;Geef lengte aan
+	LD C,L
+	PUSH BC	;3 words als opvulling op de stack
+	PUSH BC
+	PUSH BC
+	JP UPDAT2	;Laad tekst in (=CALL)
+UMRET:	POP BC	;Returnentry voor UPDAT2
+	RET
+
+	;Vergelijk (HL) met string (DE)
+
+CPHLDE:	PUSH DE
+	PUSH BC
+	PUSH HL
+	LD C,A
+	EX DE,HL	;Kijk of (HL)=(DE)
+	LD B,(HL)	;B=Len te zoeken string
+CD1:	INC HL
+	LD A,(DE)
+	CP (HL)
+	JR NZ,CD2	;Ongelijk, => Terug
+	PUSH HL
+	LD HL,(ENDTPA)
+	EX DE,HL
+	CALL DCOMPR	;Einde van buffer?
+	CALL NC,UDMRG	; Ja, Update de buffer
+	INC HL
+	EX DE,HL
+	POP HL
+	DJNZ CD1
+	XOR A	;Zet Gevonden
+	LD A,C
+	EX DE,HL	;HL=Adres laatste byte
+	DEC HL
+	POP BC
+	JR CD3	;Gevonden, HL aanpassen
+CD2:	LD A,C	;Herstel A
+	POP HL
+CD3:	POP BC
+	POP DE
+	RET
+
+	;Kijk of teken in driver zit
+
+CHKDRV:	BIT DRIVE,(IY+TABSAV)	;Driver aan?
+	RET Z
+	OR A	;ESC niet
+	RET Z
+	PUSH AF
+	PUSH HL
+	LD C,A
+	LD HL,DRVTAB
+	LD DE,10
+	LD B,32	;30 tekens
+CDR1:	LD A,(HL)
+	INC HL
+	OR A	;Lengte nul?
+	JR Z,CDR2
+	LD A,(HL)
+	CP C	;Teken in driver?
+	JR Z,CDR3
+CDR2:	ADD HL,DE	;Volgende teken
+	DJNZ CDR1
+	POP HL	;Niets
+	POP AF
+	RET
+CDR3:	DEC HL
+	LD B,(HL)	;Max. 9 tekens naar printer
+	INC HL
+CDR4:	INC HL
+	LD A,(HL)
+	CALL PRTCHR	;Druk af
+	DJNZ CDR4
+	POP HL
+	POP AF
+	POP HL	;Wis RET
+	JP TP6	;Klaar
+
+	;Print return
+
+PRTCRLF:	PUSH AF
+	LD A,CR
+	CALL PRTCHR
+	LD A,LF
+	CALL PRTCHR
+	POP AF
+	RET
+endif
+
+	;Druk teken af op printer
+
+PRTCHR:	CALL LPTOUT
+	JP C,ONDERBR
+CHKSTOP:	CALL CHSNS	;Toets ingedrukt?
+	RET Z	; Nee, => klaar
+	CALL NCHGET
+CHKSTP2:	CP ESC	;Escape?
+	JP Z,ONDERBR	; Ja, => Onderbroken
+	CP CTRLC	;Ctrl/Stop
+	JP Z,ONDERBR
+	RET
+
+	;Instellingen voor sorteren
+
+SORTINS:	LD HL,TSORT
+	LD C,5
+	CALL INVOER
+	LD HL,TKEUZE
+	CALL MESSAGE
+SI1:	LD H,22
+	LD L,(IY+MINLIN)
+	LD (CSRY),HL
+	LD A,(RECLEN)	;Lengte van een record
+	CALL BCDSET
+	LD B,3	;Toon drie sorteervelden
+	LD DE,VELDA
+	LD HL,CSRY
+	INC (HL)
+SI1B:	PUSH BC
+	INC (HL)
+	INC HL
+	LD (HL),30
+	PUSH HL
+	PUSH DE
+	LD H,0
+	LD A,(DE)
+	CALL BCDSET	;Toon veld waarop gesorteerd moet worden
+	POP DE
+	POP HL
+	LD (HL),48
+	DEC HL
+	INC DE
+	INC DE
+	LD A,(DE)
+	INC DE
+	INC DE
+	PUSH HL
+	PUSH DE
+	CALL BCDSET	;Toon kolom
+	POP DE
+	POP HL
+	POP BC
+	DJNZ SI1B
+	LD HL,TKEUZE
+	CALL MESSAGE
+SI2:	CALL INKCRL	;Wacht op toets
+	CP ESC
+	JR Z,SI6
+	LD HL,RECLEN
+	LD E,(IY+MINLIN)
+	LD D,22
+	CP 'K'                  ;Kaartlengte
+	JR Z,SI3
+	INC E
+	INC E
+	LD D,30
+	LD HL,VELDA
+	CP 'A'                  ;Sorteerveld A
+	JR Z,SI3
+	INC E
+	LD HL,VELDB
+	CP 'B'                  ;Sorteerveld B
+	JR Z,SI3
+	INC E
+	LD HL,VELDC
+	CP 'C'                  ;Sorteerveld C
+	JR NZ,SI2
+SI3:	LD (CSRY),DE
+	LD B,A	;Bewaar keuze
+SI3B:	LD A,(HL)
+	PUSH BC
+	PUSH HL
+	LD B,3	;3 cijfers
+	CALL GON1	;Haal getal van toetsenbord
+	LD A,L
+	POP HL
+	POP BC
+	JR Z,SI5	;Niets ingetypt
+	OR A
+	JR NZ,SI4	;Getal 0 ingetypt
+	LD A,B	;Haal keuze
+	CP 'K'
+	JP Z,SI1	;Bij 'K' geen nul mogelijk
+	XOR A
+SI4:	LD (HL),A
+SI5:	LD A,B
+	CP 'K'                  ;Veld A, B, of C?
+	JP Z,SI1	; Nee, => Klaar
+	LD A,48
+	LD (CSRX),A
+	LD B,'K'
+	INC HL
+	INC HL	; Ja, => vul kolom in
+	JR SI3B
+SI6:	LD A,(RECLEN)	;Haal lengte van kaart
+	LD C,A
+	LD B,3
+	LD HL,VELDA
+	LD A,(HL)
+	OR A	;1e veld is 0?
+	JR Z,SI8	; Ja, => Error
+SI7:	LD A,C	;Controleer sorteervelden
+	CP (HL)
+	JR C,SI8	;Veld te groot => Error
+	INC HL
+	INC HL
+	INC HL
+	INC HL
+	DJNZ SI7
+	RET
+SI8:	LD HL,TVLDERR
+	CALL MESKEY	;Veld te groot
+	JP SORTINS
+
+	;Quick Sort, Recursiestack in diskbuffer.
+
+QSORT:	call zeker	;Voorkom ongewenste sorteer acties
+	ret c
+	CALL EVTOPSLAAN
+	LD HL,TMOMENT
+	CALL MESSAGE	;Momentje...
+	LD (OLDSP),SP	;Bewaar pointer naar RET adres
+	LD (IY-BSRTPOS),0	;Zet blokstart op nul
+	LD HL,(BENDLN)
+	LD A,(IY-BENDPOS)
+	OR A	;Xpos blokeinde > 1e teken?
+	JR Z,QS1
+	INC HL	; Ja, verhoog laatste regel met 1
+	LD (BENDLN),HL
+	LD (IY-BENDPOS),0
+QS1:	LD DE,(BSTARTLN)
+	SCF	;Blokeinde 1 reg. na eind van blok
+	SBC HL,DE	;HL=Aantal regels
+	RET Z
+	RET C	;Geen blok aanwezig
+	SET SAV,(IY+FLAGS1)	;Saven voor stoppen
+	LD DE,(RECLEN)
+	PUSH DE
+	CALL DIV16	;Deel door record lengte
+	POP DE
+	CALL MUL16	;En weer keer record lengte
+	PUSH HL
+
+	LD A,(RECLEN)	;Voeg 1 lege record in bovenaan
+QS2:	PUSH AF	; het blok
+	LD HL,STRBUF
+	LD (HL),0
+	LD DE,(BSTARTLN)
+	CALL ADDSTR	;Voeg lege regel in op regel bstartln
+	POP AF	;Voorkom hiermee dat regel 0 doorslaat
+	DEC A	; naar -1
+	JR NZ,QS2
+
+	POP HL
+	LD DE,(BSTARTLN)
+	ADD HL,DE	;DE=Afgerondde blok-einde
+	EX DE,HL	;HL=Blok-begin
+	LD SP,(ENDTPA)	;Diskbuffer is recursie ruimte
+	LD BC,ABORT
+	PUSH BC	;Zet terugkeeradres
+
+SORT:	LD (FIRST),HL
+	EX DE,HL
+	LD (LAST),HL
+	LD A,E	;Bereken first-last
+	SUB L
+	LD A,D
+	SBC A,H
+	RET NC
+	CALL MEDIAN	;Selecteer het centrale element
+	LD C,0	;Bit 0 is richting
+
+PARTLP:	LD A,E	;Ondergrens-bovengrens
+	SUB L
+	LD A,D
+	SBC A,H
+	JR NC,DONE	;=> Alles onderzocht
+	CALL COMPARE	;Vergelijk de elementen
+	JR Z,OK
+	JR C,OK	; Staan al op volgorde
+	CALL SWAPREC
+	INC C	;Keer richting om
+OK:	BIT 0,C
+	JR Z,MVUP	;Naar boven verplaatsen
+	EX DE,HL
+	CALL NEXT	;Verlaag bovengrens
+	EX DE,HL
+	JR PARTLP
+MVUP:	CALL PREV	;Verhoog ondergrens
+	JR PARTLP
+DONE:	LD HL,DISKBUF+160	;Test stack overflow
+	OR A
+	SBC HL,SP
+	JR NC,STKERR
+	PUSH DE	;Bewaar centrale element
+	LD HL,(LAST)
+	PUSH HL	;Bewaar laatste element
+	EX DE,HL
+	CALL PREV	;Bereken het laatste element
+	EX DE,HL
+	LD HL,(FIRST)
+	CALL SORT	;Sorteer 1e (lage) deel
+	POP DE
+	POP HL
+	CALL NEXT
+	JP SORT	;Sorteer het 2e (hoge) deel | CALL SORT | RET
+
+STKERR:	LD HL,TSTKERR	;`Te weinig stack geheugen'
+	CALL MESKEY	;`Druk op een toets'
+ABORT:	LD A,(RECLEN)
+ABLP:	PUSH AF
+	LD DE,(BSTARTLN)
+	DEC DE
+	CALL DELSTR	;Verwijder de extra toegevoegde record
+	POP AF
+	DEC A
+	JR NZ,ABLP
+	LD SP,(OLDSP)	;Herstel stack
+	LD HL,(BSTARTLN)
+	JP GOTOLINE	;Herstel STRBUF
+
+MEDIAN:	PUSH HL
+	PUSH DE
+	ADD HL,DE	;(First+Last) div 2
+	RR H
+	RR L
+	PUSH AF	;Bewaar carry
+	PUSH HL	;HL=Midden
+	LD DE,(RECLEN)
+	CALL DIV16
+	POP HL
+	ADD HL,DE	;HL afronden naar boven
+	POP AF	;Carry?
+	JR NC,MED1
+	INC HL	; Ja, 'vergeten' bit erbij
+MED1:	POP DE
+	LD B,H
+	LD C,L
+	CALL COMPARE	;Vergelijk 1e en middelste
+	POP HL
+	JR NC,MIDD1	;Spring indien 1e >= middelste
+	PUSH DE
+	LD E,C
+	LD D,B
+	CALL COMPARE	;Vgl. Middelste en laatste
+	POP DE
+	JR C,SWAPMF
+	JR Z,SWAPMF
+	CALL COMPARE
+	RET NC	;Laatste => 1e
+	JR SWAPREC
+MIDD1:	CALL COMPARE
+	RET C
+	RET Z
+	PUSH DE
+	LD E,C
+	LD D,B
+	CALL COMPARE
+	POP DE
+	JR C,SWAPREC	;SWAPLF
+SWAPMF:	PUSH HL
+	LD L,C
+	LD H,B
+	CALL SWAPREC
+	POP HL
+	RET
+
+SWAPREC:	PUSH HL
+	PUSH DE
+	LD A,(RECLEN)	;Wissel records HL en DE
+	LD B,A
+SR1:	CALL SWAP	;Wissel velden
+	INC HL
+	INC DE
+	DJNZ SR1
+	POP DE
+	POP HL
+	RET
+
+NEXT:	PUSH DE
+	LD DE,(RECLEN)
+	ADD HL,DE
+	POP DE
+	RET
+PREV:	PUSH DE
+	LD DE,(RECLEN)
+	OR A
+	SBC HL,DE
+	POP DE
+	RET
+
+COMPARE:	PUSH BC
+	PUSH DE
+	PUSH HL
+	XOR A
+CP0:	LD (VELD),A	;Huidig veld is 1e
+	ADD A,A	;Bereken adres
+	ADD A,A	;4 bytes per veld
+	LD D,0
+	LD E,A
+	LD HL,VELDA	;HL=1e veld
+	ADD HL,DE
+	LD DE,CURVLD
+	LD BC,4
+	LDIR	;Vul current veld & kolom in
+	LD HL,(CURVLD)
+	LD A,H
+	OR L	;Veld is 0?
+	JR Z,CP8	; Ja, => Volgende veld
+	POP BC
+	POP DE
+	PUSH DE	;Haal 1e regel van record
+	PUSH BC
+	DEC HL	;Maak veld 0-based
+	ADD HL,DE	;Ga naar veld waarop gesorteerd moet worden
+	EX DE,HL
+	LD HL,STRBUF	;DE=String 2
+	CALL GET
+	POP DE
+	PUSH DE
+	LD HL,(CURVLD)
+	DEC HL
+	ADD HL,DE	;Ga naar veld waarop gesorteerd moet worden
+	EX DE,HL
+	LD HL,STRBF2
+	CALL GET	;HL=String 1
+	LD HL,STRBUF
+	LD DE,STRBF2	;HL=String 2
+	LD BC,(CURCOL)	;Begin vanaf positie CURCOL te zoeken
+	DEC BC	;Maak BC 0 based
+CP1:	LD A,(DE)	;A=Len str 2
+	CP (HL)
+	JR C,CP2	;Spring als str2 het kortste is
+	LD A,(HL)	; Neem anders len van str1
+CP2:	ADD HL,BC
+	EX DE,HL
+	ADD HL,BC
+	SCF	;Ook carry zetten als A-C=0
+	SBC A,C	;Staan er gegevens in dit veld?
+	JR C,CP4	; Nee, => Vergelijk lengtes
+	INC A	;Herstel op SCF
+	LD B,A	;B=Te vergelijken bytes
+CP3:	INC HL
+	INC DE
+	LD A,(HL)
+	CALL KLEIN	;Maak alles kleine letters
+	LD (HL),A	;String mag overschreven worden
+	LD A,(DE)
+	CALL KLEIN
+	CP (HL)	;Gelijk?
+	JR NZ,CP7	; Nee, => Klaar
+	DJNZ CP3
+CP4:	LD A,(STRBF2)	;Strings gelijk of 1 heeft len 0, vgl lengtes
+	SUB C
+	JR NC,CP5
+	XOR A	;String te kort, maak len 0
+CP5:	LD B,A
+	LD A,(STRBUF)
+	SUB C
+	JR NC,CP6
+	XOR A
+CP6:	CP B	;Gelijke lengtes?
+	JR Z,CP8	; Ja, => CP8
+CP7:	POP HL
+	POP DE
+	POP BC
+	RET
+CP8:	LD A,(VELD)
+	INC A
+	CP 3	;Alle velden gehad?
+	JR C,CP0	; Nee, => Volgende
+	XOR A	;Alles gelijk
+	JR CP7
+
+	;Groot invoer scherm (overschrijf evt. hulpscherm)
+
+BIGINV:	SET RSTH,(IY-FLAGS4)	;Restore helpmenu
+	LD A,3
+	BIT COMLIN,(IY+TABSAV)	;Commandoregel tonen?
+	JR Z,BIN1	; Nee, begin op reg. 3
+	LD A,5	; Ja, begin op reg. 5
+BIN1:	LD (IY+MINLIN),A
+
+	;Vraag om invoer, headerstring in HL
+	;Aantal regels in C
+
+INVOER:	LD B,(IY+MINLIN)	;Bovenaan beginnen
+INVOER2:	PUSH HL
+	PUSH BC
+INV3:	LD A,' '                ;Teken lijn
+	CALL DRAWLINE
+	INC B
+	DEC C
+	JR NZ,INV3	;C aantal regels
+	LD A,17H
+	CALL DRAWLINE
+	POP BC
+	LD H,1
+	LD L,B
+	LD (CSRY),HL
+	POP DE
+	CALL STROUT	;Druk string(s) af
+	CALL KILBUF	;Wis toetsenbord buffer
+	JP SETBOUW	;Vlag: straks schermopbouw weer herstellen
+
+	;Foutmelding+'Druk een toets'
+
+MESKEY:	CALL MESSAGE	;Druk tekst af
+	LD DE,TDRUK
+	CALL STROUT	; + 'Druk op een toets'
+	JP INKEY	;Wacht op toets
+
+	;Druk een melding van 1 regel onderaan het scherm af
+
+MESSAGE:	PUSH HL
+	LD B,(IY+MAXLIN)	;Druk onderaan scherm af
+	DEC B
+	DEC B
+	LD A,17H
+	CALL DRAWLINE
+	INC B
+	POP HL	;Haal bericht
+	LD C,1
+	JP INVOER2
+
+	;Kopi‰er hulpmenu naar/uit de tekst
+
+COPYHELP:	CALL EVTOPSLAAN
+	LD C,2
+	LD HL,TCPHULP
+	CALL INVOER	;Toon menutje
+	LD HL,TKEUZE
+	CALL MESSAGE
+	LD HL,HLPADR
+	LD BC,HLPKAR
+	LD A,1	;Toon csr
+	JP GETCMD	;Wacht op toets
+
+HLPADR:	dw ESCAPE	;ESCape
+	dw HTOTXT	;Hulp naar de tekst
+	dw TOHMENU	;Naar menu
+
+TOHMENU:	LD B,HLPCNT-1	;Acht hulpregels
+	LD DE,THELP
+	LD HL,(CSRNUM)
+CH2:	PUSH BC
+	PUSH DE
+	PUSH HL
+	LD HL,STRBUF+1	;Hulp naar menu
+	LD DE,STRBUF+2
+	LD BC,79
+	LD (HL),' '             ;Vul regel op met spaties
+	LDIR
+	POP DE	;Haal huidige tekst regel
+	PUSH DE
+	LD HL,STRBUF
+	CALL GET	;Haal regel op uit tekst
+	POP HL
+	POP DE	;Haal bestemming in menu
+	PUSH HL
+	LD HL,STRBUF+1
+	LD BC,80
+	LDIR
+	POP HL
+	POP BC
+	INC HL
+	DJNZ CH2	;Volgende hulpregel
+	BIT HLP,(IY+SAVFL2)
+	JR Z,CH5
+	SET RSTH,(IY-FLAGS4)	;Toon evt. nieuw menu
+	JR CH5	;Klaar
+HTOTXT:	LD HL,(CSRNUM)
+	LD B,HLPCNT-1	;8 hulpregels
+	LD DE,THELP
+CH4:	PUSH BC
+	PUSH HL
+	PUSH DE
+	LD BC,80
+	LD HL,STRBUF
+	LD (HL),C	;Alle hulpregels zijn 80 tekens
+	INC HL
+	EX DE,HL
+	POP HL
+	LDIR	;Verplaats hulpregel naar regelbuffer
+	POP DE	;DE=Regelnummer in de tekst
+	PUSH DE
+	PUSH HL
+	LD HL,STRBUF
+	CALL ADDSTR	;Voeg regelbuffer in tekst
+	POP DE	;DE=Pointer in Helpmenu
+	POP HL	;HL=Tekstregel
+	POP BC	;B=Teller
+	INC HL
+	DJNZ CH4	;Volgende regel
+CH5:	LD HL,(CSRNUM)
+	JP GOTOLINE	;Klaar
+
+	;Zet status regel op het scherm
+
+STATUS:	LD B,2
+	LD A,17H
+	CALL DRAWLINE	;Lijn op 2e en 4e regel
+	LD B,4
+	LD A,17H
+	CALL DRAWLINE
+	LD HL,(NAMBAS)
+	LD DE,TSTATUS	;Print status regel
+ST1:	CALL NSTWRT
+	LD B,80	;Druk een regel af
+	LD C,(IY+VDPWRITE)
+	EX DE,HL
+	OTIR
+	JP PRTINV	;Toon insertvlag
+
+	;Zet commandoregel op scherm
+
+COMLN:	LD A,(FKEYNUM)
+	CP 2	;F2 of hoger?
+	JR C,CL1
+	ADD A,'0'
+	LD B,A
+	LD C,'F'
+	LD A,'/'
+CL0:	PUSH AF
+	PUSH BC
+	LD HL,VRMTF7	; Ja, zet 'Fn/' op scherm (vrm. adr. 46)
+	LD BC,8
+	LD A,' '
+	CALL BIGFIL
+	LD HL,XYFNK	;Csr. pos. van 'Fn/A' of '^A'
+	LD (CSRY),HL
+	POP BC
+	LD A,C	;'F' of '^'
+	CALL NCHPTI
+	LD A,B
+	CALL NCHPTI	;Fkey num.
+	POP AF
+	CALL NCHPTI	;PRINT '/'
+	JR CL2
+CL1:	LD HL,VRMTF7	;Haal vram adres van tekst 'F7:Hulp' 'F7:Hilfe'
+	CALL NSTWRT
+	LD HL,TF7	;F7=Hulp
+	LD B,8	;Print 7 tekens
+	LD C,(IY+VDPWRITE)
+	OTIR
+CL2:	BIT COMLIN,(IY+TABSAV)	;Commandoregel tonen?
+	RET Z
+	LD A,(FKEYNUM)
+	ADD A,A	;Bereken adres van hulptekst
+	LD D,0
+	LD E,A
+	LD HL,COMTAB
+	ADD HL,DE
+	LD E,(HL)	;DE=Adres van tekstregel
+	INC HL
+	LD D,(HL)
+	LD HL,(NAMBAS)
+	LD BC,80*2
+	ADD HL,BC
+	JR ST1	;Druk regel af
+
+COMTAB:	dw THULP0	;0=Hoofdmenu
+	dw THULP0	;Geen extra hulp bij F1
+	dw THULP2
+	dw THULP3
+	dw THULP4
+	dw THULP5
+	dw THULP0
+
+	;Geef aan hoeveel geheugen vrij is
+
+GEHEUGEN:	CALL EVTOPSLAAN
+	LD HL,TMEM
+	LD C,3
+	CALL INVOER
+	XOR A	;NC=Haal totaal
+	CALL FRE	;Haal aantal kB op
+	LD HL,CSRY
+	DEC (HL)
+	LD HL,(FREMEM)
+	CALL DCSET	;Print getal
+	SCF	;C=Haal vrij geheugen
+	CALL FRE
+	LD HL,CSRY
+	INC (HL)	;Verhoog cursor pos
+	LD HL,(FREMEM)
+	CALL DCSET
+	LD HL,TTOETS
+	CALL MESSAGE	;Toon bericht
+	JP INKEY	;Wacht op toets
+
+	;Wis tekst/printerbuffer
+
+WISTP:	LD C,2
+	LD HL,TWIS
+	CALL INVOER
+wisTpLp:	ld hl,tKeuze
+	call message
+wis2:	call inkCrl	;Haal toets
+	cp esc
+	ret z
+	cp 'T'
+	jr z,wis4
+	cp 'P'
+	jr nz,wis2
+
+	bit pbTsr,(iy-flags6)	;PB.TSR aanwezig?
+	jr nz,wisPbTsr	; Ja, => Wis de buffer
+
+	bit pbTed,(iy-flags6)	;PB.COM aanwezig?
+	ld hl,tNoPb
+	jp z,mesKey	;Geen PB
+
+	call zeker	;Wis printerbuffer PB.COM
+	jr c,wisTpLp
+	ld a,1
+	ld (leegBuf),a
+	jp beep
+
+wisPbTsr:	call zeker	;Wis printerbuffer PB.TSR
+	jr c,wisTpLp
+	ld a,pbClear	;PB functie: Wis buffer
+	ld bc,(pbTsrID)	;ID-Code in BC
+	ld de,memMan+tsrCall	;TSR aanroep
+	call extBios	; via MemMan
+	jp beep
+
+wis4:	call zeker	;Zeker weten?
+	jr c,wisTp
+	call clear	;Wis tekst
+	ld hl,0
+	jp gotoLine
+
+	;Haal toegangscode
+
+ACCESS:
+if	not (DEMO or AUTODEMO)
+
+	LD DE,TACCESS
+	CALL STROUT
+	CALL GETNR	;Haal toegangs code
+	LD DE,-2DECH+123	;Standaard offset
+	ADD HL,DE
+	LD DE,(USERCODE)	;Toegangscode\2 erbij
+	SRL D
+	RR E	;Code delen door 2
+	ADD HL,DE	;Bereken adres
+	EX DE,HL
+	LD HL,INHOUD-123	;Een beetje moeilijker maken
+	ADD HL,DE
+	LD A,(HL)	;Test of goede code ingevoerd werd
+	CP 0CDH	;Call op-code?
+	CALL NZ,CHK3	; Nee, => Reset
+	LD (TOINHOUD+1),HL	;Sla adres van F3/Inhoud op
+	LD HL,STOP-123
+	ADD HL,DE
+	LD A,(HL)	;Stop routine begint met een CALL
+	CP 0CDH
+	CALL NZ,CHK3	; Klopt niet, => Reset
+	LD (TOSTOP+1),HL	;Sla adres van F4/Stop op
+	JP TOCHECK	;Controle
+endif
+
+	;disk Inhoud
+
+IHRST:	CALL RESTSCR	;Herstel scherm
+INHOUD:	CALL EVTOPSLAAN	;*** Accesscode: CALL moet hier staan
+	LD HL,TSELECTIE
+	BIT DOS2,(IY-FLAGS5)
+	JR Z,IH0
+	LD HL,TPAD
+IH0:	LD C,18	;Reserveer 18 regels
+	CALL BIGINV
+	LD B,(IY+MINLIN)
+	INC B
+	LD A,'-'
+	CALL DRAWLINE	;Teken streep
+	CALL CHECKAG
+	LD HL,INHNAM
+	LD E,1	;Alleen hoofdletters
+	CALL GETFLEN
+	CALL GETOLD	;Haal naam en toon vorige
+	LD A,C
+	OR A	;Niets ingetypt?
+	JR NZ,IH1
+	LD HL,BUF	; Dan * invullen
+	LD (HL),1
+	INC HL
+	LD (HL),'*'
+IH1:	LD HL,BUF
+	CALL NAAM2	;Naam naar FCB-1/Haal standaard extensie
+	PUSH BC	;DOS2 bewaart drive in C
+	BIT DOS2,(IY-FLAGS5)	;DOS2?
+	JR Z,IH1B
+	BIT 3,B	;Ja, kijk of filenaam ingetypt is
+	JR NZ,IH1B	; Ja, => Ok
+	BIT 4,B	;Alleen een extensie?
+	JR NZ,IH1B	; Ja, => Ook goed
+	LD HL,BUF
+	LD E,(HL)
+	INC (HL)
+	INC HL
+	LD D,0
+	ADD HL,DE
+	LD (HL),'*'             ; Nee, vul * in
+	INC HL
+	LD (HL),0
+	POP BC
+	JR IH1	;En test naam opnieuw
+IH1B:	LD L,(IY+MINLIN)
+	INC L
+	LD H,61
+	LD (CSRY),HL
+	LD DE,TVRIJ
+	CALL STROUT	;Tekst: Vrije diskruimte:
+	LD A,70
+	LD (CSRX),A
+	POP BC
+	DEC C
+	LD A,C
+	BIT DOS2,(IY-FLAGS5)	;DOS2?
+	JR NZ,IH1C	; Ja, => driveletter is al bekend
+	LD C,GETDEF
+	LD A,(FCB1)
+	DEC A
+	CP 0FFH	;Default drive?
+	CALL Z,DOS	; Ja, => haal driveletter
+IH1C:	LD E,A
+	ADD A,'A'
+	CALL NCHPUT	;Toon driveletter
+	LD A,73
+	LD (CSRX),A
+	INC E	;Haal drivenr.
+	LD C,GETALO	;Haal drive info
+	CALL DOS
+	PUSH AF	;Bewaar sectors/cluster
+	LD D,0
+	LD E,B
+	SRL E	;DE=Sector size / 512
+	INC DE	;  = (512 / 512) + 1 = 2
+	CALL MUL16	;2 * aantal vrije clusters = 2 * 713 = 1426
+	SRL H
+	RR L	;1426 / 2 = 713
+	POP AF	;2 sectors per cluster
+	LD D,0
+	LD E,A
+	CALL MUL16	;2 * 713 = 1426
+	SRL H
+	RR L	;Delen door 2 => 1426/2 = 713 k.
+	CALL DCSET	;Toon vrije diskruimte in kilobytes
+	BIT DOS2,(IY-FLAGS5)	;DOS2?
+	JR Z,IH1F
+	LD DE,BUF+1	; Ja, zoek naar volumename
+	LD IX,DISKBUF	;Info block naar diskbuffer
+	LD BC,1000B*256+FFIRST	;Zoek naar volumename
+	CALL DOS
+	JR NZ,IH1F
+	LD A,25
+	LD (CSRX),A
+	LD DE,TVOLUME
+	CALL STROUT	;Print 'Disknaam: '
+	LD HL,DISKBUF+1
+IH1D:	LD A,(HL)
+	OR A
+	JR Z,IH1E
+	CALL NCHPTI	; en de volumename
+	INC HL
+	JR IH1D
+IH1E:	LD A,' '
+	CALL NCHPTI
+IH1F:	LD HL,(CSRY)
+IH1G:	INC L
+	LD H,1
+	LD (CSRY),HL	;Cursor naar 1e positie
+	LD BC,64	;63 tekens + lengtebyte
+	LD HL,BUF
+	LD DE,INHNAM
+	LDIR	;Bewaar filespec/Zoekpad
+	LD B,5*16	;Maxfiles aantal per scherm
+	PUSH BC
+	BIT DOS2,(IY-FLAGS5)	;DOS2?
+	JR Z,IH1H	; Nee, => Haal FCB
+	LD DE,BUF+1
+	LD IX,DISKBUF	;Info block naar diskbuffer
+	LD BC,10000B*256+FFIRST ;Zoek naar bestanden en directories
+	CALL DOS
+	JR NZ,TONFND
+	LD HL,(DISKBUF+1)	;Haal 1e twee letters van naam
+	LD DE,'.'
+	CALL DCOMPR	;Is het de '.' directory?
+	JR NZ,IH2C	; Nee, => Toon gevonden bestand
+	LD C,FNEXT
+	CALL DOS	; Ja, sla de '.' over
+	JR NZ,TONFND
+	JR IH2C
+IH1H:	LD DE,FCB
+	LD C,SETDMA
+	CALL DOS	;Vul bestemming in
+	LD DE,FCB1
+	LD C,SFIRST	;Zoek voor de eerste keer
+	CALL DOS
+	OR A
+	JR NZ,TONFND	;Niets gevonden
+	JR IH3
+TONFND:	POP BC	;Naar 'niet gevonden'
+	JP NOTFOUND
+
+IH2:	BIT DOS2,(IY-FLAGS5)
+	JR Z,IH2D
+IH2A:	LD IX,DISKBUF
+	LD C,FNEXT	;Find next, dos 2
+	CALL DOS
+	JP NZ,IH5	;Niets meer gevonden => IH5
+	LD HL,(DISKBUF+1)	;Haal 1e twee letters van naam
+	LD DE,'.'
+	CALL DCOMPR	;Is het de '.' directory?
+	JR Z,IH2A	; Ja, => Negeren
+IH2C:	LD DE,DISKBUF+1
+	LD HL,FCB+1
+	LD C,PFILE	;Parse filename uit FIB, maak er een FCB van
+	CALL DOS
+	JR IH3
+IH2D:	LD C,SNEXT	;Search next, dos 1
+	CALL DOS
+	OR A
+	JR NZ,IH5	;Niets gevonden
+IH3:	LD HL,FCB+11
+	LD DE,FCB+12
+	LD BC,3
+	LDDR	;Schuif extensie op
+	LD A,' '
+	LD (FCB+9),A
+	LD A,NUL
+	LD (FCB+13),A	;Merk einde van naam
+	LD DE,FCB+1
+	CALL STROUT	;Print de naam
+	LD DE,TABCHR
+	BIT DOS2,(IY-FLAGS5)	;Dos 2?
+	JR Z,IH3B	; Nee, => Druk vier spaties af
+	BIT 4,(IX+14)	; Ja, kijk of het een directory is
+	JR Z,IH3B
+	LD DE,TDIRCHR	;Directory, zet een 'd' achter de naam
+IH3B:	CALL STROUT	;Druk vier spaties of 'd' af
+	POP BC
+	DEC B	;Ruimte vol?
+	PUSH BC
+	JR Z,IH4	; Ja, => Meer? J/N
+	JR IH2	;Volgende naam
+IH4:	LD HL,TMEER
+	CALL MESSAGE	;Nog meer?
+IH4A:	CALL INKCRL	;Haal toetsdruk
+	CP 'N'
+	JR Z,IH5
+	CP 'J'
+	JR NZ,IH4A
+	POP BC
+	LD B,5*16	;BC=Max aantal files
+	PUSH BC
+	LD B,(IY+MINLIN)
+	INC B
+	INC B
+	LD H,1
+	LD L,B
+	LD (CSRY),HL
+	LD C,16	;16 regels leeg maken
+IH4C:	PUSH BC
+	LD A,' '
+	CALL DRAWLINE	;Wis oude namen
+	POP BC
+	INC B
+	DEC C
+	JR NZ,IH4C
+	JP IH2	;Ga weer verder
+IH5:	POP BC	;Haal aantal namen
+	LD A,5*16
+	SUB B
+	RET Z
+	LD (IY-NAMCNT),A
+IH5B:	LD HL,TINH
+	CALL MESSAGE
+IH6:	LD (IY-INHX),1
+	LD (IY-INHY),1
+
+IH7:	LD B,(IY+MINLIN)
+	LD C,18
+IH7B:	CALL DL3	;Wis cursor
+	INC B
+	DEC C
+	JR NZ,IH7B
+	LD B,(IY-INHY)	;Kijk of csr > NAMCNT
+	LD A,0FBH	;LD A,-5
+IH8:	ADD A,5
+	DJNZ IH8
+	ADD A,(IY-INHX)
+	DEC A
+	CP (IY-NAMCNT)
+	JR NC,IH6	;Fout
+	LD A,(IY-INHY)	;Bereken csr adres
+	ADD A,(IY+MINLIN)
+	LD B,A
+	LD HL,0
+	LD DE,10
+IH9:	ADD HL,DE
+	DJNZ IH9
+	LD B,(IY-INHX)
+	LD DE,2
+	DEC HL
+	DEC HL
+IH10:	ADD HL,DE
+	DJNZ IH10
+	LD DE,(TXTCOL)
+	ADD HL,DE
+	XOR A
+	CALL NWRVRM	;Zet csr. neer
+	INC HL
+	LD A,00001111B	;DOS1 csr heeft geen blokje voor 'd' van subdir
+	BIT DOS2,(IY-FLAGS5)
+	JR Z,IH10A
+	LD A,00001011B
+IH10A:	CALL NWRVRM
+	LD BC,INHKAR	;BC wijst naar tabel met mogelijke karakters
+	LD HL,INHADR	;HL wijst naar bijbehorende adrestabel
+	XOR A	;Toon geen cursor
+	JP GETCMD	;Wacht op toetsdruk (=commando) en voer het uit
+
+INHADR:	dw ESCAPE	;Escape routine
+	dw IHDOWN	;Csr. omlaag
+	dw IHUP	;Csr. omhoog
+	dw IHRIGHT	;Csr. rechts
+	dw IHLEFT	;Csr. links
+	dw INHOUD	;Inhoud
+	dw IHLAAD	;Tekst laden
+	dw IHBLAAD	;Voeg een blok toe
+	dw IHWIS	;File wissen
+	dw IHMAIL	;Mail-merge
+	dw IHKAR	;Karakerset
+	dw IHINS	;Instellingen
+
+	;Opties van F3/Inhoud
+
+ESCAPE:	RET	;ESC=Terug naar de tekst
+
+IHDOWN:	INC (IY-INHY)	;Omlaag
+	JR IH7
+
+IHUP:	DEC (IY-INHY)	;Omhoog
+	JR Z,IHDOWN
+	JR IH7
+
+IHRIGHT:	LD A,(IY-INHX)
+	INC A	;Naar rechts
+	CP 6
+	JR NC,IHR2
+	LD (IY-INHX),A
+	JP IH7
+IHR2:	LD (IY-INHX),1
+	JR IHDOWN
+
+IHLEFT:	DEC (IY-INHX)	;Links
+	JP NZ,IH7
+	LD (IY-INHX),1
+	JR IHUP
+
+IHLAAD:	CALL GETFCB	;Haal FCB1
+	JR NC,IH16B	;Geen carry => Laad file
+	LD B,(IY+MINLIN)	;Carry, nieuwe directory (alleen dos2)
+	LD A,' '
+	CALL DRAWLINE	;Wis padnaam
+	INC B
+	INC B
+	LD C,16	;16 regels
+IH16A:	LD A,' '
+	CALL DRAWLINE	;En wis de files
+	INC B
+	DEC C
+	JR NZ,IH16A
+	CALL CHECKAG
+	LD L,(IY+MINLIN)
+	LD H,1
+	LD (CSRY),HL
+	PUSH HL
+	LD DE,TPAD
+	CALL STROUT
+	LD HL,BUF
+	CALL PRTSTR	;Toon nieuwe directorypad
+	POP HL	;Cursor naar 1e fileregel
+	INC L
+	JP IH1G	;En toon de files
+IH16B:	LD A,(FCB1)
+	PUSH AF	;Bewaar drivenummer
+	CALL VRAAGSAVE	;Moet tekst bewaard worden?
+	CALL GF4	;Herstel FCB1
+	CALL CHECKAG
+	POP AF
+	LD (FCB1),A
+	LD HL,0	;Tekst naar regel 0
+	LD (LOADREG),HL
+	JP LOAD2
+
+	;Voeg een tekstblok in
+
+IHBLAAD:	CALL GETFCB	;Haal naam uit Vram
+	CALL CHECKAG
+	JP LDBLK2	;Open de file en laad en blok in
+
+IHWIS:	LD HL,TZEKER
+	CALL MESSAGE	;Zeker weten?
+IH19:	CALL INKCRL	;Haal toetsdruk
+	CP 'N'
+	JP Z,IH5B
+	CP 'J'
+	JR NZ,IH19
+	BIT DOS2,(IY-FLAGS5)
+	JR Z,IH19B
+	LD HL,BUF
+	LD DE,path1Buf
+	LD BC,65
+	LDIR	;Bewaar zoekpad
+	CALL GETFCB	;Haal de te wissen file
+	LD DE,BUF+1
+	LD C,DELD2
+	CALL DOS	;Wis de file
+	LD HL,path1Buf
+	LD DE,BUF
+	LD BC,65
+	LDIR
+	JR IH19D
+IH19B:	CALL GETFCB	;Haal naam
+	LD DE,FCB1
+	LD C,DELFCB	;Kill FCB
+	CALL DOS
+IH19D:	LD C,16
+	LD A,(IY+MINLIN)
+	LD (CSRY),A
+	LD B,A
+	INC B
+	INC B	;2 regels van boven beginnen
+IH20:	LD A,' '                ;Wis regel
+	CALL DRAWLINE
+	INC B
+	DEC C
+	JR NZ,IH20	;C aantal regels
+	JP IH1	;Opnieuw inhoud
+
+IHMAIL:	CALL GETFCB	;Haal Mail-Merge naam
+	LD DE,MRGNAM
+	JP SFCB2	;Bewaar naam in MRGNAM
+
+ihKar:	call getFcb
+	ld de,karNam
+	call sFcb2	;Bewaar karakterset naam
+	jp loadKar	;Lees karakterset in
+
+ihIns:	call getFcb	;laad instellingen
+	res mTED,(iy-flags5)	;.TED extensie niet verplicht
+	call loadIn2	;Laad instellingen
+	jp chkPageTab	;Check op illegale paginastops
+
+GETFCB:	LD A,(IY-INHY)	;Bereken csr adres
+	ADD A,(IY+MINLIN)
+	LD B,A
+	LD HL,0
+	LD DE,80
+GF1:	ADD HL,DE
+	DJNZ GF1
+	LD B,(IY-INHX)
+	DEC B
+	JR Z,GF3
+	LD DE,16
+GF2:	ADD HL,DE
+	DJNZ GF2
+GF3:	LD DE,FCBBUF
+	LD C,14
+	XOR A	;scherm-VRAM
+	CALL NLDRMV	;Naar Ram-Page 0
+GF4:	BIT DOS2,(IY-FLAGS5)
+	JR NZ,GF5	;DOS2 => Maak pathname string
+	LD HL,FCB1+1
+	LD (HL),0
+	LD DE,FCB1+2
+	LD BC,30
+	LDIR
+	LD HL,FCBBUF
+	LD DE,FCB1+1
+	LD BC,8
+	LDIR	;Haal naam in FCB1
+	INC HL
+	LD BC,3
+	LDIR
+	OR A	;Geen directory
+	RET
+GF5:	XOR A
+	LD (DISKBUF),A	;Vlag: Geen naam in diskbuf
+	LD DE,BUF+1
+	LD BC,PARSE	;Parse Pathname string
+	CALL DOS
+	BIT 0,B	;Lege string?
+	JR Z,GF6	; Ja, => Vul naam in
+	BIT 3,B	;Filenaam aanwezig?
+	JR Z,GF6	; Nee, => Vul naam in
+	PUSH HL
+	PUSH BC	;Bewaar drive
+	LD DE,DISKBUF+1
+	LD BC,12
+	LDIR	; Ja, bewaar naam in Diskbuf
+	POP BC
+	LD A,-1
+	LD (DISKBUF),A	;Vlag: Wel naam in diskbuf
+	POP DE
+GF6:	EX DE,HL
+	LD A,(FCBBUF+1)	;Haal 2e teken van naam
+	CP '.'                  ;Is de naam '..'?
+	JR NZ,GF6M	; Nee, => Haal naam
+	PUSH AF	;Dummy, compenseer stack tegen underflow
+	LD DE,BUF	; Ja, ga een directory terug
+	DEC HL	;Sla 1e '\' over
+	CALL DCOMPR	;Lege buffer?
+	JR Z,GF6C	; Ja, => Haal current dir vanaf root
+	LD A,(HL)
+	CP ':'                  ;Alleen een drive letter?
+	JR Z,GF6C
+GF6B:	CALL DCOMPR	; Nee, er staat dus nog een directory
+	JR Z,GF11B	;Begin van buffer => Vul filenaam in
+	DEC HL
+	LD A,(HL)
+	CP '\'                  ;Zoek begin van vorige dir.
+	JR Z,GF11B	; Gevonden => Vul zoekfile in
+	CP ':'                  ;Einde van drive letter?
+	JR NZ,GF6B	; Nee, volgende teken
+	JR GF11B
+GF6C:	INC HL
+	LD (HL),'\'             ; Ja, haal default directory vanaf root
+	INC HL
+	LD (HL),0
+	PUSH HL
+	LD B,C	;Current dir. van drive B
+	EX DE,HL
+	LD C,GETCD
+	CALL DOS
+	POP HL
+	LD BC,PARSE	;Einde gevonden => Zoek begin laatste directory
+	LD DE,BUF+1
+	CALL DOS
+	JR GF11C	; en vul de zoeknaam in
+GF6K:	INC HL
+GF6M:	LD DE,FCBBUF	;Haal naam uit FCBBUF
+	LD B,8
+GF7:	LD A,(DE)
+	CP ' '+1                ;Einde van naam bereikt?
+	JR C,GF8	; Ja, => Haal extensie
+	LD (HL),A
+	INC HL
+	INC DE
+	DJNZ GF7
+GF8:	LD DE,FCBBUF+9	;Vul extensie in
+	LD (HL),'.'
+	INC HL
+	LD B,3
+GF9:	LD A,(DE)
+	CP ' '+1                ;Einde van extensie bereikt?
+	JR C,GF10	; Ja, => Klaar
+	LD (HL),A
+	INC HL
+	INC DE
+	DJNZ GF9
+GF10:	OR A	;Geen carry = geen directory
+	PUSH AF
+	LD A,(FCBBUF+13)	;Kijk of naam een directory was
+	CP 'd'
+	JR NZ,GF12
+	DEC HL	;Ja, kijk of er lege dir-extensie is
+	LD A,(HL)
+	CP '.'
+	JR Z,GF11	; Ja, => Vervang '.' door '\'
+	INC HL	; Nee, zet '\' na de extensie
+GF11:	LD (HL),'\'             ; Ja, vul directory scheiding in
+GF11B:	INC HL
+GF11C:	LD A,(DISKBUF)	;Kijk in diskbuf of er een naam was
+	OR A
+	JR Z,GF11M	; Nee, => GF11M
+	EX DE,HL
+	LD HL,DISKBUF+1
+	LD BC,12
+	LDIR	;Zet naam achter nieuwe directory naam
+	EX DE,HL
+GF11M:	POP AF
+	SCF	;Zet directory vlag
+	PUSH AF
+GF12:	LD (HL),0
+	LD HL,BUF
+	LD (HL),63	;Naam is max 63 karakters
+	CALL NAAM2	;En kontroleer de naam
+	POP AF
+	RET
+
+	;Backup menu
+
+BACKUP:	LD HL,TBACKUP
+	LD C,4
+	CALL INVOER	;Zet menu op scherm
+BAK1:	LD L,(IY+MINLIN)
+	LD H,46
+	PUSH HL
+	BIT BKUP,(IY+SAVFL)	;Zet aan of uit op het scherm
+	CALL AANCSR
+	POP HL
+	INC L
+	INC L
+	PUSH HL
+	BIT AUTOB,(IY+SAVFL)	;Automatisch bewaren aan/uit
+	CALL AANCSR
+	POP HL
+	INC L
+	LD (CSRY),HL
+	LD HL,(STRIKES)
+	CALL DCSET	;Aantal aanslagen
+	LD HL,TKEUZE
+	CALL MESSAGE
+BAK2:	CALL INKCRL	;Wacht op toets
+	CP ESC
+	RET Z
+	CP 'B'
+	LD B,10000B	;Wissel backup vlag
+	JR Z,BAK3
+	CP 'A'
+	LD B,100000B	;Wissel autosave vlag
+	JR Z,BAK3
+	CP 'S'
+	JR NZ,BAK2
+	LD A,(IY+MINLIN)
+	ADD A,3
+	LD L,A
+	LD H,46
+	LD (CSRY),HL
+	LD E,2
+	LD B,5
+	LD HL,(STRIKES)
+	CALL GN0	;Haal aantal aanslagen
+	CALL DECTOBIN
+	LD A,(BUF)
+	OR A
+	JR Z,BAK1
+	LD (STRIKES),HL
+	JR BAK1
+BAK3:	LD A,(IY+SAVFL)
+	XOR B
+	LD (IY+SAVFL),A
+	JR BAK1
+
+	;Kijk of er al automatisch bewaard moet worden
+
+AUTOSAV:	BIT AUTOB,(IY+SAVFL)	;Test of auto wel AAN staat
+	RET Z
+	LD HL,(STRIKES)	;Haal aantal benodigde toetsaanslagen
+	LD A,H
+	OR L
+	RET Z	; 0 => Terug
+	LD DE,(KEYCNT)	;Haal aantal getypte aanslagen
+	SBC HL,DE
+	RET NC	; Te weinig => terug
+	LD HL,0
+	LD (KEYCNT),HL	;Zet teller weer op 0
+	LD HL,STRBUF
+	CALL OPSLAAN4	;Sla regel op met spaties, ook als editmode=aan
+	LD HL,0
+	LD (SAVESTART),HL	;Bewaren van regel 0 tot Einde
+	LD HL,(LASTLINE)
+	LD (SAVEEND),HL
+	CALL BEEP	;Geef seintje
+	LD HL,RSTSCR2	;Straks scherm herstellen
+	PUSH HL
+	LD HL,SAVNAM	;Kijk of er al een naam opgegeven is
+	LD A,(HL)
+	LD DE,BUF	;	Naam alvast naar BUF voor NAAM routine
+	PUSH DE
+	LD BC,65
+	LDIR
+	POP HL
+	OR A
+	JP NZ,SV0B	; Ja, => begin direkt met bewaren
+	JP SAVE1	; Nee, => Vraag eerst om een naam
+
+	;Check again
+
+CHECK2:
+if	DEMO or AUTODEMO
+	RET
+else
+	PUSH AF
+	LD H,HIGH TNAME
+	LD L,LOW TNAME
+	LD DE,0	;Begin Code bij twee
+	LD C,2
+	LD B,(HL)	;Haal lengte
+	INC HL
+CHA1:	LD A,(HL)
+	CALL CHKCNT	;Bereken checksum
+	INC C	;Teller+1
+	LD A,C
+	CP 6	;Teller max. =6
+	JR C,CHA2
+	LD C,1
+CHA2:	INC HL
+	DJNZ CHA1
+	LD HL,(USERCODE)
+	OR A
+	SBC HL,DE	;Indien NZ => Code fout
+	JR NZ,CHA3	;Reset computer
+	POP AF
+	RET	; Ok.
+CHA3:	LD (HL),A
+	INC HL
+	JR CHA3
+endif
+
+	;Verander linkerkantlijn
+
+CHLEFT:	LD HL,TLINKS	;Haal linker kantlijn
+	LD C,1
+	CALL INVOER
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)	;Haal csr.pos
+	PUSH AF
+	LD A,(IY+KLLINKS)
+	LD B,3	;Max 3 cijfers
+	CALL GON1	;Haal kantlijn
+	POP DE
+	LD A,D
+	JR Z,CHL1	;Niets => Vul csr. in
+	LD A,H
+	OR A
+	JR NZ,CR1	;Getal te groot
+	LD A,L
+	OR A
+	JR Z,CR1	;Getal=0
+CHL1:	CP 76
+	JR NC,CR1	;Getal te groot
+	CP (IY+KLRECHTS)
+	JR NC,CR1	;Groter als rechterkantlijn
+	LD (IY+KLLINKS),A
+	JR CR1
+
+	;Verander rechterkantlijn
+
+CHRIGHT:	LD HL,TRECHTS	;Haal rechter kantlijn
+	LD C,1
+	CALL INVOER
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)	;Haal csr.pos
+	PUSH AF
+	LD A,(IY+KLRECHTS)
+	LD B,3	;Max 3 cijfers
+	CALL GON1	;Haal kantlijn
+	POP DE
+	LD A,D
+	JR Z,CR0	;Niets => Vul csr. in
+	LD A,H
+	OR A
+	JR NZ,CR1	;Getal te groot
+	LD A,L
+	OR A
+	JR Z,CR1	;Getal=0
+CR0:	CP 255
+	JR Z,CR1	;Getal te groot
+	SUB 2
+	JR C,CR1	;Getal moet 2> dan KLLINKS
+	CP (IY+KLLINKS)
+	JR C,CR1	;Kleiner dan linkerkantlijn
+	ADD A,2
+	LD (IY+KLRECHTS),A
+CR1:	JP KANTLIJN
+
+	;Alinea instellingen
+
+CHALINEA:	LD HL,TALINEA
+	LD C,1
+	CALL INVOER
+CAL0:	LD A,(IY+MINLIN)
+	LD (CSRY),A	;Ypos
+	LD A,xUitvul	;A=Xpos
+	BIT UITVUL,(IY+TABSAV)
+	CALL PAANUIT	;Print uitvullen aan/uit
+	LD A,xAfbreek
+	BIT AFBR,(IY+TABSAV)
+	CALL PAANUIT	;Print afbreken aan/uit
+	LD A,xStreep
+	LD (CSRX),A
+	LD A,(IY+AFBREEK)
+	CALL NCHPUT	;Print afbreek-streepje
+	LD A,xInspr
+	LD (CSRX),A
+	LD A,(IY+INSPRING)
+	CALL BCDSET	;Inspring afstand
+	LD HL,TKEUZE
+	CALL MESSAGE
+	LD HL,ALIADR
+	LD BC,ALIKAR
+	LD A,1	;Toon csr
+	CALL GETCMD	;Wacht op toets
+	JR CAL0	;En toon nieuwe instellingen
+
+ALIADR:	dw MENUESC	;ESCape
+	dw ALUITV	;Uitvullen
+	dw ALAFBR	;Afbreken
+	dw ALINSP	;Inspringen
+	dw ALSTRP	;Streepje
+
+ALUITV:	LD B,10B	;B=Bitmasker
+	db 11H
+ALAFBR:	LD B,100B
+	LD A,(IY+TABSAV)
+	XOR B	;Wissel vlag
+	LD (IY+TABSAV),A
+	RET
+
+ALINSP:	LD D,xInspr	;External, LD DE,256*x mag niet
+	LD E,0
+	CALL MENUXY	;Locate 66,0
+	LD A,(IY+INSPRING)
+	CALL GETONR	;Haal inspring-getal
+	RET Z
+	LD (IY+INSPRING),L
+	RET
+
+ALSTRP:	LD A,(IY+AFBREEK)	;Wissel afbreek-streep
+	LD B,'-'
+	CP B
+	JR NZ,ALS1
+	LD B,0FAH	;'ú'
+ALS1:	LD (IY+AFBREEK),B
+	RET
+
+; aanCsr
+;
+; In: HL=XYPOS of A=Xpos
+;     Vlag Z=Uit NZ=Aan
+;
+; Behoud: HL
+;
+aanCsr:	ld (csry),hl
+	jr aanUit2
+PAANUIT:	LD (CSRX),A
+AANUIT2:	LD DE,TAAN
+	JR NZ,PAU1
+pUit:	LD DE,TUIT
+PAU1:	PUSH HL
+	CALL STROUT	;Print aan/uit
+	POP HL
+	RET
+
+; notAanCsr
+;
+; Als aanCsr, maar nu Z=Aan, NZ=Uit
+;
+notAanCsr:	ld (csry),hl
+	jr nz,pUit	;Z=Print Uit
+	ld de,tAan
+	jr pau1
+
+
+	;Bereken code
+
+CHKCNT2:	LD H,0
+	LD L,A	;HL=A
+	INC C	;Verhoog C, = anders dan ted 2.2
+CHC1:	ADD HL,HL	;HL*C
+	DEC C
+	JR NZ,CHC1
+	ADD HL,DE	;HL=HL+DE
+	EX DE,HL	;DE=DE+C*A
+	POP BC
+	POP HL
+	RET
+
+	;Vul tabstop in
+
+ZETTAB:	LD C,'+'                ;Vul tab in
+CHTAB:	PUSH BC
+	LD HL,STRBUF
+	CALL OPSLAAN4	;Bewaar huidige regel, bereken TAB's
+	POP BC
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)
+	LD HL,TTAB-1	;Bereken pos in TAB-tabel
+	LD D,0
+	LD E,A
+	ADD HL,DE
+	LD (HL),C	;Vul tab positie in
+	LD HL,(CSRNUM)
+	CALL GOLINE2	;Haal huidige regel met nieuwe tabs
+	JP RSTSCR2	;Bouw de rest van het scherm op
+
+	;Wis tabstop
+
+WISTAB:	LD C,0	;Wis Tabstop
+	JR CHTAB
+
+	;Spaties als TABs saven
+
+SAVETAB:	LD HL,TTABCH	;TAB tekst
+	LD C,3
+	CALL INVOER
+
+showTabIns:	LD HL,CSRY
+	LD A,(IY+MINLIN)
+	LD (HL),A	;YPos=bovenaan
+	PUSH HL
+	LD A,xTabIns	;Haal Xpos
+	BIT STTAB,(IY+TABSAV)
+	CALL PAANUIT	;Print tabs in geheugen aan/uit
+	POP HL
+	PUSH HL
+	INC (HL)
+	LD A,xTabIns	;Haal Xpos
+	BIT STOTAB,(IY+TABSAV)
+	CALL PAANUIT	;Print tabs op disk aan/uit
+	POP HL
+	INC (HL)
+	LD A,xTabIns	;Haal Xpos
+	BIT LDTAB,(IY+TABSAV)
+	CALL PAANUIT	;Print tabs direkt laden aan/uit
+	LD HL,TKEUZE
+	CALL MESSAGE	;Vraag keuze
+	LD HL,TABADR
+	LD BC,TABKAR
+	LD A,1	;Toon csr
+	CALL GETCMD	;Wacht op toets
+	JR showTabIns	;Toon nieuwe inst.
+
+TABADR:	dw MENUESC	;ESCape
+	dw SVTINMEM	;TABs in geheugen
+	dw SVTONDISK	;Op disk
+	dw TABLOAD	;Laad van disk
+
+SVTONDISK:	LD B,1
+	db 11H	;LD DE,nn ==> skip de B,n
+TABLOAD:	LD B,1000000B
+	JR SVT4
+
+SVTINMEM:	LD B,100000B
+SVT3:	PUSH BC
+	CALL VRAAGSAVE	;Evt. tekst bewaren
+	CALL CLEAR	;Wis geheugen
+	CALL RESTSCR	;Bouw scherm op
+	POP BC
+SVT4:	LD A,(IY+TABSAV)
+	XOR B	;Wissel vlag aan/uit
+	BIT STTAB,A	;Tabs in geheugen UIT?
+	JR NZ,SVT5
+	RES LDTAB,A	; Ja, dan ook niet meer laden
+SVT5:	LD (IY+TABSAV),A
+	LD A,B	;Haal de te omgedraaide vlag
+	CP 100000B	;Tabs in geheugen vlag:Geheugen gewist?
+	RET NZ	; Nee, => Toon nieuwe instellingen
+	POP HL	; Ja, verwijder return addr.
+	JR SAVETAB	;Bouw scherm op
+
+	;Wel/geen Memorymapper gebruiken
+
+CHMEM:	CALL EVTOPSLAAN
+	LD HL,TMEMMAP	;Memmap veranderen?
+	LD C,2
+	CALL INVOER
+	LD HL,(CSRY)
+	PUSH HL
+	LD HL,CSRY
+	DEC (HL)	;Cursor 1 omhoog
+	LD DE,TAAN
+	BIT 0,(IY+MAPFLAG)
+	JR Z,CHM1
+	LD DE,TUIT
+CHM1:	CALL STROUT	;Print mapper aan/uit
+	POP HL
+	LD (CSRY),HL	;Herstel cursor
+	LD DE,TAAN
+	LD A,(IY+BOTMAP)
+	OR A	;Ook pag 0-6 in gebruik?
+	JR Z,CHM2
+	LD DE,TUIT
+CHM2:	CALL STROUT
+	LD HL,TKEUZE	;Maak uw keuze
+	CALL MESSAGE
+
+	LD HL,MEMADR
+	LD BC,MEMKAR
+	LD A,1	;Toon csr
+	CALL GETCMD	;Wacht op toets
+	JR CHMEM	;En opnieuw
+
+MEMADR:	dw MENUESC	;ESCape
+	dw CHMAPPER	;Mapper aan/uit
+	dw CHVRAM	;Vram aan/uit
+
+chMapper:	bit mman,(iy-flags5)	; DOS2 maproutine of memman aanwezig?
+	ret nz
+	bit d2mm,(iy-flags4)
+	ret nz	; Ja, => Dan geen mapschakel mogelijk
+	call vraagSave	;Evt eerst tekst saven
+	LD A,(IY+MAPFLAG)
+	XOR 1	;Memmap-vlag aan/uit
+	LD (IY+MAPFLAG),A
+	CALL ZOEKMAP	;Onderzoek beschikbaar geheugen
+	JR CHM6
+CHVRAM:	CALL VRAAGSAVE
+	LD A,(IY+BOTMAP)	;Wel/niet map 0-6 gebruiken
+	LD B,7	;1 pag VRAM wel (1800H-3FFFH)
+	OR A
+	JR Z,CHM5
+	LD B,0
+CHM5:	LD (IY+BOTMAP),B
+chm6:	call clear	;Wis tekst
+	ld hl,0
+	jp gotoLine
+
+	;Zet kantlijnen op scherm
+
+kantlijn:	ld hl,25*80
+	bit comLin,(iy+tabSav)	;Editor stand?
+	jr nz,kl0
+	ld hl,26*80	;Ja, op r. 26
+kl0:	call nStWrt
+	ld hl,tTab
+	ld b,0
+	ld c,(iy+offset)
+	add hl,bc	;HL=Tabulatie tabel
+	ld a,(iy+offset)
+	ld c,(iy+vdpWrite)
+	ld b,80
+kl1:	inc a
+	jr z,kl3
+	ld e,'R'
+	cp (iy+klRechts)
+	jr z,kl2
+	ld e,' '
+	jr nc,kl2
+	ld e,'L'
+	cp (iy+klLinks)
+	jr z,kl2
+	ld e,' '
+	jr c,kl2
+	ld e,'-'
+	ld d,a
+	ld a,(hl)	;Tab printen?
+	or a
+	ld a,d
+	jr z,kl2
+	ld e,(hl)	;Haal tab-teken ('+') op
+kl2:	out (c),e
+	inc hl
+	djnz kl1
+	ret
+kl3:	ld e,' '
+kl4:	out (c),e
+	djnz kl4
+	ret
+
+	;Zet hulpmenu op scherm
+
+helpMenu:	CALL EVTOPSLAAN	;Eventueel opslaan indien nodig
+	LD A,1 SHL HLP
+	CALL SFL2TOGGLE	;Wissel helpvlag
+	LD A,(IY+MINLIN)
+	BIT HLP,(IY+SAVFL2)
+	JR Z,HM3
+	LD L,A
+	ADD A,HLPCNT
+	LD (IY+MINLIN),A
+HM0:	LD DE,INVERSE	;Straks menu inkleuren
+	PUSH DE
+	LD H,1
+	LD (CSRY),HL	;Zet cursor neer
+	CALL SETVDP	;Zet schrijfadres
+	LD C,(IY+VDPWRITE)
+	LD HL,THELP
+	LD DE,80 * (HLPCNT-1)	;Help = 8 regels
+HM1:	LD A,(HL)
+	INC HL
+	BIT BIGLET,(IY+SAVFL2)
+	JR Z,HM2
+	LD A,' '                ;Grote letters : Maak hulpmenu leeg
+HM2:	OUT (C),A	;Zet teken op scherm
+	DEC DE
+	LD A,D
+	OR E
+	JR NZ,HM1
+	LD B,(IY+MINLIN)
+	DEC B
+	LD A,17H	;Zet streep onder hulpmenu
+	CALL DRAWLINE
+	JR HM4
+HM3:	SUB HLPCNT
+	LD (IY+MINLIN),A	;Haal menu van scherm
+HM4:	LD HL,(CSRNUM)	;Haal huidige regel
+	JP GOLINE2	;Daar naar toe, behoud cursor positie
+
+	;Controleer usernummer voor eerste keer
+
+CHECK:
+if	not (DEMO or AUTODEMO)	;Demo versie: Voorkom undefined global
+	LD H,HIGH TNAME+1
+	DEC H
+	LD L,LOW TNAME
+	LD DE,0	;Begin Code bij twee
+	LD C,2
+	LD B,(HL)	;Haal lengte
+	INC HL
+CHK1:	LD A,(HL)
+	CALL CHKCNT	;Bereken checksum
+	INC C	;Teller+1
+	LD A,C
+	CP 6	;Teller max=6
+	JR C,CHK2
+	LD C,1
+CHK2:	INC HL
+	DJNZ CHK1
+	LD HL,(USERCODE)
+	OR A
+	SBC HL,DE	;Indien NZ => Code fout
+	JR NZ,CHK3	;Reset computer
+	CALL SAVDEF	;Bewaar password
+	JP ERROR
+CHK3:	XOR A
+	LD H,A
+	LD L,A
+	PUSH HL
+	POP IX
+	JP CALMN
+endif
+
+	;Haal nummer in HL van toetsenbord
+
+GETNR:	LD B,5	;Bufferlengte: 5
+	LD E,2	;Flag: haal cijfers
+	CALL GETTXT
+	JP DECTOBIN
+
+	;Haal oud nummer van toetsenbord
+
+GETONR:	LD B,2
+GON1:	LD E,2
+	CALL GETONUM3	;Haal getal
+	CALL DECTOBIN
+	LD A,(BUF)
+	OR A	;Test op 0
+	RET
+
+	;Haal nummer, oude num in A
+
+GETONUM2:	LD B,3	;3 tekens
+GETONUM3:	LD H,0
+	LD L,A
+GN0:	PUSH DE
+	PUSH BC
+	CALL DECI2	;Haal code als cijfer
+	LD HL,DCBUF	; in DCBUF
+	LD B,0
+	LD A,' '
+GN1:	CP (HL)	;Klaar?
+	JR Z,GN2
+	INC HL
+	INC B
+	JR GN1
+GN2:	LD A,B
+	LD (DCBUF-1),A	;Vul lengtebyte in
+	POP BC
+	POP DE
+	LD HL,DCBUF-1
+
+	;Haal tekst uit oude buffer op in HL
+
+GETOLD:	LD A,(HL)	;Haal lengte
+	OR A
+	JR Z,GETTXT	;Nul, => Klaar
+	CP B	;Te lang?
+	JR C,GTO1
+	LD A,B	; Ja, => Neem maxlen
+	LD (HL),A
+GTO1:	LD C,A
+	INC A	;Lengtebyte ook meenemen
+	LD (IY-BUFPOS),A	;Zet cursor neer
+	PUSH BC
+	PUSH DE
+	LD DE,BUF
+	LD B,0
+	LD C,A
+	LDIR	;Vul nieuwe buf in
+	LD HL,BUF
+	LD A,(CSRX)
+	ADD A,(HL)	;Verplaats cursor naar einde
+	LD (CSRX),A
+	POP DE
+	POP BC
+	JR GT0	; Haal tekst
+
+	.comment %
+	Tekst in buffer, max in B
+	Alle letters: E=0
+	Alleen hoofdletters: E=1
+	Cijfers: E=2
+	Terug: C=lengte
+	%
+
+GETTXT:	LD C,0
+	LD (IY-BUFPOS),1	;X-pos van cursor
+GT0:	RES NOLIN,(IY-FLAGS5)	;Wel '_' tonen
+GT0A:	LD A,(CSRX)	;Toon de buffer
+	PUSH AF
+	PUSH BC
+	SUB (IY-BUFPOS)
+	INC A
+	LD (CSRX),A	;Zet cursor aan het begin v/d regel
+	LD HL,BUF+1
+	LD A,C
+	OR A	;Is buffer leeg?
+	JR Z,GT0D	; Ja, => GT0D
+	LD B,C
+GT0C:	LD A,(HL)
+	CALL NCHPTI	; Nee, Toon karakter uit buffer
+	INC HL
+	DJNZ GT0C
+GT0D:	POP BC
+	PUSH BC
+	LD A,B	;Bereken aantal '_'
+	SUB C
+	JR Z,GT1B
+	LD B,A
+	LD A,'_'
+	BIT NOLIN,(IY-FLAGS5)
+	JR Z,GT1
+	LD A,' '                ;Toon evt. ' ' i.p.v. '_'
+GT1:	CALL NCHPTI
+	DJNZ GT1
+GT1B:	POP BC
+	POP AF
+	LD (CSRX),A
+GT2:	BIT NOLIN,(IY-FLAGS5)
+	JR Z,GT2A	;Stoppen?
+	LD HL,BUF
+	LD (HL),C	; Ja, vul lengtebyte in en stop
+	RET
+GT2A:	LD HL,CSRX	;(HL) = Csr pos.
+	CALL NCHGET	;Wacht op toets
+	CP LEFT
+	JR NZ,GT2B
+	DEC (HL)
+	DEC (IY-BUFPOS)	;Csr links
+	JR NZ,GT2
+	JR GT2C	;Evt weer naar rechts
+GT2B:	CP RIGHT
+	JR NZ,GT2D
+	LD A,(IY-BUFPOS)
+	DEC A
+	CP C
+	JR NC,GT2
+GT2C:	INC (IY-BUFPOS)	;Csr naar rechts
+	INC (HL)
+	JR GT2
+GT2D:	CP DEL
+	JR NZ,GT2G
+GT2E:	LD A,(IY-BUFPOS)	;Delete
+	DEC A
+	CP C	;Cursor op regel einde?
+	JR NC,GT2	; Ja, => doe niets
+	DEC C	;Bufferlengte 1 omlaag
+	PUSH DE	;Bewaar regs
+	PUSH BC
+	LD HL,BUF+2
+	LD D,0
+	LD E,A
+	LD B,D
+	ADD HL,DE
+	LD D,H
+	LD E,L
+	DEC DE
+	SUB C	;Pos-Tot=-Len
+	JR Z,GT2F	;Buf len. is nul => Niet schuiven
+	NEG	;+Len
+	LD C,A
+	LDIR	;Voer delete uit
+GT2F:	POP BC
+	POP DE
+	JP GT0	;Toon de buffer
+GT2G:	CP BS
+	JR NZ,GT3
+GT2I:	DEC (HL)	;Back space
+	DEC (IY-BUFPOS)	;Eerst Csr links
+	JR Z,GT2C	; Kan niet => Weer naar rechts
+	JR GT2E	; Kan wel => Delete
+GT3:	CP CR	;Enter ?
+	JR NZ,GT3B
+	SET NOLIN,(IY-FLAGS5)	; Ja, lijntjes weg en stop
+	JP GT0A
+GT3B:	CP HOME
+	JR NZ,GT3F
+	INC (HL)	;Home wist de hele regel
+GT3D:	DEC (HL)
+	DEC (IY-BUFPOS)	;Zet bufpos en csrx op nul
+	JR NZ,GT3D
+	JP GETTXT
+GT3F:	CP 255
+	JR NZ,GT3H
+	CALL NCHGET	;Negeer funktietoets
+	JP GT2
+GT3H:	LD D,A
+	LD A,E
+	CP 2	;Alleen cijfers ?
+	LD A,D
+	JR NZ,GT4	; Nee, => GT4
+	CP '0'
+	JP C,GT2
+	CP '9'+1
+	JP NC,GT2
+	JR GT5
+GT4:	CP 1
+	JR NZ,GT4B
+	CALL NCHGET	;Haal grafisch teken
+	SUB 'A'-1
+	JR GT5
+GT4B:	CP ESC	;ESC?
+	JR NZ,GT45
+	XOR A	; Ja, vul code 0 in
+	JR GT5	;Toon grafisch teken
+GT45:	CP SELECT
+	JR NZ,GT4D
+	LD A,DEL	;Control = ascii 127
+	JR GT5
+GT4D:	CP INS	;Insert?
+	JR NZ,GT4F
+	LD HL,(CSRY)
+	PUSH HL
+	PUSH BC
+	PUSH DE
+	CALL INSERT	; Ja, Verander insert vlag
+	POP DE
+	POP BC
+	POP HL
+	LD (CSRY),HL
+	JP GT2
+GT4F:	CP ' '                  ;Verder geen speciale tekens
+	JP C,GT2
+	INC E
+	DEC E
+	CALL NZ,GROOT	;Kleine- in hoofdletters
+GT5:	LD D,A
+	LD A,(IY-BUFPOS)
+	DEC A
+	CP B	;Cursor voorbij reg. einde?
+	JP NC,GT2	; Ja, => Doe niets
+	LD A,D
+	CALL NCHPTI
+	PUSH DE
+	BIT INSFL,(IY+FLAGS1)	;Insert Aan?
+	JR Z,GT5M	; Nee, => GT5M
+	LD A,(IY-BUFPOS)	;Insert
+	DEC A
+	CP C	;Cursor op regel einde?
+	JR NC,GT5M	; Ja, => Niets invoegen
+	POP DE
+	LD A,C
+	DEC C
+	CP B	;Zit de buffer vol?
+	JR NC,GT5A	; Ja, => Laatste teken valt weg
+	INC C	; Nee, voeg teken in
+GT5A:	PUSH DE
+	PUSH BC	;Bewaar regs
+	LD HL,BUF
+	LD D,0
+	LD E,C
+	LD B,D
+	ADD HL,DE
+	LD D,H
+	LD E,L
+	INC DE
+	LD A,(IY-BUFPOS)
+	DEC A
+	SUB C	;A=Pos-Tot=-Len
+	JR Z,GT5B
+	NEG	;A=Len
+	LD C,A
+	LDDR	;Voer insert uit
+GT5B:	POP BC
+	INC C	;Bufferlengte 1 omhoog
+GT5M:	LD HL,BUF
+	LD A,(IY-BUFPOS)
+	LD D,0
+	LD E,A
+	ADD HL,DE	;[HL] is positie van cursor in regel
+	POP DE
+	LD (HL),D	;Vul teken in
+	INC (IY-BUFPOS)
+	DEC A
+	CP C	;Cursor op reg. einde?
+	JR C,GT6
+	INC C	; Ja, verhoog reg. lengte
+GT6:	BIT INSFL,(IY+FLAGS1)	;Insert Aan?
+	JP Z,GT2	; Nee, => Regel niet opnieuw tonen
+	JP GT0	; Ja, => Bouw regel opnieuw op
+
+	;Haal toets en maak X van ^X
+
+INKCRL:	CALL INKEY
+
+	;Test op control code
+
+NOCTRL:	CALL GROOT	;Maak hoofdletter
+	CP ' '
+	RET NC
+	PUSH HL
+	LD HL,(SFTKEY)
+	BIT 1,L	;CTRL ingedrukt?
+	POP HL
+	RET NZ	; Nee, => Terug
+	OR 64	; Ja, maak hoofdletter
+	RET
+
+	;A=INKEY$ - altijd kleine letter terug
+
+INKEY:	CALL NCHGET	;Haal toetsaanslag
+	CP 255	;Funktie toets?
+	JR Z,INK1	; Ja, => Telt niet mee
+	CP 1
+	JR Z,INK1	;Grafisch telt ook niet
+GROOT:	CP 'a'
+	RET C
+	CP 'z'+1
+	RET NC
+	SUB 'a'-'A'
+	RET
+INK1:	CALL NCHGET	;Haal funktietoetsnummer op
+	JR INKEY	;Wacht op echte letter
+
+	;Maak A kleine letter
+
+KLEIN:	CP 'A'
+	RET C
+	CP 'Z'+1                ;Verander boven- in onderkast
+	RET NC
+	ADD A,'a'-'A'
+	RET
+
+	;(De)codeer koptekst
+
+DECODE:	LD BC,THULP0-TINTRO
+CODELP:	LD HL,(MSGAD)
+	DEC BC
+	ADD HL,BC	;Werk van achter naar voren
+	LD A,(HL)
+	AND 00001111B	;Isoleer 4 LSBs
+	RRD	;Wissel (HL) bits 0-3 met 4-7
+	LD A,C
+	OR B
+	JR NZ,CODELP
+	RET
+
+	;Schrijf een lijn met teken [A] op het scherm op regelnr [B]
+
+DRAWLINE:	PUSH BC
+	LD HL,(NAMBAS)
+	DEC B
+	JR Z,DL2
+	LD DE,80
+DL1:	ADD HL,DE
+	DJNZ DL1
+DL2:	LD BC,80
+	CALL BIGFIL	;Teken lijn
+	POP BC
+DL3:	PUSH BC
+	LD H,0
+	LD L,B
+	DEC HL
+	LD D,H
+	LD E,L
+	ADD HL,HL	;Regelnummer maal 10
+	ADD HL,HL
+	ADD HL,DE
+	ADD HL,HL
+	LD DE,(TXTCOL)
+	ADD HL,DE
+	LD BC,10
+	LD A,0FFH
+	CALL BIGFIL
+	POP BC
+	RET
+
+	;Herstel inverse delen van scherm
+
+INVERSE:	LD A,(IY+MINLIN)
+	DEC A
+	LD B,A
+	LD HL,0
+	LD DE,10
+IV2:	ADD HL,DE	;Aantal bovenste regels
+	DJNZ IV2
+	LD B,H
+	LD C,L
+	LD HL,(TXTCOL)	;Bovenste regels inverse
+	LD A,0FFH
+	CALL BIGFIL
+	LD A,27
+	SUB (IY+MAXLIN)
+	LD B,A
+	LD HL,0
+	LD DE,10
+IV3:	ADD HL,DE	;Ga naar 1e onderste statusregel (kantlijn)
+	DJNZ IV3
+	LD B,H
+	LD C,L
+	LD H,0
+	LD L,(IY+MAXLIN)	;Onderste regels inverse
+	LD D,H
+	LD E,L
+	ADD HL,HL
+	ADD HL,HL
+	ADD HL,DE
+	ADD HL,HL
+	LD DE,(TXTCOL)
+	ADD HL,DE
+	LD A,0FFH
+	CALL BIGFIL
+	SET BOUW,(IY-FLAGS4)	;Bouw scherm op
+	RET
+
+	;DE=DE+C*A
+
+CHKCNT:	PUSH HL
+	PUSH BC
+	LD HL,(CHKAD)
+	JP (HL)	; en spring er naar toe
+
+	;1e regel inspringen
+
+IFORMAT:	LD A,(IY+KLRECHTS)
+	SUB (IY+KLLINKS)
+	DEC A
+	CP (IY+INSPRING)	;Te veel inspringen?
+	JR C,FORMAT
+	SET INSP,(IY-FLAGS3)	;Zet inspring-vlag
+	JR FM0
+
+	;Alinea indelen vanaf cursor pos.
+
+CFORMAT:	CALL EVTOPSLAAN
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)
+	LD (IY-SPLINKS),A	;Begin indelen van XPOS
+	DEC A
+	JR Z,CF1	;Cursor op 1 => CF1
+	LD HL,STRBUF
+	CP (HL)	;Cursor op regeleinde?
+	JR NC,CF1	; Ja, => CF1
+	INC HL
+	LD D,0
+	LD E,A
+	ADD HL,DE
+	LD A,' '
+	CP (HL)	;Staat cursor op spatie?
+	JR NZ,CF1	; Nee, => CF1
+	DEC HL
+	CP (HL)	;Staat voor de cursor ook een spatie?
+	JR Z,CF1	; Ja, => CF1
+	INC (IY-SPLINKS)	; Nee, cursor 1 naar voren om spatie te redden
+CF1:	LD HL,(CSRNUM)
+	LD (ALSTART),HL	;Alinea begint op huidige regel
+	SET INSP,(IY-FLAGS3)	;Zet inspring vlag
+	JP FM5	;Deel in vanaf cursor
+
+	;Deel alinea opnieuw in (HOME-toets)
+
+FORMAT:	RES INSP,(IY-FLAGS3)
+FM0:	BIT EDIT,(IY+SAVFL2)	;Edit mode?
+	RET NZ	; Ja, => Geen alinea's mogelijk
+	CALL EVTOPSLAAN
+	LD HL,(CSRNUM)
+	INC HL
+	LD A,(STRBUF)
+	OR A	;Regellengte = 0 ?
+	JP Z,GOTOLINE	;Ja, => 1 regel verder
+	LD DE,(CSRNUM)	;Zoek terug vanaf cursor
+	PUSH DE
+FM1:	POP DE	;Zoek begin van alinea op
+	LD A,D
+	OR E
+	JR Z,FM2B	;Regel 0 => Begin gevonden
+	DEC DE
+	PUSH DE
+	LD HL,STRBUF	;Haal regel op
+	CALL GET
+	LD A,(STRBUF)
+	CP 2	;Lege regel?
+	JR C,FM2	; Ja, => Begin gevonden
+	LD D,0
+	LD E,A
+	LD HL,STRBUF
+	ADD HL,DE	;Haal laatste teken van regel
+	LD A,(HL)
+	CP ' '                  ;Eindigt regel op spatie?
+	JR Z,FM1	; Ja, => Naar vorige regel
+FM2:	POP DE
+	INC DE	;Herstel begin van alinea
+FM2B:	LD (ALSTART),DE	;Bewaar alinea begin
+
+	ex de,hl	;Regelnummer naar HL
+	call midLine	;Zet beginregel op scherm midden
+	call rstScr2	;Bouw het scherm op
+	set dispOff,(iy-flags5) ;Vlag: Geen tussenfases tonen op scherm
+
+	LD A,(IY+KLLINKS)
+	BIT INSP,(IY-FLAGS3)	;Inspringen?
+	JR Z,FM2C
+	ADD A,(IY+INSPRING)	;Ja, spaties+kl. links
+FM2C:	LD (IY-SPLINKS),A	;Vul kantlijn in
+	JR FM3A
+
+FM3:	BIT INSP,(IY-FLAGS3)	;Ingesprongen?
+	JR Z,FM3A
+	LD A,(IY+KLLINKS)	; Ja, zet kl. terug
+	LD (IY-SPLINKS),A
+	RES INSP,(IY-FLAGS3)
+FM3A:	LD DE,(ALSTART)	;Haal huidige regel op
+	LD (CSRNUM),DE
+	LD HL,STRBUF
+	CALL GET
+FM3B:	LD A,(STRBUF)	;Tel kantlijn op bij regel
+	OR A
+	JR Z,FM5
+	LD B,0
+	LD C,A	;BC=Lengte van regel
+	LD E,A
+	LD A,(IY-SPLINKS)
+	DEC A
+	ADD A,E
+	JP C,REGLANG	;Te lang
+	CP 254
+	JP NC,REGLANG
+	LD (STRBUF),A
+	LD D,0
+	LD HL,STRBUF
+	ADD HL,DE
+	PUSH HL	;HL=Einde regel
+	LD E,(IY-SPLINKS)
+	DEC E
+	ADD HL,DE
+	EX DE,HL	;DE=Bestemming
+	POP HL
+	LDDR	;Schuif regel op
+	LD B,(IY-SPLINKS)
+	PUSH BC
+	DEC B
+	XOR A
+	SCF
+	CALL BLKPS3	;Evt. BLOKpos aanpassen
+	POP BC
+	LD HL,STRBUF+1
+FM4:	DEC B	;Vul voor kantlijn op
+	JR Z,FM5	; met spaties
+	LD (HL),' '
+	INC HL
+	JR FM4
+FM5:	LD A,(STRBUF)
+	CP (IY-SPLINKS)
+	JP C,FM10	;Lege regel? -> Klaar
+	RES AFBRFL,(IY-FLAGS3)	;Geen afbreek-teken geweest
+	RES AFBREND,(IY-FLAGS2) ; op regeleinde
+	SET SPACE,(IY+FLAGS1)	;wis eerst komende spatie
+	LD D,0
+	LD E,(IY-SPLINKS)
+	LD HL,STRBUF
+	LD D,(HL)	;D=String lengte
+	LD L,E	;HL=Linkerkantlijn (STRBUF=00-based)
+	DEC E	;E=Positie in strbuf
+
+FM6:	LD A,(HL)	;Haal spaties weg vanaf linkerkantlijn
+	CP ' '
+	JR NZ,FM8	;Geen spatie meer => FM8
+	BIT AFBRFL,(IY-FLAGS3)	;Afbreek-teken geweest?
+	JR Z,FM6B	; Nee, => FM6B
+	RES AFBRFL,(IY-FLAGS3)	; Ja, => Plak woord aanelkaar
+	DEC HL	;1 teken terug (=afbreekteken)
+	DEC E
+	SET SPACE,(IY+FLAGS1)	;Wis teken + spaties
+	SET AFBREND,(IY-FLAGS2) ;Zet alvast vlag voor regeleinde
+FM6B:	BIT SPACE,(IY+FLAGS1)
+	JR Z,FM7	;1 (eerste) spatie laten staan
+	PUSH HL
+	PUSH DE
+	LD DE,STRBUF	;Bereken pos in STRBUF
+	OR A
+	SBC HL,DE
+	LD (IY+XPOS),L	;Geef cursor pos aan
+	LD (IY+OFFSET),H	;H=0
+	CALL DELETE	;Wis spatie
+	POP DE
+	POP HL
+	DEC HL	;Blijf op dezelfde plaats in STRBUF
+FM7:	SET SPACE,(IY+FLAGS1)	;Volgende spatie (ook) wissen
+	JR FM9B	;Spatie is nooit afbreek-teken
+FM8:	RES SPACE,(IY+FLAGS1)	;Volgende spatie laten staan
+	RES AFBREND,(IY-FLAGS2) ;Geen afbr.tek op regeleinde
+	LD A,(HL)
+	CP (IY+AFBREEK)	;Afbreek-teken?
+	JR NZ,FM9B
+	SET AFBRFL,(IY-FLAGS3)	; Ja, => zet vlag
+	JR FM9C
+FM9B:	RES AFBRFL,(IY-FLAGS3)	;Geen afbreek-teken
+FM9C:	INC HL
+	INC E
+	LD A,D	;Regel klaar?
+	DEC A
+	CP E
+	JR NC,FM6	; Nee, => FM6
+	BIT AFBREND,(IY-FLAGS2) ;Afbreekteken aan reg.end weggehaald?
+	JR Z,FM10	; Nee, => Ok
+	LD A,(IY+AFBREEK)
+	LD (HL),A	; Ja, Zet afbreekteken weer neer
+	INC HL
+	LD (HL),' '
+	LD HL,STRBUF
+	INC (HL)
+	INC (HL)
+
+FM10:	LD A,(STRBUF)
+	CP (IY+KLRECHTS)	;Regel te kort?
+	JP Z,FM15	; Regel precies goed => FM15
+	JP C,FM15	; Ja, => FM15
+FM10B:	LD D,0
+	LD E,(IY+KLRECHTS)
+	LD HL,(ALSTART)
+	LD (CSRNUM),HL	;Geef in te korten regel aan
+	LD HL,STRBUF+1
+	ADD HL,DE	;HL=Rechterkantlijn
+FM11:	DEC E	;Cursor 1 naar links
+	JR Z,FM13	; Klaar, => FM13
+	DEC HL
+	LD A,(HL)	;Zoek eerste spatie op
+	CP ' '
+	JR Z,FM12
+	INC D	;Tel woordlengte
+	JR FM11
+FM12:	LD A,E
+	CP (IY-SPLINKS)	;Woord langer dan regel?
+	JR NC,FM14
+FM13:	LD E,(IY+KLRECHTS)	; Ja => breek woord door
+	DEC E
+FM14:	BIT AFBR,(IY+TABSAV)	;Afbreken aan?
+	JP Z,FM14X	; Nee, => Omslaan
+	LD A,D	;Haal woordlengte
+	CP 6
+	JP C,FM14X	;Korte woorden niet afbreken
+	DEC D
+	DEC D
+	DEC D	;D=Woordlengte
+	PUSH DE	;E=Beginpos woord
+	CALL OPSLAAN	;Bewaar regel
+	LD HL,(CSRNUM)
+	CALL MIDLINE	;Middelste regel
+	LD A,(IY+KLRECHTS)
+	DEC A
+	DEC A
+	CP 75	;Maxpos=75
+	CALL TOMID2	;Zet cursor op regelmidden
+
+	res dispOff,(iy-flags5) ;Scherm opbouw weer activeren
+	call rstScr2	;Toon huidig scherm
+	ld hl,tAfbr
+	call message	;Toon hulptekst
+
+FM14A:	LD A,(IY+YPOS)
+	LD (CSRY),A
+	LD A,(IY+XPOS)
+	LD (CSRX),A
+	CALL INKEY	;Haal toets
+	POP DE
+	PUSH DE	;Teller in D
+	CP LEFT
+	JR NZ,FM14B
+	LD A,D
+	OR A	;Bij begin van woord?
+	JR Z,FM14A
+	POP DE
+	DEC D
+	PUSH DE
+	CALL LINKS	; Nee, => Cursor naar links
+	JR FM14A
+FM14B:	CP RIGHT
+	JR NZ,FM14C
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)
+	INC A
+	CP (IY+KLRECHTS)	;Csr langs r.kantlijn?
+	JR NC,FM14A
+	CALL RECHTS	; Nee, => Naar rechts
+	POP DE
+	INC D
+	PUSH DE
+	JR FM14A
+FM14C:	CP CR	;Return?
+	JR NZ,FM14D
+	POP DE
+	LD A,(IY+FLAGS1)	;Bewaar vlaggen
+	AND 1
+	PUSH AF
+	SET INSFL,(IY+FLAGS1)	;Insert aan
+	LD A,(IY+AFBREEK)
+	CALL TEKEN	;Streepje
+	LD A,' '
+	CALL TEKEN	;Spatie
+	POP AF	;Insert stond aan: A=1, INS stond uit A=0
+	OR 11111110B	;Overige vlaggen niet veranderen
+	AND (IY+FLAGS1)	;Herstel insert-vlag
+	LD (IY+FLAGS1),A
+	LD A,(IY+XPOS)
+	ADD A,(IY+OFFSET)
+	CP (IY+KLLINKS)	;Csr al op 1?
+	JR Z,FM14Z	; Ja, => Geen CR invoegen
+	JR FM14Y	;Klaar
+FM14D:	CP ESC
+	JR NZ,FM14E
+	POP DE
+	JP FM16B	;Onderbreek
+FM14E:	CP ' '
+	JP NZ,FM14A	;Onbekende toets
+	POP DE	;Sla woord om
+
+FM14X:	inc e	;Begin tellen bij 1
+	inc e	;Achter spatie afbreken
+	ld (iy+xPos),e
+	ld (iy+offSet),0
+FM14Y:	set dispOff,(iy-flags5) ;Geen schermopbouw tonen
+	call retIns2	;Voeg regel tussen
+FM14Z:	set dispOff,(iy-flags5) ;Geen schermopbouw tonen
+	ld hl,strBuf
+	ld de,(csrNum)
+	call put	;Sla regel op
+	ld hl,(alStart)
+	inc hl
+	ld (alStart),hl
+	call regNum	;Toon huidige regelnummer
+	jp fm3	;Volgende regel
+
+	;Regel te kort => Plak de volgende erachter
+
+FM15:	LD A,(STRBUF)
+	CP 2	;Lege regel?
+	JR C,FM16	; Ja, => Klaar
+	LD (IY+OFFSET),0
+	LD HL,(ALSTART)
+	LD (CSRNUM),HL	;Geef regelnummer aan
+	LD D,0
+	LD E,A
+	LD HL,STRBUF
+	ADD HL,DE
+	LD A,(HL)
+	CP ' '                  ;Einde van alinea?
+	JR NZ,FM16	; Ja, => FM16
+	PUSH DE	;Bewaar string lengte
+	INC E
+	LD (IY+XPOS),E
+	CALL DELETE	;Plak volgende zin aan huidige
+	LD A,(STRBUF)
+	POP DE
+	CP E	;Regellengte hetzefde gebleven?
+	JP NZ,FM5	; Nee, => nog niet klaar
+
+fm16:	ld a,(strBuf)
+	cp (iy+klRechts)	;Precies lang genoeg?
+	jp z,fm10b	; Ja, => toch inkorten ivbm r.kantl.
+fm16b:	ld de,(alStart)
+	ld hl,strBuf
+	call put	;Bewaar regel
+	ld a,(iy+yPos)	;Haal schermregel nr.
+	sub (iy+minLin)	;Staan we op vierde regel of lager?
+	cp 4
+	jr nc,fm17	; Ja, => Alinea is goed zichtbaar
+	ld a,(iy+maxLin)	; Nee, toon alinea einde op de
+	sub 2	;  onderkant van het scherm
+	ld (iy+yPos),A	;Cursor op 2e regel van onder
+
+FM17:	set sav,(iy+flags1)	;Saven voor stoppen
+	res dispOff,(iy-flags5) ;Scherm opbouw weer activeren
+	ld hl,(alStart)	;AlStart is nu alinea einde
+	inc hl	;1 regel verder
+	jp gotoLine	;Daar naar toe
+
+
+	;Kijk of TED nog hetzelfde is vorige keer
+
+chkTed:	call calSum
+	ld hl,(chkSum)
+	or a
+	sbc hl,de	;Gelijk?
+	call nz,chkTed	; Nee, => Loop vast <<<<<*****>>>>>
+	ret
+
+	;Ga naar schermmidden op regel [HL]
+
+midLine:	ld a,(iy+minLin)
+	add a,(iy+maxLin)
+	sra a	;Bereken schermmidden
+	ld (iy+yPos),a
+
+
+; gotoLine
+;
+; Ga naar een bepaalde regel. Indien de opgegeven regel voorbij het
+; teksteinde ligt, ga dan naar teksteinde.
+;
+; In: HL=Regelnummer (0-based, dus 0 = 1e regel)
+;
+gotoLine:	ld (iy+xPos),1
+	ld (iy+offset),0
+	res vir,(iy-flags6)	;Geen virtuele cursor meer
+goLine2:	ex de,hl	;Regelnr. naar [DE]
+	ld hl,(lastLine)
+	call dCompr	;Willen we te ver?
+	jr nc,gl1	; Nee, => Regel DE is OK
+	ex de,hl	; Ja, we mogen maar tot LASTLINE
+gl1:	ld (csrNum),de
+	ld hl,strBuf	;Buffer voor huidige regel
+	call get	; invullen
+	set bouw,(iy-flags4)	;Scherm opnieuw opbouwen
+	ld hl,(csrNum)	;Terug met HL=Reg. nr.
+	ld a,(iy+yPos)
+	dec a
+	cp (iy+maxLin)	;Cursor te laag?
+	inc a
+	jr c,gl1b
+	ld a,(iy+maxLin)	; Ja, zet hem op de onderste regel
+	ld (iy+yPos),a
+gl1b:	sub (iy+minLin)
+	ld e,a
+	ld a,0
+	jr c,gl2	;Cursor te hoog, zet hem op MINLIN
+	ld d,a
+	sbc hl,de
+	ret nc	;Y-Pos is Ok
+	ld a,(csrNum)	;Zet cursor verder omhoog
+gl2:	add a,(iy+minLin)
+	ld (iy+yPos),a
+	ret
+
+	;Zeker weten?
+
+ZEKER:	LD HL,TZEKER
+	CALL MESSAGE	;Zeker weten?
+ZEK3:	CALL INKCRL	;Haal toetsdruk
+	CP 'N'
+	SCF
+	RET Z	;C-flag
+	CP 'J'
+	JR NZ,ZEK3
+	RET
+
+	;Haal usercode
+
+GETCODE:
+if	not (DEMO or AUTODEMO)
+	LD DE,TGETCODE
+	CALL STROUT
+	CALL GETNR	;Haal gebruikers code
+	LD (USERCODE),HL
+	JP TOACCESS	;Toegangscode
+endif
+
+	;STRBUF opslaan indien veranderd
+
+EVTOPSLAAN:	BIT CHANGE,(IY+FLAGS1)
+	RET Z
+
+	;STRBUF opslaan
+
+OPSLAAN:	LD HL,STRBUF
+OPSLAAN2:	SET BLKAP,(IY-FLAGS5)	;Vlag: wel blok aanpassen
+OPSLAAN3:	BIT EDIT,(IY+SAVFL2)	;Edit mode?
+	JR Z,OPSLAAN4
+	CALL DELSPC	; Ja, => Verwijder spaties einde regel
+	LD A,(IY+XPOS)	; en zet cursor terug indien spaties in
+	ADD A,(IY+OFFSET)	; edit mode weggehaald zijn
+	DEC A
+	PUSH HL
+	CALL TOMIDDEN
+	POP HL
+OPSLAAN4:	LD DE,(CSRNUM)
+	CALL PUT	;Sla de regel op in het tekstgeheugen
+	RES CHANGE,(IY+FLAGS1)
+	SET SAV,(IY+FLAGS1)	;Saven voor stoppen
+	RET
+
+	;Verwijder spaties aan einde van regel HL
+
+DELSPC:	LD A,(HL)	;Verwijder spaties aan einde van regel
+	OR A
+	RET Z
+	PUSH HL
+	LD D,0
+	LD E,A
+	ADD HL,DE	;Ga naar einde van de regel
+	LD B,A
+OS1:	LD A,(HL)
+	CP ' '                  ;Is laatste teken een spatie?
+	JR NZ,OS2
+	DEC HL
+	DJNZ OS1	; Ja, ga nog een teken terug
+OS2:	POP HL
+	LD (HL),B	;Vul nieuwe lengtebyte in
+	BIT BLKAP,(IY-FLAGS5)	;Blok begin/einde aanpassen?
+	RET Z	; Nee, => Klaar
+	PUSH HL
+	CALL KNIPB2	;Kijk of blokbegin/einde aangepast moet worden
+	RR C	;Regellengte < BlokStartPositie?
+	JR NC,OS2C
+	LD (IY-BSRTPOS),B	; Ja, zet blokstart op regeleinde
+OS2C:	RR C	;Regellengte < BlokEindePositie?
+	JR NC,OS2E
+	LD (IY-BENDPOS),B	; Ja, zet blokeinde op regeleinde
+OS2E:	POP HL
+	RET
+
+	;Bereken checksum voor TED
+
+CALSUM:	LD HL,BOUWOP	;Bereken CRC vanaf startadres
+	LD BC,ENDPRG-BOUWOP	; tot aan ENDPRG
+	LD DE,0
+CS1:	LD A,E
+	LD E,(HL)	;Bereken cheksum van BOUWOP tot ENDPRG
+	XOR E
+	ADD A,E
+	LD E,A
+	LD A,0
+	ADC A,D
+	LD D,A
+	INC HL
+	DEC BC
+	LD A,B
+	OR C
+	JR NZ,CS1
+	RET
+
+	;Initaliseer kleuren & Scherm
+
+INICLR:	LD A,1	;Zet palette
+IC1:	PUSH AF
+	ADD A,A
+	LD HL,COLORS-2	;Bereken pos in kleurtabel
+	LD D,0
+	LD E,A
+	ADD HL,DE
+	LD A,(HL)	;Haal rood en blauw
+	INC HL
+	LD E,(HL)	;Haal groen
+	POP BC
+	PUSH BC
+	LD D,B	;D=Kleurnummer
+	CALL SETPLT	;Schrijf palette
+	POP AF
+	INC A
+	CP 5	;Klaar?
+	JR C,IC1	; Nee, => Volgende kleur
+	LD A,(IY+REPT)
+	LD (REPFL),A	;Vul huidige repeteer vlag in
+	CALL INIS	;Initialiseer scherm
+	LD HL,FCB1
+	LD DE,path2Buf
+	LD BC,12
+	PUSH HL
+	PUSH DE
+	PUSH BC
+	LDIR	;Bewaar FCB uit commandline
+	LD HL,BUF
+	LD DE,path1Buf
+	LD BC,65
+	PUSH HL
+	PUSH DE
+	PUSH BC
+	LDIR	;Bewaar huidige pathname in path1Buf
+	CALL LOADKAR	;Laad evt. karakterset in
+	CALL CTRLESC	;Zet escape en ctrl tekens in de karset
+	POP BC
+	POP HL
+	POP DE
+	LDIR
+	POP BC
+	POP HL
+	POP DE
+	LDIR	;Herstel FCB uit commandline
+	RET
+
+	;Roep DOS op 0005H aan
+
+DOS:	BIT DOS2,(IY-FLAGS5)	;Dos2 aanwezig?
+	JR NZ,DODOS	; Ja, => doe de doscall
+	PUSH AF
+	LD A,-1	; Nee, forceer straks een mapper
+	LD (P2SEG),A	;  i/o schakeling, omdat RamDisk
+	POP AF	;  de standaard segmenten aangeschakeld
+DODOS:	CALL BDOS	;  heeft.
+	LD IY,TABEL
+	RET
+
+	;BIOS calls
+
+DCOMPR:	LD A,H
+	SUB D
+	RET NZ
+	LD A,L
+	SUB E
+	RET
+
+CHSNS:
+if	not autoDemo
+
+	EXX
+	DI	;Voorkom dat een TSR aan de toetsen-
+	LD HL,(GETPNT)	; bordbuffer gaat klooien
+	LD DE,(PUTPNT)
+	EI	;Maar het is ook wel leuk zijn dat er
+	OR A	; af en toe iets in de buffer gezet
+	SBC HL,DE	; kan worden
+	EXX
+	RET
+
+else
+	xor a	;Altijd karakter klaar
+	dec a
+	ret	; in auto-run demo
+endif
+
+BIGFIL:	PUSH AF
+	PUSH BC
+	CALL NSTWRT	;Zet VDP schrijfadres
+	POP HL
+	POP AF
+	LD C,(IY+VDPWRITE)
+	LD B,H
+	INC L
+	DEC L	;Low byte=0?
+	JR Z,BI1	; Ja, => Teller niet met 256 verhogen
+	INC B	; Nee, Highbyte+1
+BI1:	OUT (C),A
+	DEC L
+	JP NZ,BI1
+	DJNZ BI1
+	RET
+
+NWRVRM:	PUSH BC
+	PUSH HL
+	PUSH AF
+	CALL NSTWRT
+	POP AF
+	LD C,(IY+VDPWRITE)
+	OUT (C),A
+	POP HL
+	POP BC
+	RET
+
+	;Herstel Fkeys
+
+INIFNK:	LD HL,SAVFNK	;Bewaarruimte voor fkeys
+	LD DE,FNKSTR
+	LD A,7	;7 fkeys
+RSTFNK:	LD BC,3
+	LDIR	;Herstel drie tekens
+	LD BC,16-3	;16 kars per fkey
+	EX DE,HL
+	ADD HL,BC	;Naar de volgende fkey
+	EX DE,HL
+	DEC A	;Alle fkeys gehad?
+	JR NZ,RSTFNK	; Nee, => Volgende
+	RET
+
+; BIOS & SUBROM calls
+;
+dellno:	ld ix,121h
+	jr calSub
+
+inslno:	ld ix,125h
+	jr calSub
+
+getplt:	ld ix,149h
+	jr calSub
+
+setplt:	ld ix,14dh
+	jr calSub
+
+sdfscr:	ld ix,185h
+
+; calSub
+;
+; Call routine in MSX2 SUBROM
+;
+; The problem is that we can never pass IX register that EXTROM wants.
+; What must be done is to set IX register and jump to EXTROM after
+; the BIOS ROM is inter-slot called.
+;
+; The following interface routine is built in page 3.  NMI-hook jumps
+; to it.  Perform inter-slot call to BIOS NMI entry (never used
+; and only hook is provided).
+;
+; +0    inc	sp	;Romove RET-addr. to BIOS RETN instr.
+; +1    inc	sp
+; +2    ld	ix,<sub-ROM entry>
+; +6    jp	EXTROM
+;
+calSub:	exx	; Save [HL] register
+	ld   (subRomEnt+4),ix	; Enter sub-rom address in program code
+	ld   l,0c3h	; JP-opcode
+	ld   (h.nmi),hl	; NMI hooks jumps to
+	ld   hl,subRomEnt	;  sub-rom calling routine in page 3
+	ld   (h.nmi+1),hl
+	exx	; Restore registers
+	ld   ix,nmi	; call 066h (NMI entry) in main-ROM
+
+; calMn
+;
+; Call routine in BIOS-ROM
+;
+calMn:	ld iy,(mainRm-1)
+	call calSlt
+	ld iy,tabel	; Herstel pointer naar var. tabel
+	ei
+	ret
+
+disScr:	ld ix,041h
+	jr calMn
+
+enaScr:	ld ix,044h
+	jr calMn
+
+chGet:	ld ix,9fh
+	jr calMn
+
+chPut:	ld ix,0a2h
+	jr calMn
+
+lptOut:	ld ix,0a5h
+	jr calMn
+
+eraFnk:	ld ix,0cch
+	jr calMn
+
+stMotr:	ld ix,0f3h
+	jr calMn
+
+kilBuf:	ld ix,156h
+	jr calMn
+
+nRdVrm:	ld ix,174h
+	jr calMn
+
+iniTxt:	ld ix,06ch
+	jr calMn
+
+setTxt:	ld ix,078h
+	jr calMn
+
+wrtVdp:	ld ix,47h
+	jr calMn
+
+chgClr:	ld ix,62h
+	jp calMn
+
+beep:	ld ix,0c0h
+	jp calMn
+
+
+; Karakter patronen voor Ctrl en Escape codes ("^" en "e")
+;
+CTRLKAR:	db 11011111B
+	db 10101111B
+	db 01110111B
+	db 11111111B
+	db 11111111B
+	db 11111111B
+	db 11111111B
+	db 11111111B
+
+ESCKAR:	db 11111111B
+	db 11111111B
+	db 10001111B
+	db 01110111B
+	db 00000111B
+	db 01111111B
+	db 10001111B
+	db 11111111B
+
+serialNumber:	dw -1	;Serienummer
+
+endPrg	equ $	;Einde van prog., bereken CRC tot hier
+
+
+; crlTab
+;
+; Controltoetsen tabel
+;  - twee bytes voor de toets combinatie
+;  - routine adres
+;
+CRLTAB:	db 'IL'
+	dw CHLEFT
+	db 'IR'
+	dw CHRIGHT
+	db 'FA'
+	dw CHALINEA
+	db 'TZ'
+	dw ZETTAB
+	db 'TW'
+	dw WISTAB
+	db 'TS'
+	dw SAVETAB
+	db 'IM'
+	dw CHMEM
+	db 'IP'
+	dw PRTINS
+	db 'ID'
+	dw DRIVER
+	db 'FS'
+	dw SORTINS
+	db 'IB'
+	dw SAVINS
+
+	db 'WT'
+	dw WISTP
+	db 'D',0
+	dw TOINHOUD
+	db 'IA'
+	dw BACKUP
+	db 'KO'
+	dw CHKOL
+
+	db 'M',0
+	dw setResStop
+
+	db 'WA'
+	dw resAllStops
+
+	db 'ON'
+	dw pageNumFlip
+
+	db 'OA'
+	dw pageStopFlip
+
+	db 'OP'
+	dw PAGAAN
+	db 'OU'
+	dw PAGUIT
+	db 'OK'
+	dw KLEUR
+	db 'IE'
+	dw EXTENSIE
+	db 'OL'
+	dw KRANT
+	db 'OS'
+	dw SCHERM2
+	db 'OC'
+	dw CURSOR
+	db 'OV'
+	dw KLOK
+	db 'KM'
+	dw MSXSET
+	db 'OE'
+	dw EDITM
+	db 'OB'
+	dw CSRBLK
+	db 'AI'
+	dw SETAI
+	db 'OR'
+	dw REPKEY
+	db 'GL'
+	dw GROLET2
+	db 'CK'
+	dw CSRKNIP
+	db 'HM'
+	dw TOHMENU
+	db 'HT'
+	dw HTOTXT
+	db 'OG'
+	dw GEHEUGEN
+
+	db 'N',0
+	dw AGAIN
+	db 'Z',0
+	dw ZOEK
+	db 'CT'
+	dw TOTOP
+	db 'CO'
+	dw TOBOTTOM
+	db 'GR'
+	dw GETLINE
+	db 'CS'
+	dw TOBLOKS
+	db 'CE'
+	dw TOBLOKE
+	db 'R0'
+	dw SETMRK
+	db 'G0'
+	dw TOMARK
+	db 'B',0
+	dw SAVE
+	db 'L',0
+	dw LOAD
+	db 'P',0
+	dw PRINT
+	db 'KQ'
+	dw TOSTOP
+
+	db 'S',0
+	dw STARTBLOK
+	db 'E',0
+	dw ENDBLOK
+	db 'KD'
+	dw RESETBLOK
+	db 'KK'
+	dw COPYBLOK
+	db 'KW'
+	dw WISBLOK
+	db 'KV'
+	dw MOVEBLOK
+	db 'KP'
+	dw PRTBLOK
+	db 'KS'
+	dw QSORT
+	db 'KI'
+	dw indentBlok
+	db 'KL'
+	dw LOADBLOK
+	db 'KB'
+	dw SAVEBLOK
+	db NUL
+
+	;Ruimte voor tabel in IY (tijdelijke var's)
+
+	db 0	;VirPos, positie virtuele csr, 0-based
+	db 0	;FirstPntSeg  (wisBlok)
+	db 0	;FirstDataSeg (wisBlok)
+	db 0	;Flags6
+		;Bit 0: 1=PB.TSR aanwezig
+		;Bit 1: 1=PB.COM geinstalleerd
+		;Bit 2: 1=Virtuele cursor bestaat
+	db 0	;Segmentnummer in Page 1
+	db 0	;Huidig slot adres in page 2
+	db 0	;Bit 0=Doe geen DOS calls => Error routine
+		;Bit 1=DOS2 BDOS aanwezig
+		;Bit 2=Teken geen '_' => GETTXT
+		;Bit 3=Pas blok begin/einde aan
+		;Bit 4=Maak de instel extensie .TED
+		;Bit 5=MemMan Mapper I/O aanwezig
+		;Bit 6: 1=Karakter gevonden, word-left
+		;Bit 7: 1=Geen schermregels tonen
+	db 0	;Positie in invul regel
+	db 0	;Laatste teken van blok
+	db 0	;Eerste teken van blok
+	db 00100B	;Bit 0=Schermopbouwen
+		;Bit 1=Sorteren klaar
+		;Bit 2=Print kop/voetregel
+		;Bit 3=Herstel helpmenu
+		;Bit 4=Print blok
+		;Bit 5=Blokverplaatsing
+		;Bit 6=Onvoorwaardelijk vervangen
+		;Bit 7=DOS2 Mapper I/O aanwezig
+	db 0	;Aantal spaties
+	db 0	;VDP read poort
+	db 0	;VDP adres poort
+	db 0	;Markeringsnummer
+	db 0	;Tijdelijke linker kl.
+	db 0	;Aantal namen
+	db 0,0	;X,Y disk-inhoud scherm
+	db 100B	;Vlaggen byte
+		;Bit 0=vooruit zoeken
+		;Bit 1=Hoofd/kleine letters zoeken
+		;Bit 2=Lichtkrant aan/uit
+		;Bit 3=Haal 2e ^-teken
+		;Bit 4=Inspringen
+		;Bit 5=Negeer kantlijn
+		;Bit 6=Aanhalingsteken gedetecteerd
+		;Bit 7=Voorloopnul afdrukken
+
+	db 0	;Bit 0: 1=Cursor staat op scherm
+		;Bit 1..7: Zie offset.mac
+
+	db 0	;Spaties teller
+TABEL:	db 0	;MaxMap
+	db 0	;TabMap
+	db 0	;DataMap
+	db 0	;CurMap
+	db 0	;CurTab
+	db 0	;Vrij, was: SavMap
+	db 0	;EndSav
+	db 0	;BufLen
+	db 0	;DskFlg / DOS2 filehandle
+	db 0	;VdpWrite
+	db 0	;PrtReg
+	db 0	;Offset
+	db 1	;xPos
+	db 1	;yPos
+	db 1	;Flags1
+		;Bit 0=Insert
+	db 0	;MinLin
+	db 0	;MaxLin
+	db 0	;BouwNum
+	db 0	;RegLow
+
+	;Start adres voor variabelen (wel saven in TED.COM)
+
+startVar:	db 1	;Kantlijn links
+	db 78	;Kantlijn rechts
+	db 0	;Bit 0: 1=Gebruik geen MM
+	db 0	;Boven marge
+	db 2	;Onder marge
+	db 54	;Pagina lengte
+	db 01111111B	;Bit 0: 1=Spaties worden TABs op disk
+		;Bit 1: 1=Uitvullen aan
+		;Bit 2: 1=Afbreken aan
+		;Bit 3: 1=Commandoregel aan
+		;Bit 4: 1=Driver aan
+		;Bit 5: 1=Spaties als tabs
+		;Bit 6: 1=Tabs van disk direkt in geheugen
+		;Bit 7: 1=Toon kleurencursor
+	db 0	;Laagste segment nr.: 0=met VRAM, 7=zonder
+	db 0FAH	;Afbreek-streepje
+	db 1	;Kopregel positie
+	db 35	;Voetregel positie
+	db 1	;Kopregel marge
+	db 2	;spaties inspringen
+	db 01011101B	;Bit 0: 1=Voorloopnullen in klokje
+		;Bit 1: 1=Print met mail-merge
+		;Bit 2: 1=Formfeed aan
+		;Bit 3: 1=Continue printen aan
+		;Bit 4: 1=Backup maken
+		;Bit 5: 1=Automatisch bewaren
+		;Bit 6: 1=MSX karakterset gebruiken
+		;Bit 7: 1=Altijd blok cursor
+	db '$'                  ;Karakter dat Mail-merge aangeeft
+	db 2	;Voetregel marge
+	db 01100000b	;Bit 0: 1=Grote letters in hulpmenu
+		;Bit 1: 1=Hulpmenu op scherm
+		;Bit 2: 1=Edit mode aan
+		;Bit 3: 1=Auto-Indent aan
+		;Bit 4: 1=Pagina-grens indicatie aan
+		;Bit 5: 1=*.TED samen met .TXT bewaren
+		;Bit 6: 1=Cursorknipper Aan
+		;Bit 7: 0=Pagina-stop indicatie aan
+	db 255	;Toets repeteervlag
+	db 0	;Aantal harde pagina stops
+	db 00000000b	;Bit 0: 0=Pagina nummer indicatie aan
+		;Bit 1: 0=Blokinspringen naar rechts
+	db 0	;Aantal posities inspringen
+
+	rept 60-($-startVar)	;Haakjes verplicht!
+	  db 0	;Tabel aanvullen tot 60 bytes
+	endm	; (.TED compatible vanaf # 2.4)
+
+
+tVersie:	db '2.5'                ;.TED file versie nummer 2.5
+	db 3	;3 bytes extensie
+tExtens:	db 'TXT'                ;Voorkeurs-extensie
+
+
+               ;   RB  G
+colors:	db 00H,0	;Kleur	1=Achtergrond
+	db 77H,7	;	2=Wit
+	db 11H,2	;	4=Cursor achtergrond
+	db 70H,7	;	3=Cursor voorgrond
+
+
+pStart:	dw 1	;Begin nummer
+strikes:	dw 1000	;Aantal aanslagen voor backup
+recLen:	dw 1	;Lengte van sorteer record
+veldA:	dw 1	;Sorteerveld A in record
+	dw 1	;Kolom positie van gegevens in veld A
+veldB:	dw 0
+	dw 1
+veldC:	dw 0
+	dw 1
+mStart:	dw 1	;1e mail-merge kaart
+
+koloms:	dw 1	;1 kolom
+kolTab:	db 1,41,1,1,1,1	;Positie kol 1-6
+
+	;Tabulatie stops
+
+tTab:	rept 32
+	 db '+',0,0,0,0,0,0,0
+	endm
+tSetPrt:	db 0	;Lengte byte
+	ds 40	;40 bytes setup string
+KOPTXT:	db 0	;Kopregel
+	ds 78
+
+if	TAAL eq NL
+voetTxt:	db 10
+	db 'Pagina: $P'         ;Pagina nummer in de voetregel
+	ds 68
+endif
+
+if	TAAL eq DUITS
+voetTxt:	db 9
+	db 'Seite: $P'          ;Pagina nummer in de voetregel
+	ds 69
+endif
+
+	;Mail-merge bestand
+MRGNAM:	db 9,'ADRES.MRG                                                       '
+	;Inhoud
+INHNAM:	db 0,'                                                                '
+	;Karakterset
+KARNAM:	db 10,'KARSET.CHR                                                      '
+
+TVLDEND:	db 2,13,10,0,0,0,0,0,0		;Code voor veldeinde
+TRECEND:	db 3,'-',13,10,0,0,0,0,0        ;Record einde
+
+drvTab:	db 1,0fah,'-',0,0,0,0,0,0,0,0   ;Len, char, 9 codes
+	rept 31
+	 db 0,0,0,0,0,0,0,0,0,0,0	;32*11 driver-code's
+	endm
+
+	;Tekst van F7/Hulpmenu, NL/DUITS
+
+if	TAAL eq NL
+tHelp:
+db ' Alinea indelen         : HOME          Naar einde van regel : CTRL-rechts    G '
+db ' Indelen vanaf cursor   : CTRL-HOME     Naar begin van regel : CTRL-links     I '
+db ' Alinea inspringen      : SHIFT-HOME    Naar volgende woord  : SHIFT-rechts   R '
+db ' Regel centreren        : GRAPH-HOME    Naar vorige woord    : SHIFT-links    O '
+db ' Wis regel              : CTRL-DEL      Naar volgende pagina : SHIFT-omlaag   6 '
+db ' Wis tot regeleinde     : SHIFT-DEL     Naar vorige pagina   : SHIFT-omhoog   9 '
+db ' Cassette motor aan/uit : STOP          Tekst voor linkerkl. : SHIFT-TAB      8 '
+db ' Hoofd <=> Kleine letter: GRAPH-links/rechts       Hulpregel : F3/S/S         9 '
+endif
+
+if	TAAL eq DUITS
+tHelp:
+db ' Absatz formattieren     : HOME        Zum Ende der Zeile   : CTRL-rechts       '
+db ' Formattieren vom Cursor : CTRL-HOME   Zum Anfang der Zeile : CTRL-links        '
+db ' Absatz einr',81H,'cken        : SHIFT-HOME  Zum n',84H,'chtsten Wort   : SHIFT-rechts      '
+db ' Zeile centrieren        : GRAPH-HOME  Zum vorige Wort      : SHIFT-links       '
+db ' L',94h,'sche Zeile            : CTRL-DEL    Zum n',84h,'chsten Seite   : SHIFT-omlaag      '
+db ' L',94h,'sch bis Zeile-Ende    : SHIFT-DEL   Zum vorige Seite     : SHIFT-omhoog      '
+db ' Cassette motor an/aus   : STOP        Text vor linkerrand  : SHIFT-TAB         '
+db ' Gro',0E1H,' <=> Klein Buchstabe: GRAPH-links/rechts        F3/S/B : Befehlszeile      '
+endif
+
+blkOn:	db 30	;Cursor knipper aan en uit tijden
+blkOff:	db 15
+
+pointers	equ $	;Begin van blokpointers &
+bstartln:	dw 0	; markeringen
+bendLn:	dw 0
+markTab:	db 0,0,0,0,0,0,0,0,0,0	;20 bytes markeringen
+	db 0,0,0,0,0,0,0,0,0,0
+
+	dw 0	;Regel 0=Vaste pagina stop
+pageTab:	ds maxPageStops * 2	;Regnr's van harde pagina stops
+
+
+if	demo or autoDemo
+toInhoud:	jp inhoud	;Toegangs jump voor demo-versie
+tName:
+
+else
+toInhoud:	jp getName	;Toegangsjump naar INHOUD
+
+	;40 bytes username
+
+   if	TAAL eq NL
+tName:	db 18	;Lengte byte
+	irpc X,<dreertsigereg teiN>
+	  db '&X' xor cryptByte ;Alle karakters xorren met crypt-byte
+	endm	;Er staat nu: 'Niet geregistreerd'
+	ds 40 - 18	;Nog 40-17 bytes extra reserveren
+   else
+tName:	db 17	;Lengte byte
+	irpc X,<treirtsiger thciN>
+	  db '&X' xor cryptByte ;Alle karakters xorren met crypt-byte
+	endm	;Er staat nu: 'Nicht registriert'
+	ds 40 - 17	;Nog 40-17 bytes extra reserveren
+   endif
+endif
+
+userCode:	dw 0	;Wachtwoord nummer
+
+chkSum:	dw 0	;Checksum
+keyCnt:	dw 0	;Toetsaanslag teller = Verwarring
+
+if	demo or autoDemo
+toStop:	jp stop	;Toegangs jump voor demo-versie
+else
+toStop:	jp getName	;Toegangsjump naar STOP
+endif
+
+endVar	equ $	;Tot hier saven in TED.COM
+
+	;Variabelen
+
+csrNum:	dw 0
+endTpa:	dw 0
+lastLine:	dw 0
+ALSTART:	dw 0
+PRTNUM:	dw 0
+FREMEM:	dw 0409BH	;Dummy
+CHKAD:	dw CHKCNT2
+LOADREG:	dw 0
+SAVESTART:	dw 0
+SAVEEND:	dw 0
+PRTSTART:	dw 0
+PRTEND:	dw 0
+CURPLIN:	dw 0
+TOCHK:	dw CHKTED
+BUFPOINT:	dw 0
+BF3PNT:	dw 0
+SAVERR:	dw 0
+KRTPOS:	dw 0
+ADDCODE:	dw 987H
+PAGNUM:	dw 1
+SAVIND:	dw 0
+MAXPTR:	dw 0
+FIRST:	dw 0
+LAST:	dw 0
+OLDSP:	dw 0
+RECSTAR:	dw 0
+CURREC:	dw 0
+CURVLD:	dw 0
+CURCOL:	dw 0
+CURKOL:	dw 0
+VELD:	db 0
+MSGAD:	dw TINTRO
+SAVKAR:	dw 0
+SAVADR:	dw 0
+startNextPage:	dw 0
+pbTsrID:	dw 0
+
+TEDMAX:	dw 0
+SEGEND:	ds 2*8 + 2*maxMapSeg	;Eindadressen van 8 videoram segmenten
+		; en 128 Mapper segmenten
+
+fKeyNum:	db 0
+savFd:	db 0
+savFe:	db 0
+savCsr:	db 0
+savKMode:	db 0	;Kanji mode
+savFnk:	ds 3 * 7	;7 keys, 3 bytes per stuk
+
+IVLINE:	ds 10	;Buffer voor inverse schermregel
+FCBBUF:	ds 14	;Buffer voor filenaam van F3/Inhoud
+
+SAVNAM:	db 0
+	db 'B:FILENAAM.EXT                                                  '
+LOADNAM:	db 0
+	db 'C:FILENAAM.EXT                                                  '
+
+FCB:	db 0
+	db 'Hi there!  '
+	dw 0
+GROOTTE:	dw 1
+	ds 17
+BLOK:	dw 0
+	dw 0
+
+TCRLF:	db CR,LF,'$'            ;Return string
+
+
+if	AUTODEMO	;FCB voor demo-datafile
+
+	global AUTOFCB
+
+autoFcb:	db 0
+	db 'TEDDEMO DAT'
+	dw 0
+dfgr:	dw 1
+	ds 17
+	dw 0
+	dw 0
+endif
+
+$memry	equ $	;Laatste programma byte
+vrmEnd	equ 1800H + 8000h	;Einde van scherm vram + 8000h (page 2)
+
+; De nu volgende code wordt tijdens de initialisatie naar
+;  pagina 3 verplaatst.
+;
+page3code	equ $	;Start van programma code voor page 3
+
+	; Interrupt routine, schakel repeteerfunktie uit
+
+intRou:	ld hl,blkCnt	;Verhoog continu de cursor knipper
+	inc (hl)	; teller
+	if autoDemo
+	   ld hl,autoCnt	;Verhoog disk-lees wachtteller
+	   inc (hl)	; van auto-demo
+	endif
+	ld a,(repFl)	;Toets repeteer vlag AAN?
+	or a
+	jr nz,intBuf	; Ja, => Klaar
+	ld (repCnt),a	; Nee, zet teller op 0 => Geen repeteer
+intBuf:	ds 5	;Ruimte voor vorige interrupt hook
+
+intLen	equ $-intRou	;lengte van interrupt routine
+
+	;Routine in pagina 3 om EXTROM routine aan te roepen
+
+toSubRom:	inc sp	;Verwijder return-adres naar RETN
+	inc sp
+	ld ix,0	;Adres van aan te roepen routine
+	jp extRom	; in de SUBROM
+
+subLen	equ $-toSubRom	;Lengte van SubRom call routine
+
+endPage3	equ $	;Einde programmacode in page 3
+
+
+; Foutmeldingen tijdens initialisatie
+;
+mManErr:	ld de,tNoMMan	;Geen goede memman versie
+	jr errMsg
+noMem:	ld de,tNoMem	;Geen geheugen
+errMsg:	ld c,9
+	call dos	;Toon melding
+	rst 0	;Jump naar DOS
+
+tMSX:	db 'Sorry, TED is MSX-2$'
+tNoMMan:	db 'MemMan version < 1.1$'
+tNoMem:	db 'Not enough TPA memory$'
+
+savEnd	equ $	;Saven tot hier
+
+
+	;Variabelen/buffergebied in page 3 (bespaart tekst-geheugen)
+
+dss	macro symbol,bytes	;Define variable Space macro
+symbol	  equ $d	;Datapointer aan `symbol' toekennen
+$d	  defl $d+bytes	;Data pointer ophogen
+	endm
+
+$d	defl 0c000h	;Data pointer voor on-ge‹niteerde var's
+
+	dss strBuf,257	;Buffer voor huidige regel
+	dss strBf2,257	;Buffer voor kladregel
+	dss strBf3,257	;Buffer voor regel met TAB's
+	dss intEnt,intLen	;Interrupt routine
+	dss subRomEnt,subLen	;SUB-ROM call routine
+	dss repFl,1	;Toets repeteer vlag
+	dss blkCnt,1	;Cursor knipper teller
+	dss autoCnt,1	;Auto-demo karakter-lees wachtteller
+	dss errPnt,2	;Error routine pointer
+	dss zoekBuf,51	;Zoekstring
+	dss vervBuf,51	;Vervangbuffer
+	dss savZoek,51	;Bewaarbuffer voor zoekstring
+	dss stackBot,300	;Stack bodem (300 bytes stack)
+stack	equ $d	;Stack top
+mmTabLen	equ 2 * maxMapSeg	;Segtabel lengte = 1 word per segment
+	dss mmTabel,mmTabLen	;Segmenttabel (128 * 16 Kb = 2 Mb)
+		;(2*128) ziet M80 als "(2" ipv 256!
+diskBuf	equ $d	;Load/save buffer (minstens 512 bytes)
+
+	;Bereken checksum voor TED en bewaar TED op disk
+
+codeer:	ld hl,ini	;INI is nieuwe startadres
+	ld (101h),hl
+
+	ld de,80h	;Startadres cmd line
+
+	ld a,(de)	;Haal lengte byte
+	or a	;Nul?
+	jr z,noSerialNum	; Ja, => Geen cmd line
+	ld b,a	;Karakter teller
+	ld hl,0	;Serie-nummer op 0 stellen
+
+getSerialNumLp: inc de	;Haal volgende teken uit CMD line
+	ld a,(de)
+	sub '0'
+	jr c,nextSerChar	; => Geen cijfer
+	cp 10
+	jr nc,nextSerChar
+
+	push bc
+	ld b,h
+	ld c,l
+	add hl,hl	;HL=HL*2
+	add hl,hl	;*4
+	add hl,bc	;*5
+	add hl,hl	;*10
+	ld b,d	;B=0
+	ld c,a	;C=Digit
+	add hl,bc	;Tel cijfer op bij serienummer
+	pop bc
+
+nextSerChar:	djnz getSerialNumLp	;Volgende getal
+
+	ld de,1000	;Standaard offset (niet erg kraak-
+	add hl,de	; ongevoelig, maar ja...)
+	ld (serialNumber),hl
+
+noSerialNum:	ld hl,bouwOp	;Bereken vanaf startadres
+	ld bc,endPrg-bouwOp
+	ld de,0
+cde1:	ld a,e
+	ld e,(hl)	;Bereken cheksum voor 100H tot ENDPRG
+	xor e
+	add a,e
+	ld e,a
+	ld a,0
+	adc a,d
+	ld d,a
+	inc hl
+	dec bc
+	ld a,b
+	or c
+	jr nz,cde1
+	ld (chkSum),de	; en bewaar hem
+	ld bc,thulp0-tIntro
+cde2:	ld hl,(msgAd)	;Adres van intro in HL
+	DEC BC
+	ADD HL,BC	;Werk van achter naar voren
+	LD A,(HL)
+	AND 00001111B	;Isoleer 4 LSBs
+	RRD	;Wissel (HL) bits 0-3 met 4-7
+	LD A,C
+	OR B
+	JR NZ,CDE2
+	LD DE,TEDFCB	;Cre‰er nieuwe TED file
+	LD C,CREATE
+	CALL DOS
+	LD DE,100H
+	LD C,SETDMA
+	CALL DOS
+	LD HL,1
+	LD (TEDGR),HL
+	LD HL,SAVEND-100H	;Bewaar van 100H t/m SAVEND
+	LD DE,TEDFCB
+	LD C,RBWRITE
+	CALL DOS
+	LD DE,TEDFCB
+	LD C,CLOSE
+	CALL DOS
+	RST 0
+
+TEDFCB:	db 0
+	db 'TED     COM'
+	dw 0
+TEDGR:	dw 1
+	ds 17
+	dw 0
+	dw 0
+
+if1
+	.printx * Pass 1 done *
+else
+	.printx * Pass 2 done *
+endif
+
+	end codeer	;MAIN.MAC, "codeer" is startadres
+

@@ -1,0 +1,2 @@
+L80 SUBTED,GETPUT,TEDSTR,MAIN,ted/n/y/g
+

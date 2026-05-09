@@ -1,0 +1,304 @@
+* R+, U+, G 0, Q-
+                                ; These switches are for GEN80.COM
+
+dos             equ 5           ; BDOS entry
+calSlt          equ 0001ch      ; interslot call
+beep            equ 000c0h      ; BIOS BEEP
+enaDiskRom      equ 0f368h      ; enable main diskROM routine onder DOS
+txtnam          equ 0f3b3h      ; name table in VRAM
+txtcol          equ 0f3b5h      ; color table in VRAM
+txtcgp          equ 0f3b7h      ; pattern table in VRAM
+rg13sav         equ 0ffdfh+13   ; bewaar-adres VDP-register
+hkeycod         equ 0fdcch      ; keycode hook (my concern: dead-key)
+extBio          equ 0ffcah      ; extbios for Memman call
+
+; Program constants
+;
+bufSize         equ 64          ; data buffer size
+fcbSize         equ 25h         ; FCB size
+
+
+; Start dumping
+;
+dmpScr::        ld      hl,(fcbPnt)
+                inc     hl              ; skip drive number
+                inc     hl              ; skip "dmp" text
+                inc     hl
+                inc     hl
+                push    hl              ; copy pointer to filename to IX
+                pop     ix
+
+                ld      hl,(count)
+                inc     hl
+                ld      (count),hl      ; get count for name in HL
+
+                call    putnum          ; put number HL in filename (IX)
+
+                ld      de,(fcbPnt)
+                xor     a
+                ld      (de),a          ; always default drive to dump to
+                push    de
+                pop     ix
+                ld      (ix+0ch),a      ; extent number MUST be 0 before create
+
+                ld      c,16h           ; create
+                call    dos             ; create file (no existance-check)
+                inc     a
+                push    af
+                ld      ix,beep         ; NB: direct call NOT allowed, since a
+                ld      iy,(0fcc1h-1)   ;  DOS program may have switched RAM
+                call    z,calSlt        ;  into page 0, by installing a RST 30H
+                pop     af              ;  at the interrupt hook
+                jr      z,dumpDone      ; exit if error
+
+                ld      ix,(fcbPnt)
+                xor     a
+                ld      (ix+33),a       ; random record to 0
+                ld      (ix+34),a
+                ld      (ix+35),a
+                ld      (ix+36),a
+
+                ld      (ix+0eh),.low. bufSize ; set block size to "bufSize"
+                ld      (ix+0fh),.high.bufSize ;  bytes
+
+                ld      de,(bufPnt)
+                ld      c,1ah
+                call    dos                 ; set DMA to buf
+
+                ld      bc,27*80/(bufSize/8); Lines*chars/(bufsize/(bytes/chr))
+                ld      hl,(txtnam)
+
+dump:           push    bc
+                ld      b,bufsize/8
+                ld      de,(bufPnt)     ; RAM buffer with char patterns
+
+dmpmore:        push    hl
+                push    bc
+
+                call    getInv          ; see if this char. should be inverted
+
+                call    setrd
+                in      a,(98h)         ; read char code
+                call    getpat          ; get pattern for this char
+
+                pop     bc
+                pop     hl
+                inc     hl
+                djnz    dmpmore         ; fill the buffer (16 char's)
+
+                push    hl
+                ld      hl,1            ; 1 block (= BufSize bytes)
+                ld      de,(fcbPnt)
+                ld      c,26h           ; random write
+                call    dos             ; write BufSize bytes
+                pop     hl
+                pop     bc
+                dec     bc
+                ld      a,b
+                or      c
+                jr      nz,dump
+
+                ld      c,10h
+                ld      de,(fcbPnt)
+                call    dos             ; close file
+
+dumpDone:       jp      nocode
+
+
+; getInv
+;
+; Set "inverse" flag when character should be inverted
+;
+; In: HL=Pointer of char. in name-table
+;
+; Modifies: AF
+;
+getInv:         xor     a               ; assume no invert
+                ld      (invert),a
+
+                ld      a,(rg13Sav)     ; get VDP(14): blink counter
+                and     11110000b       ; extract ON time
+                ret     z               ; don't invert when always off
+
+                push    bc              ; save char. counter
+                push    de
+                push    hl              ; save char pnt.
+
+                ld      de,(txtNam)
+                xor     a               ; bit counter for colorbyte = 0
+                sbc     hl,de           ; get char. #, 0-based
+
+                srl     h               ; devide HL by 8, 1 colorbyte contains
+                rr      l               ;  info about 8 characters
+                rra                     ; Shift rest into bit-counter
+
+                srl     h               ; /4
+                rr      l
+                rra
+
+                srl     h               ; /8
+                rr      l
+                rra
+
+                rra                     ; shift counter to bits 0..2
+                rra
+                rra
+                rra
+                rra
+                inc     a               ; make bit-number 1-based
+                ld      b,a             ; store bit counter in B
+
+                ld      de,(txtCol)     ; get color table base
+                add     hl,de           ; calc address of byte in col. table
+
+                call    setRd           ; set read address
+
+                in      a,(98h)         ; get colorbyte
+
+getColBitLp:    rlca                    ; shift bit into carry flag
+                djnz    getColBitLp     ; until we've got the right one
+
+                jr      nc,noInvert     ; don't invert when color bit=0
+
+                ld      a,0ffh
+                ld      (invert),a      ; set invert-flag to -1
+
+noInvert:       pop     hl
+                pop     de
+                pop     bc
+                ret
+
+; getPat
+;
+; Put char. pattern in save-buffer
+;
+getpat:         push    de
+                ld      l,a
+                ld      h,0
+                add     hl,hl
+                add     hl,hl
+                add     hl,hl
+                ld      de,(txtcgp)
+                add     hl,de
+                call    setrd
+                pop     hl
+                ld      bc,(invert)     ;C=Invert pattern
+                ld      b,8             ;B=Byted counter
+
+gtpat2:         in      a,(98h)
+                xor     c               ;Invert
+                ld      (hl),a
+                inc     hl
+                djnz    gtpat2
+
+                ex      de,hl
+                ret
+
+
+setrd:          ld      a,l
+                di                      ; no int's when accessing VDP reg's
+                out     (99h),a
+                ld      a,h
+                and     3fh
+                out     (99h),a
+                ret
+
+
+putnum:         ld      de,subtab       ; words -10000,-1000,-100,-10,-1
+
+moredigits:     ex      de,hl
+                ld      c,(hl)
+                inc     hl
+                ld      b,(hl)          ; get value
+                inc     hl
+                ex      de,hl
+                call    getdigit
+                add     a,'0'
+                ld      (ix+0),a        ; put digit to IX
+                inc     ix
+                inc     bc
+                ld      a,b
+                or      c
+                jr      nz,moredigits   ; if not -1 more to do
+                ret
+
+
+getdigit:       ld      a,0ffh          ; preset -1
+submore:        add     hl,bc
+                inc     a
+                jr      c,submore
+                sbc     hl,bc
+                ret
+
+subtab:         defw    -10000,-1000,-100,-10,-1
+
+; dos
+;
+; Call BDOS entry.
+;
+; Note: The interrupt routine of MSX-DOS2 uses the same stack
+; area as the BDOS routine at 0F37DH. So, when DOS is active, only the
+; BDOS entry at 0005h may be called, because the interrupt's stack will
+; be corrupted by a call to 0F37Dh.
+;
+; When MSX-Basic is active, only the 0F37DH entry is available and no
+; stack switches are made by the interrupt routine. So in that case
+; 0F37DH must be called.
+;
+dos:            call    5               ;MSX-DOS BDOS
+                ret
+
+
+; Variable space
+;
+busy:           defb    0
+seenone:        defb    0
+invert:         defb    0
+count:          defw    0
+fcbPnt:         defw    0
+bufPnt:         defw    0
+stkPnt:         defw    0
+savSP:          defw    0
+
+tsrEnd          equ     $
+
+
+; Init routine, test if TSR already present.
+; Note: Memman is installed, this check is done by the loader.
+;
+init:           ld b,getMemManEnt       ;Ask for MemMan entry
+                ld de,256*'M' + info    ;Call the MemMan info function
+                call extBio             ;Through the ExtBio hook
+                ld (memManEntry+1),hl   ;Save the MemMan entry address
+
+                ld hl,tTsrName          ;Pointer to TSR name-string
+                memMan getTsrID         ;See if this TSR already exists
+                jr nc,initDouble        ; Yes, => Double installed error
+
+                ld hl,bufSize+fcbSize   ;Allocate buffer & FCB
+                memMan heapAlloc        ; in page 3
+                ld a,h
+                or l                    ;Address 0?
+                jr z,heapError          ; => Not enough heap space
+
+                ld (bufPnt),hl          ;Start of databuffer
+                ld de,bufSize
+                add hl,de
+                ld (fcbPnt),hl          ;Start of FCB data
+
+                ex de,hl
+                ld hl,fcbData
+                ld bc,fcbDataLen
+                ldir                    ;Fill FCB with static filename
+
+                ld a,0                  ;Flags in A, no messages
+                ret                     ;Init ready, return to TsrLoad
+
+
+fcbData:        defb 0                  ;Static FCB data
+                defb 'dmp12345dmp'
+fcbDataLen      equ $-fcbData
+
+
+                end
+

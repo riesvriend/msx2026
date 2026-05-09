@@ -1,0 +1,19 @@
+	title HELLO
+;
+; Minimal MSX-DOS / CP/M-80 'Hello, MSX!' program.
+; Exercises the M80 -> L80 -> .COM toolchain end to end.
+;
+	.Z80
+	aseg
+	org	0100h
+
+bdos	equ	5
+
+start:	ld	de,msg
+	ld	c,9		; BDOS function 9 = print '$'-terminated string
+	call	bdos
+	ret			; return to MSX-DOS
+
+msg:	db	'Hello, MSX!',13,10,'$'
+
+	end	start

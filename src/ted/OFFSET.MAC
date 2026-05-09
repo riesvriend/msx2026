@@ -4,6 +4,19 @@ true            equ not false
 demo            equ false               ;True = build the limited demo (TEDDEMO.COM)
 autoDemo        equ false               ;True = auto-running demo build
 
+                ; Bypass the 1991 copy-protection in this retro release:
+                ;   * MAIN.MAC entry point becomes "ini" instead of "codeer"
+                ;     (no longer need to run TED <serial> after L80 to register)
+                ;   * the chkTed checksum guard early-returns
+                ;   * the intro-string XOR/RRD scrambling is skipped
+                ;   * toInhoud / toStop point straight at INHOUD / STOP, so
+                ;     F3 (directory) and F4 (stop) work without ever entering
+                ;     the "Toegangs code" prompt.
+                ; The original GETCODE/ACCESS/CHECK/codeer/getName routines
+                ; are kept on disk for historical reference; they just become
+                ; unreachable.
+noLicense       equ true
+
 nl              equ 0                   ;Language id: Dutch
 duits           equ 1                   ;Language id: German
 

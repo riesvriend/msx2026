@@ -326,7 +326,9 @@ ankAlready:     ld a,80                 ;80 columns, screen 0
                 call iniTxt             ;Switch back to screen 1 or width 40
                 call disScr             ;Disable screen display
 
-                call code               ;Decrypt screentext
+if              not noLicense
+                call code               ;Decrypt screentext (skipped: noLicense)
+endif
 
                 ld hl,0                 ;Fill in the screen base
                 ld (txtNam),hl          ; tables
@@ -6712,7 +6714,11 @@ FM17:           set sav,(iy+flags1)     ;Save before quitting
 
                 ;Check whether TED is still the same as last time (anti-tamper)
 
-chkTed:         call calSum
+chkTed:
+if              noLicense
+                ret                     ;Anti-tamper disabled (see noLicense in OFFSET.MAC)
+endif
+                call calSum
                 ld hl,(chkSum)
                 or a
                 sbc hl,de               ;Equal?
@@ -7483,7 +7489,11 @@ toInhoud:       jp inhoud               ;Entry jump for the demo build
 tName:
 
 else
+  if            noLicense
+toInhoud:       jp inhoud               ;noLicense: skip the Toegangs-code prompt
+  else
 toInhoud:       jp getName              ;Entry jump to INHOUD (directory)
+  endif
 
                 ;40 bytes of user-name
 
@@ -7510,7 +7520,11 @@ keyCnt:         dw 0                    ;Keystroke counter = obfuscation
 if              demo or autoDemo
 toStop:         jp stop                 ;Entry jump for the demo build
 else
+  if            noLicense
+toStop:         jp stop                 ;noLicense: skip the Toegangs-code prompt
+  else
 toStop:         jp getName              ;Entry jump to STOP
+  endif
 endif
 
 endVar          equ $                   ;Save up to here in TED.COM
@@ -7679,7 +7693,11 @@ diskBuf         equ $d                  ;Load/save buffer (at least 512 bytes)
 
                 ;Compute checksum for TED and write TED to disk
 
-codeer:         ld hl,ini               ;INI is the new start address
+codeer:
+if              noLicense
+                jp ini                  ;noLicense: skip the registration ritual entirely
+endif
+                ld hl,ini               ;INI is the new start address
                 ld (101h),hl
 
                 ld de,80h               ;Start address of the cmd line
@@ -7774,4 +7792,5 @@ else
 endif
 
                 end codeer              ;MAIN.MAC, "codeer" is the start address
+                                        ;(noLicense makes codeer jump straight to ini)
 

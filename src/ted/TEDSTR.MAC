@@ -1,727 +1,727 @@
-	;Bestand: TEDSTR.MAC
+                ;Bestand: TEDSTR.MAC
 
 if1
-	.printx * Assemble: TEDSTR.MAC *
+                .printx * Assemble: TEDSTR.MAC *
 endif
 
-	;Dit bestand bevat alle TED-schermteksten en taal-afhankelijke
-	; karaktertabellen.
+                ;Dit bestand bevat alle TED-schermteksten en taal-afhankelijke
+                ; karaktertabellen.
 
-	;De volgende talen worden ondersteund:
-	;
-	;TAAL EQU NL	;Nederlands
-	;TAAL EQU DUITS	; en Duits
-
-
-tab	equ   9
-lf	equ  10
-cr	equ  13
-esc	equ 1BH
-right	equ 1CH
-left	equ 1DH
-up	equ 1EH
-down	equ 1FH
-nul	equ 255
-
-	include offset.mac     ;Bevat var-offsets, Taal- en Demovlaggen
-
-	global f2Kar,f3Kar,f4Kar,f5Kar,inhKar,prtKar,scrKar,indKar
-	global goKar,aliKar,insKar,kolKar,hlpKar,memKar,tabKar,pageKar
-	global tIntro,tGetName,tGetCode,tGebr
-	global krtStart,krtEnd,tNoKrt,tF7
-	global tStatus,tHulp0,tHulp2,tHulp3,tHulp4,tHulp5
-	global tAan,tUit,tRegNr,tSelectie
-	global tPad,tInh,tVrij,tVolume
-	global tSaven,tTabCh,tabChr,tDirChr,tVldErr,tNoPb,tNextPg,tDruk
-	global tMoment,tMeer,tZeker,tMemMap,tKeuze,tAlinea,tSort
-	global TKOLOM,TKOLPOS,TGOTO,TKLEUR,TEXT,TBACKUP,TSCHERM,TDRIVER
-	global TGETDRV,TPRTINS,TPSTAT,TKAART,TPBEGON,TMEM,TAFBR,TWIS
-	global TCPHULP,TTOETS,TACCESS,tPage
-	global TRECERR,TREGLEN,TONDERB,TMEMVOL,TTOMANY,TDISKVOL,TPROT
-	global TNODISK,TDSKERR,TVERERR,TKARERR,TNOTFND,TPROB,TVERVANG
-	global TSAVNAM,TLOADNAM,TSAVINS,TZOEK,TZOEK2,TWEL,TACHTER,TONV
-	global tPageTabFull,tStkErr,tIndent,tRechts,tLinks
-
-	;Videoram adressen van scherm teksten/waardes
-
-	global vrmReg,vrmKol,vrmPag,vrmTF7
-	global xyFnk,xZoek
-	global xUitvul,xAfbreek,xStreep,xInspr,xTabIns
-	global xAantPos
+                ;De volgende talen worden ondersteund:
+                ;
+                ;TAAL EQU NL            ;Nederlands
+                ;TAAL EQU DUITS         ; en Duits
 
 
-	;Karaktertabellen voor de funktietoetsen
-	; Indeling: Kar, kar, ..., 0
+tab             equ   9
+lf              equ  10
+cr              equ  13
+esc             equ 1BH
+right           equ 1CH
+left            equ 1DH
+up              equ 1EH
+down            equ 1FH
+nul             equ 255
+
+                include offset.mac     ;Bevat var-offsets, Taal- en Demovlaggen
+
+                global f2Kar,f3Kar,f4Kar,f5Kar,inhKar,prtKar,scrKar,indKar
+                global goKar,aliKar,insKar,kolKar,hlpKar,memKar,tabKar,pageKar
+                global tIntro,tGetName,tGetCode,tGebr
+                global krtStart,krtEnd,tNoKrt,tF7
+                global tStatus,tHulp0,tHulp2,tHulp3,tHulp4,tHulp5
+                global tAan,tUit,tRegNr,tSelectie
+                global tPad,tInh,tVrij,tVolume
+                global tSaven,tTabCh,tabChr,tDirChr,tVldErr,tNoPb,tNextPg,tDruk
+                global tMoment,tMeer,tZeker,tMemMap,tKeuze,tAlinea,tSort
+                global TKOLOM,TKOLPOS,TGOTO,TKLEUR,TEXT,TBACKUP,TSCHERM,TDRIVER
+                global TGETDRV,TPRTINS,TPSTAT,TKAART,TPBEGON,TMEM,TAFBR,TWIS
+                global TCPHULP,TTOETS,TACCESS,tPage
+                global TRECERR,TREGLEN,TONDERB,TMEMVOL,TTOMANY,TDISKVOL,TPROT
+                global TNODISK,TDSKERR,TVERERR,TKARERR,TNOTFND,TPROB,TVERVANG
+                global TSAVNAM,TLOADNAM,TSAVINS,TZOEK,TZOEK2,TWEL,TACHTER,TONV
+                global tPageTabFull,tStkErr,tIndent,tRechts,tLinks
+
+                ;Videoram adressen van scherm teksten/waardes
+
+                global vrmReg,vrmKol,vrmPag,vrmTF7
+                global xyFnk,xZoek
+                global xUitvul,xAfbreek,xStreep,xInspr,xTabIns
+                global xAantPos
 
 
-if	TAAL eq NL	;TRUE indien TAAL=Nederlands
+                ;Karaktertabellen voor de funktietoetsen
+                ; Indeling: Kar, kar, ..., 0
 
-	;Nederlandstalige karakters bij funktietoetsen
 
-	;Funktietoets 2
+if              TAAL eq NL              ;TRUE indien TAAL=Nederlands
 
-F2KAR:	db 'l'                  ;Linkerkantlijn
-	db 'r'                  ;Rechterkantlijn
-	db 'a'                  ;Alinea instellingen
-	db 'z'                  ;Zet tab
-	db 'w'                  ;Wis tab
-	db 't'                  ;Tab instellingen
-	db 'm'                  ;Change Memorymapper
-	db 'p'                  ;Printer instelling
-	db 's'                  ;Sorteer instelling
-	db 'd'                  ;Printerdriver
-	db 'b'                  ;Bewaar instellingen
-	db 255	;Funktietoets
-	db 0	;Einde van tabel
+                ;Nederlandstalige karakters bij funktietoetsen
 
-	;Funktietoets 3
+                ;Funktietoets 2
 
-f3Kar:	db 'g'                  ;Geheugen vrij
-	db 'w'                  ;wis Tekst/Buffer
-	db 'i'                  ;disk Inhoud
-	db 'b'                  ;Backup aan/uit
-	db 'p'                  ;Pagina indikatie aan/uit/stop
-	db 'k'                  ;Kleur instellen
-	db 'e'                  ;Verander '.TXT'
-	db 'l'                  ;Kolominstellen
-	db 's'                  ;Scherm
-	db 'h'                  ;Kopi‰er hulpmenu
-	db 255	;Funktietoets
-	db 0
+F2KAR:          db 'l'                  ;Linkerkantlijn
+                db 'r'                  ;Rechterkantlijn
+                db 'a'                  ;Alinea instellingen
+                db 'z'                  ;Zet tab
+                db 'w'                  ;Wis tab
+                db 't'                  ;Tab instellingen
+                db 'm'                  ;Change Memorymapper
+                db 'p'                  ;Printer instelling
+                db 's'                  ;Sorteer instelling
+                db 'd'                  ;Printerdriver
+                db 'b'                  ;Bewaar instellingen
+                db 255                  ;Funktietoets
+                db 0                    ;Einde van tabel
 
-	;Funktietoets 4
+                ;Funktietoets 3
 
-F4KAR:	db 'n'                  ;Zoek nog eens
-	db 'z'                  ;Zoek
-	db 'b'                  ;Bewaar
-	db 'l'                  ;Laad
-	db 'g'                  ;Ga naar regel
-	db 'p'                  ;Print de tekst
-	db 's'                  ;Stop
-	db 255	;Funktietoets
-	db 0
+f3Kar:          db 'g'                  ;Geheugen vrij
+                db 'w'                  ;wis Tekst/Buffer
+                db 'i'                  ;disk Inhoud
+                db 'b'                  ;Backup aan/uit
+                db 'p'                  ;Pagina indikatie aan/uit/stop
+                db 'k'                  ;Kleur instellen
+                db 'e'                  ;Verander '.TXT'
+                db 'l'                  ;Kolominstellen
+                db 's'                  ;Scherm
+                db 'h'                  ;Kopi‰er hulpmenu
+                db 255                  ;Funktietoets
+                db 0
 
-	;Funktietoets 5
+                ;Funktietoets 4
 
-f5Kar:	db 's'                  ;Startblok
-	db 'e'                  ;Eindeblok
-	db 'd'                  ;Wis blokdefinitie
-	db 'k'                  ;Kopieer blok
-	db 'w'                  ;Wis blok
-	db 'v'                  ;Verplaats blok
-	db 'p'                  ;Print blok
-	db 't'                  ;sorTeer
-	db 'l'                  ;Laad blok
-	db 'b'                  ;Bewaar blok
-	db 'i'                  ;Inspringen
-	db 255	;Funktietoets
-	db 0
+F4KAR:          db 'n'                  ;Zoek nog eens
+                db 'z'                  ;Zoek
+                db 'b'                  ;Bewaar
+                db 'l'                  ;Laad
+                db 'g'                  ;Ga naar regel
+                db 'p'                  ;Print de tekst
+                db 's'                  ;Stop
+                db 255                  ;Funktietoets
+                db 0
 
-	;F2/Tab
+                ;Funktietoets 5
 
-tabKar:	db ESC
-	db 'g'                  ;Gebruik in geheugen
-	db 'b'                  ;Bewaren op disk
-	db 'l'                  ;Direkt laden van disk
-	db 0
+f5Kar:          db 's'                  ;Startblok
+                db 'e'                  ;Eindeblok
+                db 'd'                  ;Wis blokdefinitie
+                db 'k'                  ;Kopieer blok
+                db 'w'                  ;Wis blok
+                db 'v'                  ;Verplaats blok
+                db 'p'                  ;Print blok
+                db 't'                  ;sorTeer
+                db 'l'                  ;Laad blok
+                db 'b'                  ;Bewaar blok
+                db 'i'                  ;Inspringen
+                db 255                  ;Funktietoets
+                db 0
 
-	;F2/MemMap
+                ;F2/Tab
 
-memKar:	db ESC
-	db 'm'                  ;Mapper aan/uit
-	db 'v'                  ;Vram aan/uit
-	db 0
+tabKar:         db ESC
+                db 'g'                  ;Gebruik in geheugen
+                db 'b'                  ;Bewaren op disk
+                db 'l'                  ;Direkt laden van disk
+                db 0
 
-	;F2/Bewaar instel.
+                ;F2/MemMap
 
-insKar:	db ESC
-	db 'e'                  ;Elke tekst bewaren
-	db 't'                  ;Bewaar in TED
-	db 'b'                  ;Bewaar instellingen
-	db 'l'                  ;Laad instellingen
-	db 0
+memKar:         db ESC
+                db 'm'                  ;Mapper aan/uit
+                db 'v'                  ;Vram aan/uit
+                db 0
 
-	;F3/Kolom
+                ;F2/Bewaar instel.
 
-kolKar:	db ESC
-	db 'a'                  ;Aantal kolommen
-	db 0
+insKar:         db ESC
+                db 'e'                  ;Elke tekst bewaren
+                db 't'                  ;Bewaar in TED
+                db 'b'                  ;Bewaar instellingen
+                db 'l'                  ;Laad instellingen
+                db 0
 
-	;F3/Disk Inhoud
+                ;F3/Kolom
 
-inhKar:	db ESC
-	db DOWN
-	db UP
-	db RIGHT
-	db LEFT
-	db 'i'                  ;Inhoud
-	db 'l'                  ;Tekst laden
-	db 'b'                  ;Voeg een blok toe
-	db 'w'                  ;File wissen
-	db 'm'                  ;Mail-merge
-	db 'k'                  ;Karakerset
-	db 's'                  ;Instellingen
-	db 0
+kolKar:         db ESC
+                db 'a'                  ;Aantal kolommen
+                db 0
 
-	;F3/Pagina
+                ;F3/Disk Inhoud
 
-pageKar:	db esc
-	db 'p'                  ;Plaats pagina stop
-	db 'v'                  ;Verwijder paginastop
-	db 'a'                  ;Verwijder alle paginastops
-	db 'n'                  ;Pagina-nummer indicatie
-	db 's'                  ;Pagina-stop indicatie
-	db 'g'                  ;Pagina-grens indicatie
-	db 0
+inhKar:         db ESC
+                db DOWN
+                db UP
+                db RIGHT
+                db LEFT
+                db 'i'                  ;Inhoud
+                db 'l'                  ;Tekst laden
+                db 'b'                  ;Voeg een blok toe
+                db 'w'                  ;File wissen
+                db 'm'                  ;Mail-merge
+                db 'k'                  ;Karakerset
+                db 's'                  ;Instellingen
+                db 0
 
-	;F3/Hulp
+                ;F3/Pagina
 
-hlpKar:	db ESC
-	db 't'                  ;Hulp naar text
-	db 'm'                  ;Hulp naar menu
-	db 0
+pageKar:        db esc
+                db 'p'                  ;Plaats pagina stop
+                db 'v'                  ;Verwijder paginastop
+                db 'a'                  ;Verwijder alle paginastops
+                db 'n'                  ;Pagina-nummer indicatie
+                db 's'                  ;Pagina-stop indicatie
+                db 'g'                  ;Pagina-grens indicatie
+                db 0
 
-	;F2/Printer instellingen
+                ;F3/Hulp
 
-PRTKAR:	db ESC
-	db 's'                  ;Setup string
-	db 'b'                  ;Boven marge
-	db 'o'                  ;Onder marge
-	db 'l'                  ;pagina Lengte
-	db '1'                  ;Kopregel tekst
-	db '2'                  ;Voetregel tekst
-	db 'm'                  ;Mail-Merge
-	db 'n'                  ;Mail-Merge Naam
-	db 'a'                  ;Kaart einde
-	db 'v'                  ;Veld einde
-	db 'e'                  ;Eerste paginanummer
-	db 'p'                  ;Kopregel Positie
-	db 't'                  ;Voetregel Positie
-	db 'f'                  ;Formfeed
-	db 'c'                  ;Continu printen
-	db 'r'                  ;Kopregel marge
-	db 'g'                  ;Voetregel marge
-	db 'i'                  ;Mail-Merge teken
-	db 'k'                  ;Eerste Kaart
-	db 0
+hlpKar:         db ESC
+                db 't'                  ;Hulp naar text
+                db 'm'                  ;Hulp naar menu
+                db 0
 
-	;Scherm instellingen
+                ;F2/Printer instellingen
 
-scrKar:	db ESC
-	db 's'                  ;Commandoregel op scherm
-	db 'c'                  ;Kleuren cursor
-	db 'b'                  ;Blok cursor
-	db 'v'                  ;Voorloop nul
-	db 'l'                  ;Lichtkrant
-	db 'g'                  ;Grote letters
-	db 'm'                  ;MSX set
-	db 'e'                  ;Edit mode
-	db 'a'                  ;Auto-indent
-	db 'r'                  ;Repeteer toetsen
-	db 'k'                  ;Karakterset naam
-	db 'i'                  ;Knipperende cursor
-	db 'n'                  ;Knippertijd aan
-	db 'u'                  ;Knippertijd uit
-	db 0
+PRTKAR:         db ESC
+                db 's'                  ;Setup string
+                db 'b'                  ;Boven marge
+                db 'o'                  ;Onder marge
+                db 'l'                  ;pagina Lengte
+                db '1'                  ;Kopregel tekst
+                db '2'                  ;Voetregel tekst
+                db 'm'                  ;Mail-Merge
+                db 'n'                  ;Mail-Merge Naam
+                db 'a'                  ;Kaart einde
+                db 'v'                  ;Veld einde
+                db 'e'                  ;Eerste paginanummer
+                db 'p'                  ;Kopregel Positie
+                db 't'                  ;Voetregel Positie
+                db 'f'                  ;Formfeed
+                db 'c'                  ;Continu printen
+                db 'r'                  ;Kopregel marge
+                db 'g'                  ;Voetregel marge
+                db 'i'                  ;Mail-Merge teken
+                db 'k'                  ;Eerste Kaart
+                db 0
 
-	;Karaktertabel voor F4/Ga Naar
+                ;Scherm instellingen
 
-goKar:	db ESC	;Escape
-	db 'r'                  ;Naar regel
-	db 't'                  ;Naar top
-	db 'b'                  ;Naar bodem
-	db 's'                  ;Naar blokstart
-	db 'e'                  ;Naar blokeinde
-	db 0
+scrKar:         db ESC
+                db 's'                  ;Commandoregel op scherm
+                db 'c'                  ;Kleuren cursor
+                db 'b'                  ;Blok cursor
+                db 'v'                  ;Voorloop nul
+                db 'l'                  ;Lichtkrant
+                db 'g'                  ;Grote letters
+                db 'm'                  ;MSX set
+                db 'e'                  ;Edit mode
+                db 'a'                  ;Auto-indent
+                db 'r'                  ;Repeteer toetsen
+                db 'k'                  ;Karakterset naam
+                db 'i'                  ;Knipperende cursor
+                db 'n'                  ;Knippertijd aan
+                db 'u'                  ;Knippertijd uit
+                db 0
 
-	;F2/Alinea instellingen
+                ;Karaktertabel voor F4/Ga Naar
 
-ALIKAR:	db ESC	;ESCape
-	db 'u'                  ;Uitvullen
-	db 'a'                  ;Afbreken
-	db 'i'                  ;Inspringen
-	db 's'                  ;Streepje
-	db 0
+goKar:          db ESC                  ;Escape
+                db 'r'                  ;Naar regel
+                db 't'                  ;Naar top
+                db 'b'                  ;Naar bodem
+                db 's'                  ;Naar blokstart
+                db 'e'                  ;Naar blokeinde
+                db 0
 
-	;F5/Indent
+                ;F2/Alinea instellingen
 
-indKar:	db esc	;ESCape
-	db 'a'                  ;Aantal posities
-	db left	;Schuif naar links
-	db right	;Schuif naar rechts
-	db 0
+ALIKAR:         db ESC                  ;ESCape
+                db 'u'                  ;Uitvullen
+                db 'a'                  ;Afbreken
+                db 'i'                  ;Inspringen
+                db 's'                  ;Streepje
+                db 0
 
-	;Videoram adressen van scherm teksten/waardes
+                ;F5/Indent
 
-VRMREG	equ 18	;Regelnummer
-VRMKOL	equ 30	;Kolomnummer
-VRMPAG	equ 41	;Paginanummer
-VRMTF7	equ 46	;'F7:Hulp'
+indKar:         db esc                  ;ESCape
+                db 'a'                  ;Aantal posities
+                db left                 ;Schuif naar links
+                db right                ;Schuif naar rechts
+                db 0
 
-	;Cursor posities van schermteksten /waardes
+                ;Videoram adressen van scherm teksten/waardes
 
-XYFNK	equ 3101H	;F2/X etc
-XZOEK	equ 15	;Zoektekst
+VRMREG          equ 18                  ;Regelnummer
+VRMKOL          equ 30                  ;Kolomnummer
+VRMPAG          equ 41                  ;Paginanummer
+VRMTF7          equ 46                  ;'F7:Hulp'
 
-	;Schermteksten
+                ;Cursor posities van schermteksten /waardes
 
-if	DEMO
+XYFNK           equ 3101H               ;F2/X etc
+XZOEK           equ 15                  ;Zoektekst
 
-TINTRO:	db cr
-	db 9,9,9,'  MSX2 Tekstverwerker - Editor',cr,lf
-	db 9,9,9,9,'door M.J. Vriend',cr,lf
-	db 9,9,9,9,'(c) 1992 Jos-Tel',cr,lf
-	db 9,9,'   Demonstratieversie - kopi',89H,'ren toegestaan',cr,lf,lf,nul
+                ;Schermteksten
+
+if              DEMO
+
+TINTRO:         db cr
+                db 9,9,9,'  MSX2 Tekstverwerker - Editor',cr,lf
+                db 9,9,9,9,'door M.J. Vriend',cr,lf
+                db 9,9,9,9,'(c) 1992 Jos-Tel',cr,lf
+                db 9,9,'   Demonstratieversie - kopi',89H,'ren toegestaan',cr,lf,lf,nul
 TGETNAME:
 TGETCODE:
 TACCESS:
 TGEBR:
 else
-TINTRO:	db cr
-	db 9,9,9,'  MSX2 Tekstverwerker - Editor',cr,lf
-	db 9,9,9,9,'door M.J. Vriend',cr,lf
-	db 9,9,9,9,'(c) 1992 Jos-Tel',cr,lf
-	db 9,9,9,'   Kopi',89H,'ren  NIET  toegestaan',cr,lf,lf,nul
+TINTRO:         db cr
+                db 9,9,9,'  MSX2 Tekstverwerker - Editor',cr,lf
+                db 9,9,9,9,'door M.J. Vriend',cr,lf
+                db 9,9,9,9,'(c) 1992 Jos-Tel',cr,lf
+                db 9,9,9,'   Kopi',89H,'ren  NIET  toegestaan',cr,lf,lf,nul
 
-TGETNAME:	db tab,tab,'Vraag uw code aan bij Jos-Tel!!',cr,lf,lf
-	db tab,tab,'Gebruikers naam: ',nul
-TGETCODE:	db cr,lf,tab,tab,'Gebruikers code: ',nul
-TACCESS:	db cr,lf,tab,tab,'  Toegangs code: ',nul
-TGEBR:	db cr,lf,tab,'Gebruiker: ',nul
+TGETNAME:       db tab,tab,'Vraag uw code aan bij Jos-Tel!!',cr,lf,lf
+                db tab,tab,'Gebruikers naam: ',nul
+TGETCODE:       db cr,lf,tab,tab,'Gebruikers code: ',nul
+TACCESS:        db cr,lf,tab,tab,'  Toegangs code: ',nul
+TGEBR:          db cr,lf,tab,'Gebruiker: ',nul
 endif
 
-	;Lichtkrant
+                ;Lichtkrant
 
-KRTSTART:	db "              M.J. Vriend's TED "
+KRTSTART:       db "              M.J. Vriend's TED "
 
-if	DEMO
-	db 'demonstratie'
+if              DEMO
+                db 'demonstratie'
 endif
-	db 'versie #2.65 (17 november 1992) '
-	db 'copyright (C) 1992 Jos-Tel Aktie M.S. '
-	db 'De opbrengst van TED komt ten goede '
-	db 'aan de Nederlandse Multiple Sclerose Stichting. '
-if	DEMO
-	db 'Bestel de nieuwe TED #2.65 bij Jos-Tel. '
+                db 'versie #2.65 (17 november 1992) '
+                db 'copyright (C) 1992 Jos-Tel Aktie M.S. '
+                db 'De opbrengst van TED komt ten goede '
+                db 'aan de Nederlandse Multiple Sclerose Stichting. '
+if              DEMO
+                db 'Bestel de nieuwe TED #2.65 bij Jos-Tel. '
 endif
-	db 'Bel voor meer informatie naar de Jos-Tel databank 05149-1837, '
-	db '24 per dag online. Of schrijf naar Jos de Boer, Kampenspaed 4, 8721 GL  WARNS.'
-KRTEND:	db '                '
-TNOKRT:	db "MJV's TED v#2.6]"
-TF7:	db 'F7:Hulp '
+                db 'Bel voor meer informatie naar de Jos-Tel databank 05149-1837, '
+                db '24 per dag online. Of schrijf naar Jos de Boer, Kampenspaed 4, 8721 GL  WARNS.'
+KRTEND:         db '                '
+TNOKRT:         db "MJV's TED v#2.6]"
+TF7:            db 'F7:Hulp '
 
-TSTATUS:	db 'Invoeg:AAN  Regel:      Kolom:    Pagina:     '
-	db "F7:Hulp [MJV's TED v#2.6]  0.00:00"
-THULP0:	db ' F1/6=Omlaag/-hoog  F2=Instellingen  F3='
-	db "Systeem  F4=Commando's  F5=Blokfunkties "
-THULP2:	db ' Linker/Rechterkl. Alinea Zet/Wis-Tab Me'
-	db 'mmap Printer-Driver Sort Bewaar  ESCape '
-THULP3:	db ' Geheugen Wis Inhoud koLom Pagina Kleur '
-	db 'Backup Extensie Scherm Hulp      ESCape '
-THULP4:	db ' Nog_eens-Zoeken  Ga_naar  Print  Bewaar'
-	db '/Laad_tekst  0..9-markeer  Stop  ESCape '
-THULP5:	db ' Start Einde Wis_Def. Kopi',89H,'er Verplaats '
-	db 'Print sorTeer Inspr. Laad Bewaar ESCape '
+TSTATUS:        db 'Invoeg:AAN  Regel:      Kolom:    Pagina:     '
+                db "F7:Hulp [MJV's TED v#2.6]  0.00:00"
+THULP0:         db ' F1/6=Omlaag/-hoog  F2=Instellingen  F3='
+                db "Systeem  F4=Commando's  F5=Blokfunkties "
+THULP2:         db ' Linker/Rechterkl. Alinea Zet/Wis-Tab Me'
+                db 'mmap Printer-Driver Sort Bewaar  ESCape '
+THULP3:         db ' Geheugen Wis Inhoud koLom Pagina Kleur '
+                db 'Backup Extensie Scherm Hulp      ESCape '
+THULP4:         db ' Nog_eens-Zoeken  Ga_naar  Print  Bewaar'
+                db '/Laad_tekst  0..9-markeer  Stop  ESCape '
+THULP5:         db ' Start Einde Wis_Def. Kopi',89H,'er Verplaats '
+                db 'Print sorTeer Inspr. Laad Bewaar ESCape '
 
-TAAN:	db 'AAN',nul
-TUIT:	db 'UIT',nul
-TREGNR:	db tab,tab,tab,'Naar regelnummer: ',nul
-TLINKS:	db tab,tab,tab,'Linkerkantlijn: ',nul
-TRECHTS:	db tab,tab,tab,'Rechterkantlijn: ',nul
-TSELECTIE:	db tab,tab,tab,'Selectie - Filenaam: ',nul
-TPAD:	db ' Zoekpad: ',nul
-TINH:	db ' <',17H,' ',17H,'>  Laden  Blok  Karakterset  inStellingen  '
-	db 'Mail-Merge  Wis  Inhoud  ESCape',nul
-TVRIJ:	db '-Vrij op A:       k.',nul
-TVOLUME:	db ' Disknaam: ',nul
-TSAVEN:	db tab,tab,'Huidige tekst bewaren op disk? (j/n) ',nul
-tabCHR:	db tab,nul
-tDirChr:	db ' d',tab,nul
+TAAN:           db 'AAN',nul
+TUIT:           db 'UIT',nul
+TREGNR:         db tab,tab,tab,'Naar regelnummer: ',nul
+TLINKS:         db tab,tab,tab,'Linkerkantlijn: ',nul
+TRECHTS:        db tab,tab,tab,'Rechterkantlijn: ',nul
+TSELECTIE:      db tab,tab,tab,'Selectie - Filenaam: ',nul
+TPAD:           db ' Zoekpad: ',nul
+TINH:           db ' <',17H,' ',17H,'>  Laden  Blok  Karakterset  inStellingen  '
+                db 'Mail-Merge  Wis  Inhoud  ESCape',nul
+TVRIJ:          db '-Vrij op A:       k.',nul
+TVOLUME:        db ' Disknaam: ',nul
+TSAVEN:         db tab,tab,'Huidige tekst bewaren op disk? (j/n) ',nul
+tabCHR:         db tab,nul
+tDirChr:        db ' d',tab,nul
 
-TVLDERR:	db tab,tab,'*** Veld valt buiten de kaart',nul
-TNOPB:	db tab,tab,'*** Geen buffer aanwezig',nul
-TNEXTPG:	db tab,tab,'*** Plaats volgende pagina',nul
-TDRUK:	db ' *** - Druk een toets... ',nul
+TVLDERR:        db tab,tab,'*** Veld valt buiten de kaart',nul
+TNOPB:          db tab,tab,'*** Geen buffer aanwezig',nul
+TNEXTPG:        db tab,tab,'*** Plaats volgende pagina',nul
+TDRUK:          db ' *** - Druk een toets... ',nul
 
-TMOMENT:	db tab,tab,tab,tab,'*** Momentje... *** ',nul
-TMEER:	db tab,tab,tab,tab,'Nog meer? (j/n) ',nul
-TZEKER:	db tab,tab,tab,'Zeker weten? (j/n) ',nul
+TMOMENT:        db tab,tab,tab,tab,'*** Momentje... *** ',nul
+TMEER:          db tab,tab,tab,tab,'Nog meer? (j/n) ',nul
+TZEKER:         db tab,tab,tab,'Zeker weten? (j/n) ',nul
 
-TMEMMAP:	db tab,tab,tab,'gebruik van de MM:'
-	db tab,tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'gebruik van Vram: ',nul
-TKEUZE:	db tab,tab,tab,tab,'Maak uw keuze: ',nul
-TtabCH:	db tab,'  gebruik tab-tekens in Geheugen:'
-	db tab,tab,tab,tab,' ESCape',cr,lf
-	db tab,'      tab-tekens Bewaren op disk:',cr,lf
-	db tab,'tab-tekens direkt van disk Laden:',nul
-xTabIns	equ 43
+TMEMMAP:        db tab,tab,tab,'gebruik van de MM:'
+                db tab,tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'gebruik van Vram: ',nul
+TKEUZE:         db tab,tab,tab,tab,'Maak uw keuze: ',nul
+TtabCH:         db tab,'  gebruik tab-tekens in Geheugen:'
+                db tab,tab,tab,tab,' ESCape',cr,lf
+                db tab,'      tab-tekens Bewaren op disk:',cr,lf
+                db tab,'tab-tekens direkt van disk Laden:',nul
+xTabIns         equ 43
 
-tAlinea:	db ' Uitvullen:',tab,' Afbreken:',tab
-	db 'afbreek-Streepje:    Inspringen:',tab,' ESCape',nul
-xUitvul	equ 13
-xAfbreek	equ 28
-xStreep	equ 51
-xInspr	equ 66
+tAlinea:        db ' Uitvullen:',tab,' Afbreken:',tab
+                db 'afbreek-Streepje:    Inspringen:',tab,' ESCape',nul
+xUitvul         equ 13
+xAfbreek        equ 28
+xStreep         equ 51
+xInspr          equ 66
 
-tIndent:	db tab,tab,tab,'Aantal posities verschuiven:',tab,tab,tab
-	db ' ESCape',cr,lf,lf
-	db tab,tab,tab,'druk op <',17H,' of ',17H,'> om te starten',nul
+tIndent:        db tab,tab,tab,'Aantal posities verschuiven:',tab,tab,tab
+                db ' ESCape',cr,lf,lf
+                db tab,tab,tab,'druk op <',17H,' of ',17H,'> om te starten',nul
 
-xAantPos	equ 54
+xAantPos        equ 54
 
-TSORT:	db tab,'Kaartlengte:',tab,' regel(s)'
-	db tab,tab,tab,tab,tab,' ESCape',cr,lf,lf
-	db tab,'sorteren op A: veld:',tab,tab,'kolom:',cr,lf
-	db tab,tab,'    B: veld:',tab,tab,'kolom:',cr,lf
-	db tab,tab,'    C: veld:',tab,tab,'kolom:',nul
-TKOLOM:	db tab,tab,tab,'Aantal kolommen:'
-	db tab,tab,tab,tab,' ESCape',lf,nul
-TKOLPOS:	db cr,lf,tab,tab,tab,'positie kolom ',nul
-tPage:	db tab,tab,tab,'Plaats pagina-stop'
-	db tab,tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'Verwijder huidige pagina-stop',cr,lf
-	db tab,tab,tab,'verwijder Alle pagina-stops',cr,lf,lf
-	db tab,tab,tab,'pagina-Nummer indicatie   : ',cr,lf
-	db tab,tab,tab,'pagina-Stop indicatielijn : ',cr,lf
-	db tab,tab,tab,'pagina-Grens indicatielijn: ',nul
-tGoto:	db tab,tab,'Ga naar:Top van de tekst'
-	db tab,'Start van blok',tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'Bodem van de tekst'
-	db tab,'Einde van blok',cr,lf
-	db tab,tab,tab,'Regelnummer'
-	db tab,tab,'markering 0..9',nul
-TKLEUR:	db tab,tab,tab,tab,'    Blauw  Rood  Groen'
-	db tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,' Tekst achtergrond:',cr,lf
-	db tab,tab,'   Tekst voorgrond:',cr,lf
-	db tab,tab,'Cursor achtergrond:',cr,lf
-	db tab,tab,'  Cursor voorgrond:',nul
-TEXT:	db tab,tab,tab,'Voorkeurs-extensie: ',nul
-TBACKUP:	db tab,tab,tab,'    Backup aanmaken:',tab,tab,tab,tab,' ESCape',cr,lf,lf
-	db tab,tab,tab,'Automatisch bewaren:',cr,lf
-	db tab,tab,tab,'   aantal aanSlagen:',nul
-TSCHERM:	db tab,tab,' kleuren Cursor:',tab,tab,'  Edit mode:'
-	db tab,tab,' ESCape',cr,lf
-	db tab,tab,'    Blok cursor:',tab,tab,'Auto-indent:',cr,lf
-	db tab,'commandoregel op Scherm:',tab,'   Repeteer toetsen:',cr,lf
-	db tab,' Voorloopnullen in klok:',tab,' knIpperende cursor:',cr,lf
-	db tab,tab,'     Lichtkrant:      cursorknippertijd aaN:',cr,lf
-	db '      Grote letters in hulpmenu:      cursorknippertijd Uit:',cr,lf,lf
-	db ' Msx kar. set: ',cr,lf
-	db '  Karakterset: ',nul
-TDRIVER:	db tab,tab,tab,'Gebruik van driver:'
-	db tab,tab,tab,tab,' Return',nul
-TGETDRV:	db tab,tab,'Typ een teken: '
-	db tab,tab,tab,tab,tab,tab,' ESCape',nul
-TPRTINS:	db '  Setup String:',tab,tab,tab,tab,tab,tab,tab,tab
-	db ' ESCape',cr,lf
-	db '   Boven marge:'
-	db tab,tab,' Eerste paginanummer:'
-	db tab,tab,'   kopregel maRge:',cr,lf
-	db '   Onder marge:'
-	db tab,tab,'    kopregel Positie:'
-	db tab,tab,'  voetregel marGe:',cr,lf
-	db ' pagina Lengte:'
-	db tab,tab,'   voeTregel posiTie:'
-	db tab,tab,tab,' Formfeed:',cr,lf
-	db tab,tab,tab,tab,tab,tab,tab,'  Continu printen:',cr,lf
-	db ' 1:kop- en 2:voet regel    ($p=paginanummer)',cr,lf,lf,lf,lf
-	db '    Mail-merge: ',tab,' eerste Kaart:'
-	db tab,tab,tab,' maIl-merge teken:',cr,lf
-	db ' bestands Naam:',cr,lf
-	db '   kAArt-einde:',cr,lf
-	db '    Veld-einde:',nul
+TSORT:          db tab,'Kaartlengte:',tab,' regel(s)'
+                db tab,tab,tab,tab,tab,' ESCape',cr,lf,lf
+                db tab,'sorteren op A: veld:',tab,tab,'kolom:',cr,lf
+                db tab,tab,'    B: veld:',tab,tab,'kolom:',cr,lf
+                db tab,tab,'    C: veld:',tab,tab,'kolom:',nul
+TKOLOM:         db tab,tab,tab,'Aantal kolommen:'
+                db tab,tab,tab,tab,' ESCape',lf,nul
+TKOLPOS:        db cr,lf,tab,tab,tab,'positie kolom ',nul
+tPage:          db tab,tab,tab,'Plaats pagina-stop'
+                db tab,tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'Verwijder huidige pagina-stop',cr,lf
+                db tab,tab,tab,'verwijder Alle pagina-stops',cr,lf,lf
+                db tab,tab,tab,'pagina-Nummer indicatie   : ',cr,lf
+                db tab,tab,tab,'pagina-Stop indicatielijn : ',cr,lf
+                db tab,tab,tab,'pagina-Grens indicatielijn: ',nul
+tGoto:          db tab,tab,'Ga naar:Top van de tekst'
+                db tab,'Start van blok',tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'Bodem van de tekst'
+                db tab,'Einde van blok',cr,lf
+                db tab,tab,tab,'Regelnummer'
+                db tab,tab,'markering 0..9',nul
+TKLEUR:         db tab,tab,tab,tab,'    Blauw  Rood  Groen'
+                db tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,' Tekst achtergrond:',cr,lf
+                db tab,tab,'   Tekst voorgrond:',cr,lf
+                db tab,tab,'Cursor achtergrond:',cr,lf
+                db tab,tab,'  Cursor voorgrond:',nul
+TEXT:           db tab,tab,tab,'Voorkeurs-extensie: ',nul
+TBACKUP:        db tab,tab,tab,'    Backup aanmaken:',tab,tab,tab,tab,' ESCape',cr,lf,lf
+                db tab,tab,tab,'Automatisch bewaren:',cr,lf
+                db tab,tab,tab,'   aantal aanSlagen:',nul
+TSCHERM:        db tab,tab,' kleuren Cursor:',tab,tab,'  Edit mode:'
+                db tab,tab,' ESCape',cr,lf
+                db tab,tab,'    Blok cursor:',tab,tab,'Auto-indent:',cr,lf
+                db tab,'commandoregel op Scherm:',tab,'   Repeteer toetsen:',cr,lf
+                db tab,' Voorloopnullen in klok:',tab,' knIpperende cursor:',cr,lf
+                db tab,tab,'     Lichtkrant:      cursorknippertijd aaN:',cr,lf
+                db '      Grote letters in hulpmenu:      cursorknippertijd Uit:',cr,lf,lf
+                db ' Msx kar. set: ',cr,lf
+                db '  Karakterset: ',nul
+TDRIVER:        db tab,tab,tab,'Gebruik van driver:'
+                db tab,tab,tab,tab,' Return',nul
+TGETDRV:        db tab,tab,'Typ een teken: '
+                db tab,tab,tab,tab,tab,tab,' ESCape',nul
+TPRTINS:        db '  Setup String:',tab,tab,tab,tab,tab,tab,tab,tab
+                db ' ESCape',cr,lf
+                db '   Boven marge:'
+                db tab,tab,' Eerste paginanummer:'
+                db tab,tab,'   kopregel maRge:',cr,lf
+                db '   Onder marge:'
+                db tab,tab,'    kopregel Positie:'
+                db tab,tab,'  voetregel marGe:',cr,lf
+                db ' pagina Lengte:'
+                db tab,tab,'   voeTregel posiTie:'
+                db tab,tab,tab,' Formfeed:',cr,lf
+                db tab,tab,tab,tab,tab,tab,tab,'  Continu printen:',cr,lf
+                db ' 1:kop- en 2:voet regel    ($p=paginanummer)',cr,lf,lf,lf,lf
+                db '    Mail-merge: ',tab,' eerste Kaart:'
+                db tab,tab,tab,' maIl-merge teken:',cr,lf
+                db ' bestands Naam:',cr,lf
+                db '   kAArt-einde:',cr,lf
+                db '    Veld-einde:',nul
 
-TPSTAT:	db tab,'Huidige regel: 1      Laatste regel: ',nul
-TKAART:	db 'Huidige kaart:',nul
-TPBEGON:	db tab,tab,tab,'*** Printen begonnen... ***',nul
-TMEM:	db tab,tab,'Geheugen  kilobytes',cr,lf
-	db tab,tab,'  totaal:',cr,lf
-	db tab,tab,'    vrij: ',nul
-TAFBR:	db '    stuur met pijltjes: <',17H,' ',17H,'>  afbreken:'
-	db ' Return  omslaan: Spatie',tab,' ESCape',nul
-TWIS:	db tab,tab,tab,'wis  Tekst',tab,tab,tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'leeg Printerbuffer',nul
-TCPHULP:	db tab,tab,tab,'kopi',89H,'er hulp naar de Tekst',tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'kopi',89H,'er hulp naar het Menu',nul
-TTOETS:	db tab,tab,tab,'*** Druk op een toets... *** ',nul
+TPSTAT:         db tab,'Huidige regel: 1      Laatste regel: ',nul
+TKAART:         db 'Huidige kaart:',nul
+TPBEGON:        db tab,tab,tab,'*** Printen begonnen... ***',nul
+TMEM:           db tab,tab,'Geheugen  kilobytes',cr,lf
+                db tab,tab,'  totaal:',cr,lf
+                db tab,tab,'    vrij: ',nul
+TAFBR:          db '    stuur met pijltjes: <',17H,' ',17H,'>  afbreken:'
+                db ' Return  omslaan: Spatie',tab,' ESCape',nul
+TWIS:           db tab,tab,tab,'wis  Tekst',tab,tab,tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'leeg Printerbuffer',nul
+TCPHULP:        db tab,tab,tab,'kopi',89H,'er hulp naar de Tekst',tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'kopi',89H,'er hulp naar het Menu',nul
+TTOETS:         db tab,tab,tab,'*** Druk op een toets... *** ',nul
 
-TRECERR:	db tab,'*** Einde van kaart niet gevonden',nul
-TREGLEN:	db tab,tab,'*** Regel te lang',nul
-TONDERB:	db tab,tab,'*** Onderbroken',nul
-TMEMVOL:	db tab,tab,'*** Geheugen vol',nul
-TTOMANY:	db tab,'*** Bestandsnaam fout of diskinhoud vol',nul
-TDISKVOL:	db tab,tab,'*** Disk vol',nul
-TPROT:	db tab,'*** Disk schrijf beveiligd',nul
-TNODISK:	db '    *** Geen (goede) diskette aanwezig',nul
-TDSKERR:	db tab,tab,'*** Disk fout',nul
-TVERERR:	db tab,tab,'*** Geen TED 2.6 bestand',nul
-TKARERR:	db tab,tab,'*** Karakterset niet gevonden',nul
-TNOTFND:	db tab,tab,'*** Niet gevonden',nul
-tPageTabFull:	db tab,tab,'*** Paginatabel vol',nul
-tStkErr:	db tab,tab,'*** Te weinig stackgeheugen',nul
-TPROB:	db ' ***  -  Opnieuw proberen? (j/n) ',nul
-TVERVANG:	db tab,tab,tab,tab,'Vervangen? (j/n) ',nul
-TSAVNAM:	db tab,tab,tab,' Bewaar - Naam: ',nul
-TLOADNAM:	db tab,tab,tab,' Laad - Naam: ',nul
-TSAVINS:	db tab,'bewaar en laad instellingen bij Elke tekst:',tab,tab,tab,' ESCape',cr,lf,lf
-	db tab,'bewaar huidige instellingen in Ted',cr,lf
-	db tab,'Bewaar huidige instellingen in een bestand',cr,lf
-	db tab,'Laad instellingen uit een bestand',nul
-TZOEK:	db ' Zoeken  naar:',cr,lf
-	db ' Vervangen in:',nul
-TZOEK2:	db ' F1:   Geen onderscheid tussen hoofd- en kleine letters',cr,lf
-	db ' F2:   Vooruit zoeken',cr,lf
-	db ' F3:   Voorwaardelijk vervangen',cr,lf,lf
-	db ' Kies F1, F2 of F3, Return om te starten'
-	db tab,tab,tab,tab,' ESCape',nul
-TWEL:	db ' Wel',nul
-TACHTER:	db 'Achte',nul
-TONV:	db 'Onv',nul
+TRECERR:        db tab,'*** Einde van kaart niet gevonden',nul
+TREGLEN:        db tab,tab,'*** Regel te lang',nul
+TONDERB:        db tab,tab,'*** Onderbroken',nul
+TMEMVOL:        db tab,tab,'*** Geheugen vol',nul
+TTOMANY:        db tab,'*** Bestandsnaam fout of diskinhoud vol',nul
+TDISKVOL:       db tab,tab,'*** Disk vol',nul
+TPROT:          db tab,'*** Disk schrijf beveiligd',nul
+TNODISK:        db '    *** Geen (goede) diskette aanwezig',nul
+TDSKERR:        db tab,tab,'*** Disk fout',nul
+TVERERR:        db tab,tab,'*** Geen TED 2.6 bestand',nul
+TKARERR:        db tab,tab,'*** Karakterset niet gevonden',nul
+TNOTFND:        db tab,tab,'*** Niet gevonden',nul
+tPageTabFull:   db tab,tab,'*** Paginatabel vol',nul
+tStkErr:        db tab,tab,'*** Te weinig stackgeheugen',nul
+TPROB:          db ' ***  -  Opnieuw proberen? (j/n) ',nul
+TVERVANG:       db tab,tab,tab,tab,'Vervangen? (j/n) ',nul
+TSAVNAM:        db tab,tab,tab,' Bewaar - Naam: ',nul
+TLOADNAM:       db tab,tab,tab,' Laad - Naam: ',nul
+TSAVINS:        db tab,'bewaar en laad instellingen bij Elke tekst:',tab,tab,tab,' ESCape',cr,lf,lf
+                db tab,'bewaar huidige instellingen in Ted',cr,lf
+                db tab,'Bewaar huidige instellingen in een bestand',cr,lf
+                db tab,'Laad instellingen uit een bestand',nul
+TZOEK:          db ' Zoeken  naar:',cr,lf
+                db ' Vervangen in:',nul
+TZOEK2:         db ' F1:   Geen onderscheid tussen hoofd- en kleine letters',cr,lf
+                db ' F2:   Vooruit zoeken',cr,lf
+                db ' F3:   Voorwaardelijk vervangen',cr,lf,lf
+                db ' Kies F1, F2 of F3, Return om te starten'
+                db tab,tab,tab,tab,' ESCape',nul
+TWEL:           db ' Wel',nul
+TACHTER:        db 'Achte',nul
+TONV:           db 'Onv',nul
 
-endif	;End Taal=Nederlands
+endif           ;End Taal=Nederlands
 
 
-if	TAAL eq DUITS	;TRUE indien TAAL=DUITS
+if              TAAL eq DUITS           ;TRUE indien TAAL=DUITS
 
-	;Duitstalige opties bij de funktietoetsen
+                ;Duitstalige opties bij de funktietoetsen
 
-	;Funktietoets 2
+                ;Funktietoets 2
 
-F2KAR:	db 'l'                  ;Linkerkantlijn
-	db 'r'                  ;Rechterkantlijn
-	db 'a'                  ;Paragraph instellingen
-	db 'z'                  ;Zet tab
-	db 'e'                  ;Wis tab
-	db 't'                  ;Tab instellingen
-	db 'm'                  ;Change Memorymapper
-	db 'd'                  ;Printer instelling
-	db 'o'                  ;Sorteer instelling
-	db 'b'                  ;Printerdriver
-	db 's'                  ;Bewaar instellingen
-	db 255	;Funktietoets
-	db 0	;Einde van tabel
+F2KAR:          db 'l'                  ;Linkerkantlijn
+                db 'r'                  ;Rechterkantlijn
+                db 'a'                  ;Paragraph instellingen
+                db 'z'                  ;Zet tab
+                db 'e'                  ;Wis tab
+                db 't'                  ;Tab instellingen
+                db 'm'                  ;Change Memorymapper
+                db 'd'                  ;Printer instelling
+                db 'o'                  ;Sorteer instelling
+                db 'b'                  ;Printerdriver
+                db 's'                  ;Bewaar instellingen
+                db 255                  ;Funktietoets
+                db 0                    ;Einde van tabel
 
-	;Funktietoets 3
+                ;Funktietoets 3
 
-F3KAR:	db 'r'                  ;Geheugen vrij
-	db 'l'                  ;wis Tekst/Buffer
-	db 'i'                  ;disk Inhoud
-	db 'b'                  ;Backup aan/uit
-	db 'p'                  ;Pagina stop - indikatie aan/uit
-	db 'f'                  ;Kleur instellen
-	db 'e'                  ;Verander '.TXT'
-	db 't'                  ;Kolominstellen
-	db 's'                  ;Scherm
-	db 'h'                  ;Kopi‰er hulpmenu
-	db 255	;Funktietoets
-	db 0
+F3KAR:          db 'r'                  ;Geheugen vrij
+                db 'l'                  ;wis Tekst/Buffer
+                db 'i'                  ;disk Inhoud
+                db 'b'                  ;Backup aan/uit
+                db 'p'                  ;Pagina stop - indikatie aan/uit
+                db 'f'                  ;Kleur instellen
+                db 'e'                  ;Verander '.TXT'
+                db 't'                  ;Kolominstellen
+                db 's'                  ;Scherm
+                db 'h'                  ;Kopi‰er hulpmenu
+                db 255                  ;Funktietoets
+                db 0
 
-	;Funktietoets 4
+                ;Funktietoets 4
 
-F4KAR:	db 'w'                  ;Zoek nog eens
-	db 'n'                  ;Zoek
-	db 's'                  ;Bewaar
-	db 'l'                  ;Laad
-	db 'g'                  ;Ga naar regel
-	db 'd'                  ;Print de tekst
-	db 'b'                  ;Stop
-	db 255	;Funktietoets
-	db 0
+F4KAR:          db 'w'                  ;Zoek nog eens
+                db 'n'                  ;Zoek
+                db 's'                  ;Bewaar
+                db 'l'                  ;Laad
+                db 'g'                  ;Ga naar regel
+                db 'd'                  ;Print de tekst
+                db 'b'                  ;Stop
+                db 255                  ;Funktietoets
+                db 0
 
-	;Funktietoets 5
+                ;Funktietoets 5
 
-F5KAR:	db 'a'                  ;Startblok
-	db 'e'                  ;Eindeblok
-	db 'u'                  ;Wis blokdefinitie
-	db 'k'                  ;Kopieer blok
-	db 'h'                  ;Wis blok
-	db 'v'                  ;Verplaats blok
-	db 'd'                  ;Print blok
-	db 't'                  ;sorTeer
-	db 'l'                  ;Laad blok
-	db 's'                  ;Bewaar blok
-	db 'i'                  ;Inspringen
-	db 255	;Funktietoets
-	db 0
+F5KAR:          db 'a'                  ;Startblok
+                db 'e'                  ;Eindeblok
+                db 'u'                  ;Wis blokdefinitie
+                db 'k'                  ;Kopieer blok
+                db 'h'                  ;Wis blok
+                db 'v'                  ;Verplaats blok
+                db 'd'                  ;Print blok
+                db 't'                  ;sorTeer
+                db 'l'                  ;Laad blok
+                db 's'                  ;Bewaar blok
+                db 'i'                  ;Inspringen
+                db 255                  ;Funktietoets
+                db 0
 
-	;F2/Tab
+                ;F2/Tab
 
-tabKAR:	db ESC
-	db 'g'                  ;Gebruik in geheugen
-	db 's'                  ;Bewaren op disk
-	db 'l'                  ;Direkt laden van disk
-	db 0
+tabKAR:         db ESC
+                db 'g'                  ;Gebruik in geheugen
+                db 's'                  ;Bewaren op disk
+                db 'l'                  ;Direkt laden van disk
+                db 0
 
-	;F2/MemMap
+                ;F2/MemMap
 
-MEMKAR:	db ESC
-	db 'r'                  ;Mapper aan/uit
-	db 'v'                  ;Vram aan/uit
-	db 0
+MEMKAR:         db ESC
+                db 'r'                  ;Mapper aan/uit
+                db 'v'                  ;Vram aan/uit
+                db 0
 
-	;F2/Bewaar instel.
+                ;F2/Bewaar instel.
 
-INSKAR:	db ESC
-	db 't'                  ;Elke tekst bewaren
-	db 'd'                  ;Bewaar in TED
-	db 's'                  ;Bewaar instellingen
-	db 'l'                  ;Laad instellingen
-	db 0
+INSKAR:         db ESC
+                db 't'                  ;Elke tekst bewaren
+                db 'd'                  ;Bewaar in TED
+                db 's'                  ;Bewaar instellingen
+                db 'l'                  ;Laad instellingen
+                db 0
 
-	;F3/Kolom
+                ;F3/Kolom
 
-KOLKAR:	db ESC
-	db 's'                  ;Aantal kolommen
-	db 0
+KOLKAR:         db ESC
+                db 's'                  ;Aantal kolommen
+                db 0
 
-	;F3/Disk Inhoud
+                ;F3/Disk Inhoud
 
-INHKAR:	db ESC
-	db DOWN
-	db UP
-	db RIGHT
-	db LEFT
-	db 'i'                  ;Inhoud
-	db 'l'                  ;Tekst laden
-	db 'b'                  ;Voeg een blok toe
-	db 'h'                  ;File wissen
-	db 'm'                  ;Mail-merge
-	db 'z'                  ;Karakerset
-	db 'e'                  ;Instellingen
-	db 0
+INHKAR:         db ESC
+                db DOWN
+                db UP
+                db RIGHT
+                db LEFT
+                db 'i'                  ;Inhoud
+                db 'l'                  ;Tekst laden
+                db 'b'                  ;Voeg een blok toe
+                db 'h'                  ;File wissen
+                db 'm'                  ;Mail-merge
+                db 'z'                  ;Karakerset
+                db 'e'                  ;Instellingen
+                db 0
 
-	;F3/Pagina
+                ;F3/Pagina
 
-pageKar:	db esc
-	db 's'                  ;Setz Pagina stop
-	db 'e'                  ;Entfern pagina stop
-	db 'a'                  ;Entfern alle pagina stops
-	db 'n'                  ;Pagina-nummer indicatie aan/uit
-	db 'i'                  ;Pagina-stop indicatie aan/uit
-	db 'g'                  ;Pagina-grens indicatie aan/uit
-	db 0
+pageKar:        db esc
+                db 's'                  ;Setz Pagina stop
+                db 'e'                  ;Entfern pagina stop
+                db 'a'                  ;Entfern alle pagina stops
+                db 'n'                  ;Pagina-nummer indicatie aan/uit
+                db 'i'                  ;Pagina-stop indicatie aan/uit
+                db 'g'                  ;Pagina-grens indicatie aan/uit
+                db 0
 
-	;F3/Hulp
+                ;F3/Hulp
 
-HLPKAR:	db ESC
-	db 'z'                  ;Hulp naar text
-	db 'v'                  ;Hulp naar menu
-	db 0
+HLPKAR:         db ESC
+                db 'z'                  ;Hulp naar text
+                db 'v'                  ;Hulp naar menu
+                db 0
 
-	;Printer instellingen
+                ;Printer instellingen
 
-PRTKAR:	db ESC
-	db 's'                  ;Setup string
-	db 'o'                  ;Boven marge
-	db 'u'                  ;Onder marge
-	db 'l'                  ;pagina Lengte
-	db '1'                  ;Kopregel tekst
-	db '2'                  ;Voetregel tekst
-	db 'm'                  ;Mail-Merge
-	db 'n'                  ;Mail-Merge Naam
-	db 'a'                  ;Kaart einde
-	db 'd'                  ;Veld einde
-	db 'e'                  ;Eerste paginanummer
-	db 'p'                  ;Kopregel Positie
-	db 't'                  ;Voetregel Positie
-	db 'v'                  ;Formfeed
-	db 'r'                  ;Continu printen
-	db 'z'                  ;Kopregel marge
-	db 'i'                  ;Voetregel marge
-	db 'h'                  ;Mail-Merge teken
-	db 'k'                  ;Eerste Kaart
-	db 0
+PRTKAR:         db ESC
+                db 's'                  ;Setup string
+                db 'o'                  ;Boven marge
+                db 'u'                  ;Onder marge
+                db 'l'                  ;pagina Lengte
+                db '1'                  ;Kopregel tekst
+                db '2'                  ;Voetregel tekst
+                db 'm'                  ;Mail-Merge
+                db 'n'                  ;Mail-Merge Naam
+                db 'a'                  ;Kaart einde
+                db 'd'                  ;Veld einde
+                db 'e'                  ;Eerste paginanummer
+                db 'p'                  ;Kopregel Positie
+                db 't'                  ;Voetregel Positie
+                db 'v'                  ;Formfeed
+                db 'r'                  ;Continu printen
+                db 'z'                  ;Kopregel marge
+                db 'i'                  ;Voetregel marge
+                db 'h'                  ;Mail-Merge teken
+                db 'k'                  ;Eerste Kaart
+                db 0
 
-	;Scherm instellingen
+                ;Scherm instellingen
 
-ScrKAR:	db ESC
-	db 'b'                  ;Commandoregel op scherm
-	db 'f'                  ;Kleuren cursor
-	db 'c'                  ;Blok cursor
-	db 'u'                  ;Voorloop nul
-	db 's'                  ;Lichtkrant
-	db 'h'                  ;Grote letters
-	db 'm'                  ;MSX set
-	db 'e'                  ;Edit mode
-	db 'a'                  ;Auto-indent
-	db 'r'                  ;Repeteer toetsen
-	db 'z'                  ;Karakterset naam
-	db 'i'                  ;Knipperende cursor aan/uit
-	db 'n'                  ;Knippertijd aan
-	db 'o'                  ;Knippertijd uit
-	db 0
+ScrKAR:         db ESC
+                db 'b'                  ;Commandoregel op scherm
+                db 'f'                  ;Kleuren cursor
+                db 'c'                  ;Blok cursor
+                db 'u'                  ;Voorloop nul
+                db 's'                  ;Lichtkrant
+                db 'h'                  ;Grote letters
+                db 'm'                  ;MSX set
+                db 'e'                  ;Edit mode
+                db 'a'                  ;Auto-indent
+                db 'r'                  ;Repeteer toetsen
+                db 'z'                  ;Karakterset naam
+                db 'i'                  ;Knipperende cursor aan/uit
+                db 'n'                  ;Knippertijd aan
+                db 'o'                  ;Knippertijd uit
+                db 0
 
-	;Karaktertabel voor F4/Ga Naar
+                ;Karaktertabel voor F4/Ga Naar
 
-GOKAR:	db ESC	;Escape
-	db 'z'                  ;Naar regel
-	db 'a'                  ;Naar top
-	db 'e'                  ;Naar bodem
-	db 'b'                  ;Naar blokstart
-	db 's'                  ;Naar blokeinde
-	db 0
+GOKAR:          db ESC                  ;Escape
+                db 'z'                  ;Naar regel
+                db 'a'                  ;Naar top
+                db 'e'                  ;Naar bodem
+                db 'b'                  ;Naar blokstart
+                db 's'                  ;Naar blokeinde
+                db 0
 
-	;F2/Alinea instellingen
+                ;F2/Alinea instellingen
 
-aliKar:	db esc	;ESCape
-	db 'b'                  ;Uitvullen
-	db 'w'                  ;Afbreken
-	db 'e'                  ;Inspringen
-	db 't'                  ;Streepje
-	db 0
+aliKar:         db esc                  ;ESCape
+                db 'b'                  ;Uitvullen
+                db 'w'                  ;Afbreken
+                db 'e'                  ;Inspringen
+                db 't'                  ;Streepje
+                db 0
 
-	;F5/Indent
+                ;F5/Indent
 
-indKar:	db esc	;ESCape
-	db 'v'                  ;Aantal posities
-	db left	;Schuif naar links
-	db right	;Schuif naar rechts
-	db 0
+indKar:         db esc                  ;ESCape
+                db 'v'                  ;Aantal posities
+                db left                 ;Schuif naar links
+                db right                ;Schuif naar rechts
+                db 0
 
-	;Videoram adressen van scherm teksten/waardes
+                ;Videoram adressen van scherm teksten/waardes
 
-VRMREG	equ 17	;Regelnummer
-VRMKOL	equ 30	;Kolomnummer
-VRMPAG	equ 40	;Paginanummer
-VRMTF7	equ 45	;'F7:Hilfe'
+VRMREG          equ 17                  ;Regelnummer
+VRMKOL          equ 30                  ;Kolomnummer
+VRMPAG          equ 40                  ;Paginanummer
+VRMTF7          equ 45                  ;'F7:Hilfe'
 
-	;Cursor posities van schermteksten /waardes
+                ;Cursor posities van schermteksten /waardes
 
-XYFNK	equ 3101H	;F2/X etc
-XZOEK	equ 14	;Zoektekst
+XYFNK           equ 3101H               ;F2/X etc
+XZOEK           equ 14                  ;Zoektekst
 
-if	DEMO
-TINTRO:	db cr
-	db 9,9,9,'  MSX2 Wordprocessor - Editor',cr,lf
-	db 9,9,9,'       (c)  M.J. Vriend',cr,lf
-	db 9,9,9,'       (c) 1992 Jos-Tel',cr,lf
-	db 9,9,9,9,' Demo-version',cr,lf,lf,nul
+if              DEMO
+TINTRO:         db cr
+                db 9,9,9,'  MSX2 Wordprocessor - Editor',cr,lf
+                db 9,9,9,'       (c)  M.J. Vriend',cr,lf
+                db 9,9,9,'       (c) 1992 Jos-Tel',cr,lf
+                db 9,9,9,9,' Demo-version',cr,lf,lf,nul
 TGETNAME:
 TGETCODE:
 TACCESS:
 TGEBR:
 else
-TINTRO:	db cr
-	db 9,9,9,'  MSX2 Wordprocessor - Editor',cr,lf
-	db 9,9,9,'   (c) 1992 M.S. BBS Jos-Tel',cr,lf
-	db 9,9,9,'     (c) 1992 M.J. Vriend',cr,lf
-	db 9,9,9,'      Kopieren  Verboten',cr,lf,lf,nul
+TINTRO:         db cr
+                db 9,9,9,'  MSX2 Wordprocessor - Editor',cr,lf
+                db 9,9,9,'   (c) 1992 M.S. BBS Jos-Tel',cr,lf
+                db 9,9,9,'     (c) 1992 M.J. Vriend',cr,lf
+                db 9,9,9,'      Kopieren  Verboten',cr,lf,lf,nul
 
-TGETNAME:	db tab,tab,'Bitte beantrage Ihre Registraturkode bei H.S.H.',cr,lf,lf
-	db tab,tab,'  Name: ',nul
-TGETCODE:	db cr,lf,tab,tab,'Kode 1: ',nul
-TACCESS:	db cr,lf,tab,tab,'Kode 2: ',nul
-TGEBR:	db cr,lf,tab,'Gebraucher: ',nul
+TGETNAME:       db tab,tab,'Bitte beantrage Ihre Registraturkode bei H.S.H.',cr,lf,lf
+                db tab,tab,'  Name: ',nul
+TGETCODE:       db cr,lf,tab,tab,'Kode 1: ',nul
+TACCESS:        db cr,lf,tab,tab,'Kode 2: ',nul
+TGEBR:          db cr,lf,tab,'Gebraucher: ',nul
 endif
 
-	;Lichtkrant
+                ;Lichtkrant
 
-KRTSTART:	db "              M.J. Vriend's TED (D) "
+KRTSTART:       db "              M.J. Vriend's TED (D) "
 
-if	DEMO
-	db 'Demo-'
+if              DEMO
+                db 'Demo-'
 endif
 
 db 'Version #2.65 (21/11/1992) '
@@ -748,196 +748,196 @@ db '4406-Drensteinfurt, West Germany. Sie k',94H,'nnen aber auch unter Telefon N
 db '02508-659 die EURO BOX direkt erreichen. '
 %
 
-if	DEMO
-	db 'Please sponsor the M.S. Foundation and place an order for your '
-	db 'personal copy of TED #2.65. '
+if              DEMO
+                db 'Please sponsor the M.S. Foundation and place an order for your '
+                db 'personal copy of TED #2.65. '
 endif
 
-KRTEND:	db '                '
-TNOKRT:	db "MJV's TED v#2.6]"
-TF7:	db 'F7:Hilfe'
+KRTEND:         db '                '
+TNOKRT:         db "MJV's TED v#2.6]"
+TF7:            db 'F7:Hilfe'
 
-TSTATUS:	db 'Einf',81H,'g:AN  Zeile:      Spalte:    Seite:'
-	db "     F7:Hilfe [MJV's TED v#2.6]  0.00:00"
-THULP0:	db ' F1/6=Schirm ab/auf   F2=Einstellung   F'
-	db "3=System   F4=Befehle   F5=Blockbefehle "
-THULP2:	db ' rand:L/R formAt Tab-setZ/Entfern Memmap'
-	db ' Drucker-treiBer sOrt Sichern    ESCape '
-THULP3:	db ' fRei L',94H,'sch Inhalt spalTe Pagina F'
-	db 'arbe Backup Extension Schirm Hilfe     ESCape '
-THULP4:	db ' Weiter-sucheN Gehe_nach text:Drucken/Si'
-	db 'chern/Laden merker-0..9 Beenden  ESCape '
-THULP5:	db ' Anfang Ende l',94H,'scH Unmark Kopier Vers'
-	db 'chieb Indent Druck sorT Laden Sichern  ESC '
+TSTATUS:        db 'Einf',81H,'g:AN  Zeile:      Spalte:    Seite:'
+                db "     F7:Hilfe [MJV's TED v#2.6]  0.00:00"
+THULP0:         db ' F1/6=Schirm ab/auf   F2=Einstellung   F'
+                db "3=System   F4=Befehle   F5=Blockbefehle "
+THULP2:         db ' rand:L/R formAt Tab-setZ/Entfern Memmap'
+                db ' Drucker-treiBer sOrt Sichern    ESCape '
+THULP3:         db ' fRei L',94H,'sch Inhalt spalTe Pagina F'
+                db 'arbe Backup Extension Schirm Hilfe     ESCape '
+THULP4:         db ' Weiter-sucheN Gehe_nach text:Drucken/Si'
+                db 'chern/Laden merker-0..9 Beenden  ESCape '
+THULP5:         db ' Anfang Ende l',94H,'scH Unmark Kopier Vers'
+                db 'chieb Indent Druck sorT Laden Sichern  ESC '
 
-TAAN:	db 'AN ',nul
-TUIT:	db 'AUS',nul
-TREGNR:	db tab,tab,tab,'Zur Zeilennummer: ',nul
-TLINKS:	db tab,tab,tab,'Linkerrand - Spalte: ',nul
-TRECHTS:	db tab,tab,tab,'Rechterrand - Spalte: ',nul
-TSELECTIE:	db tab,tab,tab,'Selektion - Dateiname: ',nul
-TPAD:	db ' Suchpfad: ',nul
-TINH:	db ' <',17H,' ',17H,'>  Laden Block Zeichensatz Einstellung '
-	db 'Mail-Merge l',94H,'scH Inhalt',tab,' ESCape',nul
-TVRIJ:	db 'Frei auf A:       k.',nul
-TVOLUME:	db ' Diskname: ',nul
-TSAVEN:	db tab,tab,'Text auf Disk speichern? (j/n) ',nul
-tabCHR:	db tab,nul
-tDirChr:	db ' d',tab,nul
+TAAN:           db 'AN ',nul
+TUIT:           db 'AUS',nul
+TREGNR:         db tab,tab,tab,'Zur Zeilennummer: ',nul
+TLINKS:         db tab,tab,tab,'Linkerrand - Spalte: ',nul
+TRECHTS:        db tab,tab,tab,'Rechterrand - Spalte: ',nul
+TSELECTIE:      db tab,tab,tab,'Selektion - Dateiname: ',nul
+TPAD:           db ' Suchpfad: ',nul
+TINH:           db ' <',17H,' ',17H,'>  Laden Block Zeichensatz Einstellung '
+                db 'Mail-Merge l',94H,'scH Inhalt',tab,' ESCape',nul
+TVRIJ:          db 'Frei auf A:       k.',nul
+TVOLUME:        db ' Diskname: ',nul
+TSAVEN:         db tab,tab,'Text auf Disk speichern? (j/n) ',nul
+tabCHR:         db tab,nul
+tDirChr:        db ' d',tab,nul
 
-TVLDERR:	db tab,tab,'*** Feld nicht in der Karte',nul
-TNOPB:	db tab,tab,'*** Keiner Druckerpuffer geladen',nul
-tNextpg:	db tab,tab,'*** Stelle n',84H,'chste Pagina auf',nul
-tDruk:	db ' *** - Dr',81H,'cke eine Taste... ',nul
+TVLDERR:        db tab,tab,'*** Feld nicht in der Karte',nul
+TNOPB:          db tab,tab,'*** Keiner Druckerpuffer geladen',nul
+tNextpg:        db tab,tab,'*** Stelle n',84H,'chste Pagina auf',nul
+tDruk:          db ' *** - Dr',81H,'cke eine Taste... ',nul
 
-tMoment:	db tab,tab,tab,tab,'*** Moment... *** ',nul
-tMeer:	db tab,tab,tab,tab,'Mehr (j/n) ',nul
-tZeker:	db tab,tab,tab,'Sind Sie Sicher? (j/n) ',nul
+tMoment:        db tab,tab,tab,tab,'*** Moment... *** ',nul
+tMeer:          db tab,tab,tab,tab,'Mehr (j/n) ',nul
+tZeker:         db tab,tab,tab,'Sind Sie Sicher? (j/n) ',nul
 
-tMemMap:	db tab,tab,tab,'  Ram-erweiterung:',tab,tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'    Vram gebrauch: ',nul
-tKeuze:	db tab,tab,tab,'      Ihre Wahl bitte: ',nul
-tTabCh:	db tab,'Gebrauch der tab-zeichen im arbeitsspeicher:',tab,tab,tab,' ESCape',cr,lf
-	db tab,'  tab-zeichen Speichern in einer text-datei:',cr,lf
-	db tab,'tab-zeichen direkt im arbeitsspeicher Laden:',nul
-xTabIns	equ 54
+tMemMap:        db tab,tab,tab,'  Ram-erweiterung:',tab,tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'    Vram gebrauch: ',nul
+tKeuze:         db tab,tab,tab,'      Ihre Wahl bitte: ',nul
+tTabCh:         db tab,'Gebrauch der tab-zeichen im arbeitsspeicher:',tab,tab,tab,' ESCape',cr,lf
+                db tab,'  tab-zeichen Speichern in einer text-datei:',cr,lf
+                db tab,'tab-zeichen direkt im arbeitsspeicher Laden:',nul
+xTabIns         equ 54
 
-tAlinea:	db '   Blocksatz:       Wortumbruch:       '
-	db 'Trenn-strich:      Einr',81h,'cken:',tab,' ESCape',nul
+tAlinea:        db '   Blocksatz:       Wortumbruch:       '
+                db 'Trenn-strich:      Einr',81h,'cken:',tab,' ESCape',nul
 
-xUitvul	equ 15
-xAfbreek	equ 34
-xStreep	equ 54
-xInspr	equ 70
+xUitvul         equ 15
+xAfbreek        equ 34
+xStreep         equ 54
+xInspr          equ 70
 
-tIndent:	db tab,tab,tab,'Verschieb zeichenzahl:',tab,tab,tab,tab
-	db ' ESCape',cr,lf,lf
-	db tab,tab,tab,'dr',81H,'cke <',17h,' oder '
-	db 17h,'> zum starten',nul
+tIndent:        db tab,tab,tab,'Verschieb zeichenzahl:',tab,tab,tab,tab
+                db ' ESCape',cr,lf,lf
+                db tab,tab,tab,'dr',81H,'cke <',17h,' oder '
+                db 17h,'> zum starten',nul
 
-xAantPos	equ 48
+xAantPos        equ 48
 
-tSort:	db tab,' Kartenl',84H,'nge:',tab,' zeile(n)',tab,tab,tab,tab,tab,' ESCape'
-	db cr,lf,lf
-	db '       sortieren auf A: feld:',tab,tab,'spalte:',cr,lf
-	db tab,tab,'     B: feld:',tab,tab,'spalte:',cr,lf
-	db tab,tab,'     C: feld:',tab,tab,'spalte:',nul
-TKOLOM:	db tab,tab,tab,'    Spaltenzahl:',tab,tab,tab,tab,' ESCape',lf,nul
-TKOLPOS:	db cr,lf,tab,tab,'      position spalte ',nul
-tPage:	db tab,tab,tab,'Setz seite-stop'
-	db tab,tab,tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'Entfern seite-stop',cr,lf
-	db tab,tab,tab,'entfern Alle seite-stops',cr,lf,lf
-	db tab,tab,tab,'seite-Nummer indication: ',cr,lf
-	db tab,tab,tab,'seite-stop   Indication: ',cr,lf
-	db tab,tab,tab,'seite-Grenze indication: ',nul
-TGOTO:	db tab,' gehe:  zum text Anfang',tab
-	db tab,'zum Block anfang',tab,tab,' ESCape',cr,lf
-	db tab,tab,'zum text Ende'
-	db tab,tab,'zum ende des blockS',cr,lf
-	db tab,tab,'zur Zeilenummer'
-	db tab,tab,'zu  merker 0..9',nul
-TKLEUR:	db tab,tab,tab,tab,'    Blau   Rot   Gr',81H,'n'
-	db tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,'  Text Hintergrund:',cr,lf
-	db tab,tab,'  Text Vordergrund:',cr,lf
-	db tab,tab,'Cursor Hintergrund:',cr,lf
-	db tab,tab,'Cursor Vordergrund:',nul
-TEXT:	db tab,tab,'Bevorzugte Dateinamenserweiterung: ',nul
-TBACKUP:	db tab,'   sicherheitskopie (Backup) machen:',tab,tab,tab,tab,' ESCape',cr,lf,lf
-	db tab,tab,'   text Automatisch sichern:',cr,lf
-	db tab,tab,tab,'  nach anSchlagzahl:',nul
-TSCHERM:	db tab,tab,'    Farb cursor:',tab,'      Editier modus:'
-	db tab,tab,' ESCape',cr,lf
-	db tab,tab,'   block Cursor:',tab,tab,'Auto-indent:',cr,lf
-	db tab,'  Befehlszeile anzeigen:',tab,'     Repetiertasten:',cr,lf
-	db '       f',81H,'hrende null in Uhrzeit:',tab,    '       blInk-cursor:',cr,lf
-	db tab,tab,'    Scroll-text:        cursor blinkrate aN:',cr,lf
-	db tab,'eine lupe ins Hilfsmenu:       cursOr blinkrate aus:',cr,lf,lf
-	db ' Msx zch.satz: ',cr,lf
-	db ' Zeichenstatz: ',nul
-TDRIVER:	db tab,tab,tab,'    drucker treiber:'
-	db tab,tab,tab,tab,' RETURN',nul
-TGETDRV:	db tab,'    Welches Zeichen? : '
-	db tab,tab,tab,tab,tab,tab,' ESCape',nul
-TPRTINS:	db '  Setup String:',tab,tab,tab,tab,tab,tab,tab,tab
-	db ' ESCape',cr,lf
-	db '     rand Oben:'
-	db tab,tab,'  Erste seitennummer:'
-	db tab,tab,'   kopfnote Zeile:',cr,lf
-	db '    rand Unten:'
-	db tab,tab,'   kopfnote Position:'
-	db tab,tab,'    fu',0E1H,'note zeIle:',cr,lf
-	db '  seiten-L',84H,'nge:'
-	db tab,tab,'    fu',0E1H,'note posiTion:'
-	db tab,tab,'  seiten-Vorschub:',cr,lf
-	db tab,tab,tab,tab,tab,tab,tab,'    endlos papieR:',cr,lf
-	db ' 1=kopf- und 2=fu',0E1H,'note    ($P=Seitennummer)',cr,lf,lf,lf,lf
-	db '    Mail-merge:            erste Karte:'
-	db tab,tab,'       mail-merge zeicHen:',cr,lf
-	db '     dateiName:',cr,lf
-	db '    kArte-ende:',cr,lf
-	db '     felD-ende:',nul
+tSort:          db tab,' Kartenl',84H,'nge:',tab,' zeile(n)',tab,tab,tab,tab,tab,' ESCape'
+                db cr,lf,lf
+                db '       sortieren auf A: feld:',tab,tab,'spalte:',cr,lf
+                db tab,tab,'     B: feld:',tab,tab,'spalte:',cr,lf
+                db tab,tab,'     C: feld:',tab,tab,'spalte:',nul
+TKOLOM:         db tab,tab,tab,'    Spaltenzahl:',tab,tab,tab,tab,' ESCape',lf,nul
+TKOLPOS:        db cr,lf,tab,tab,'      position spalte ',nul
+tPage:          db tab,tab,tab,'Setz seite-stop'
+                db tab,tab,tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'Entfern seite-stop',cr,lf
+                db tab,tab,tab,'entfern Alle seite-stops',cr,lf,lf
+                db tab,tab,tab,'seite-Nummer indication: ',cr,lf
+                db tab,tab,tab,'seite-stop   Indication: ',cr,lf
+                db tab,tab,tab,'seite-Grenze indication: ',nul
+TGOTO:          db tab,' gehe:  zum text Anfang',tab
+                db tab,'zum Block anfang',tab,tab,' ESCape',cr,lf
+                db tab,tab,'zum text Ende'
+                db tab,tab,'zum ende des blockS',cr,lf
+                db tab,tab,'zur Zeilenummer'
+                db tab,tab,'zu  merker 0..9',nul
+TKLEUR:         db tab,tab,tab,tab,'    Blau   Rot   Gr',81H,'n'
+                db tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,'  Text Hintergrund:',cr,lf
+                db tab,tab,'  Text Vordergrund:',cr,lf
+                db tab,tab,'Cursor Hintergrund:',cr,lf
+                db tab,tab,'Cursor Vordergrund:',nul
+TEXT:           db tab,tab,'Bevorzugte Dateinamenserweiterung: ',nul
+TBACKUP:        db tab,'   sicherheitskopie (Backup) machen:',tab,tab,tab,tab,' ESCape',cr,lf,lf
+                db tab,tab,'   text Automatisch sichern:',cr,lf
+                db tab,tab,tab,'  nach anSchlagzahl:',nul
+TSCHERM:        db tab,tab,'    Farb cursor:',tab,'      Editier modus:'
+                db tab,tab,' ESCape',cr,lf
+                db tab,tab,'   block Cursor:',tab,tab,'Auto-indent:',cr,lf
+                db tab,'  Befehlszeile anzeigen:',tab,'     Repetiertasten:',cr,lf
+                db '       f',81H,'hrende null in Uhrzeit:',tab,    '       blInk-cursor:',cr,lf
+                db tab,tab,'    Scroll-text:        cursor blinkrate aN:',cr,lf
+                db tab,'eine lupe ins Hilfsmenu:       cursOr blinkrate aus:',cr,lf,lf
+                db ' Msx zch.satz: ',cr,lf
+                db ' Zeichenstatz: ',nul
+TDRIVER:        db tab,tab,tab,'    drucker treiber:'
+                db tab,tab,tab,tab,' RETURN',nul
+TGETDRV:        db tab,'    Welches Zeichen? : '
+                db tab,tab,tab,tab,tab,tab,' ESCape',nul
+TPRTINS:        db '  Setup String:',tab,tab,tab,tab,tab,tab,tab,tab
+                db ' ESCape',cr,lf
+                db '     rand Oben:'
+                db tab,tab,'  Erste seitennummer:'
+                db tab,tab,'   kopfnote Zeile:',cr,lf
+                db '    rand Unten:'
+                db tab,tab,'   kopfnote Position:'
+                db tab,tab,'    fu',0E1H,'note zeIle:',cr,lf
+                db '  seiten-L',84H,'nge:'
+                db tab,tab,'    fu',0E1H,'note posiTion:'
+                db tab,tab,'  seiten-Vorschub:',cr,lf
+                db tab,tab,tab,tab,tab,tab,tab,'    endlos papieR:',cr,lf
+                db ' 1=kopf- und 2=fu',0E1H,'note    ($P=Seitennummer)',cr,lf,lf,lf,lf
+                db '    Mail-merge:            erste Karte:'
+                db tab,tab,'       mail-merge zeicHen:',cr,lf
+                db '     dateiName:',cr,lf
+                db '    kArte-ende:',cr,lf
+                db '     felD-ende:',nul
 
-TPSTAT:	db tab,' Drucke Zeile: 1      Letzte Zeile: ',nul
-TKAART:	db ' Drucke Karte:',nul
-TPBEGON:	db tab,tab,tab,'*** Drucken angefangen... ***',nul
-TMEM:	db tab,' Arbeitsspeicher  Kilobytes',cr,lf
-	db tab,tab,    ' gesammt:',cr,lf
-	db tab,tab,    '    frei: ',nul
-TAFBR:	db '  Cursor L/R mit: <',17H,' ',17H,'>    Trennen:'
-	db ' RETURN    Nicht trennen: SPACE',tab,' ESCape',nul
-TWIS:	db tab,tab,tab,'l',94H,'sche Text',tab,tab,tab,tab,tab,' ESCape',cr,lf
-	db tab,tab,tab,'l',94H,'sche drucker-Puffer',nul
-TCPHULP:	db tab,tab,'hilfsmenu-text Zum arbeitsspeicher kopieren',tab,tab,' ESCape',cr,lf
-	db tab,tab,'hilfsmenu-text Vom arbeitsspeicher zum menu kopieren',nul
-TTOETS:	db tab,tab,tab,'*** Dr',81H,'cken Sie eine Taste... *** ',nul
+TPSTAT:         db tab,' Drucke Zeile: 1      Letzte Zeile: ',nul
+TKAART:         db ' Drucke Karte:',nul
+TPBEGON:        db tab,tab,tab,'*** Drucken angefangen... ***',nul
+TMEM:           db tab,' Arbeitsspeicher  Kilobytes',cr,lf
+                db tab,tab,    ' gesammt:',cr,lf
+                db tab,tab,    '    frei: ',nul
+TAFBR:          db '  Cursor L/R mit: <',17H,' ',17H,'>    Trennen:'
+                db ' RETURN    Nicht trennen: SPACE',tab,' ESCape',nul
+TWIS:           db tab,tab,tab,'l',94H,'sche Text',tab,tab,tab,tab,tab,' ESCape',cr,lf
+                db tab,tab,tab,'l',94H,'sche drucker-Puffer',nul
+TCPHULP:        db tab,tab,'hilfsmenu-text Zum arbeitsspeicher kopieren',tab,tab,' ESCape',cr,lf
+                db tab,tab,'hilfsmenu-text Vom arbeitsspeicher zum menu kopieren',nul
+TTOETS:         db tab,tab,tab,'*** Dr',81H,'cken Sie eine Taste... *** ',nul
 
-if	AUTODEMO
-	global TDFERR
-TDFERR:	db tab,'*** Datafile error',nul
+if              AUTODEMO
+                global TDFERR
+TDFERR:         db tab,'*** Datafile error',nul
 endif
 
-TRECERR:	db tab,'*** Ende der Karte nicht gefunden',nul
-TREGLEN:	db tab,tab,'*** Zeile zu l',84H,'nge',nul
-TONDERB:	db tab,tab,'*** Unterbrochen',nul
-TMEMVOL:	db tab,tab,'*** Abeits-Speicher voll',nul
-TTOMANY:	db tab,'*** Dateiname falsch oder Diskinhalt voll',nul
-TDISKVOL:	db tab,tab,'*** Disk voll',nul
-TPROT:	db tab,'*** Disk write protected',nul
-TNODISK:	db tab,'*** Not ready error',nul
-TDSKERR:	db tab,tab,'*** Disk error',nul
-TVERERR:	db tab,tab,'*** Kein TED 2.6 Datei',nul
-TKARERR:	db tab,'*** Zeichenstatz-Datei nicht gefunden',nul
-tPageTabFull:	db tab,tab,'*** Seitentabel voll',nul
-tStkErr:	db tab,tab,'*** Zu weinig Stackspeicher',nul
-TNOTFND:	db tab,tab,'*** Nicht gefunden',nul
-TPROB:	db ' ***  -  Aufs neue versuchen? (j/n) ',nul
-TVERVANG:	db tab,tab,tab,tab,'Ersetzen? (j/n) ',nul
-TSAVNAM:	db tab,tab,tab,' Sichern - Name: ',nul
-TLOADNAM:	db tab,tab,tab,' Lade - Name: ',nul
-TSAVINS:	db tab,'einstellungen speichern in einer Ted-datei:',tab,tab,tab,' ESCape',cr,lf,lf
-	db tab,'einstellungen als Default-werte speichern',cr,lf
-	db tab,'einstellungen in einer datei Speichern',cr,lf
-	db tab,'einstellungen von einer datei Laden',nul
-TZOEK:	db '       Suche:',cr,lf
-	db ' Ersetze mit:',nul
-TZOEK2:	db ' F1:   Kein Unterschied zwischen gro',0E1H,' und klein Buchstaben',cr,lf
-	db ' F2:   Vorw',84H,'rts suchen ',cr,lf
-	db ' F3:   Abfrage beim ersetzen   ',tab,tab,tab,tab,cr,lf,lf
-	db ' W',84h,'hle F1, F2 oder F3, Return zum starten'
-	db tab,tab,tab,tab,' ESCape',nul
-TWEL:	db '    ',nul
-TACHTER:	db '  R',81h,'ckw',84H,'rts suchen',cr,lf,nul
-TONV:	db '  Im gesammten Text ersetzen ohne abzufragen',nul
+TRECERR:        db tab,'*** Ende der Karte nicht gefunden',nul
+TREGLEN:        db tab,tab,'*** Zeile zu l',84H,'nge',nul
+TONDERB:        db tab,tab,'*** Unterbrochen',nul
+TMEMVOL:        db tab,tab,'*** Abeits-Speicher voll',nul
+TTOMANY:        db tab,'*** Dateiname falsch oder Diskinhalt voll',nul
+TDISKVOL:       db tab,tab,'*** Disk voll',nul
+TPROT:          db tab,'*** Disk write protected',nul
+TNODISK:        db tab,'*** Not ready error',nul
+TDSKERR:        db tab,tab,'*** Disk error',nul
+TVERERR:        db tab,tab,'*** Kein TED 2.6 Datei',nul
+TKARERR:        db tab,'*** Zeichenstatz-Datei nicht gefunden',nul
+tPageTabFull:   db tab,tab,'*** Seitentabel voll',nul
+tStkErr:        db tab,tab,'*** Zu weinig Stackspeicher',nul
+TNOTFND:        db tab,tab,'*** Nicht gefunden',nul
+TPROB:          db ' ***  -  Aufs neue versuchen? (j/n) ',nul
+TVERVANG:       db tab,tab,tab,tab,'Ersetzen? (j/n) ',nul
+TSAVNAM:        db tab,tab,tab,' Sichern - Name: ',nul
+TLOADNAM:       db tab,tab,tab,' Lade - Name: ',nul
+TSAVINS:        db tab,'einstellungen speichern in einer Ted-datei:',tab,tab,tab,' ESCape',cr,lf,lf
+                db tab,'einstellungen als Default-werte speichern',cr,lf
+                db tab,'einstellungen in einer datei Speichern',cr,lf
+                db tab,'einstellungen von einer datei Laden',nul
+TZOEK:          db '       Suche:',cr,lf
+                db ' Ersetze mit:',nul
+TZOEK2:         db ' F1:   Kein Unterschied zwischen gro',0E1H,' und klein Buchstaben',cr,lf
+                db ' F2:   Vorw',84H,'rts suchen ',cr,lf
+                db ' F3:   Abfrage beim ersetzen   ',tab,tab,tab,tab,cr,lf,lf
+                db ' W',84h,'hle F1, F2 oder F3, Return zum starten'
+                db tab,tab,tab,tab,' ESCape',nul
+TWEL:           db '    ',nul
+TACHTER:        db '  R',81h,'ckw',84H,'rts suchen',cr,lf,nul
+TONV:           db '  Im gesammten Text ersetzen ohne abzufragen',nul
 
-endif	;End Taal=Duits
+endif           ;End Taal=Duits
 
 if1
-	.printx * Pass 1 done *
+                .printx * Pass 1 done *
 else
-	.printx * Pass 2 done *
+                .printx * Pass 2 done *
 endif
 
-	end	;End TEDSTR.MAC
+                end                     ;End TEDSTR.MAC
 

@@ -14,11 +14,12 @@ msx2026/
 ├── tools/
 │   ├── m80/                M80.COM, L80.COM, LIB80.COM, CREF80.COM (CP/M-80 binaries)
 │   ├── msxdos/             MSXDOS.SYS + COMMAND.COM — make any zip-disk bootable
-│   └── pack.sh             Builds the dist/*.zip files
+│   ├── pack.sh             Builds the dist/*.zip files
+│   └── expand-ted-tabs.py  Replays MAKESP from GETPUT.MAC to expand TAB → spaces
 ├── src/
 │   ├── hello/              HELLO.MAC + ML.BAT — minimal proof of the toolchain
 │   └── ted/                TED #2.6 source: MAIN/SUBTED/TEDSTR/GETPUT/OFFSET/TEDGRAB.MAC
-│                           plus original ML*.BAT and our cleaner MK.BAT / SHORT.BAT
+│                           plus *.TED ruler files and our MK.BAT / SHORT.BAT
 ├── runtime/ted/            Prebuilt TED.COM + helpers + LEES.MIJ + manual
 ├── dist/                   Drag any of these onto webmsx.org (or use as DISKA_FILES_URL)
 │   ├── m80-tools.zip
@@ -78,6 +79,18 @@ https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=T
 `dist/ted-run.zip` contains the already-registered prebuilt `TED.COM` plus `LEES.MIJ`, the manual, helpers, and `MSXDOS.SYS` + `COMMAND.COM`. The editor appears within seconds. Inside TED: `F7` help, `F2` settings, `F3` system, `F4` commands, `F5` block ops. Status bar is in Dutch.
 
 Local iteration: `tools/pack.sh ted-run`.
+
+## Why don't the .MAC sources have any TAB characters?
+
+They used to. TED's editor stores tabs as ASCII 9 in memory and on disk (when F2/T/B "Bewaar Tab-tekens op diskette" is on), and when displaying or loading it expands them using a configurable ruler from a per-file `.TED` settings file. For TED's own sources that ruler has stops at columns **0, 16, 40, then every 8 up to 248** — labels at col 0, opcodes at col 16, comments at col 40. Modern viewers (GitHub, VS Code) default to 4- or 8-column tabs, which mangles the layout.
+
+`tools/expand-ted-tabs.py` re-implements the `MAKESP` routine from `src/ted/GETPUT.MAC` byte for byte: it reads the ruler from a `.TED` file (offset 103, 256-byte column map, `0x2B` = stop) and replaces every `\t` with the right run of spaces. Run it after editing any source:
+
+```bash
+python3 tools/expand-ted-tabs.py src/ted/MAIN.MAC src/ted/MAIN.TED
+```
+
+The expanded files still assemble identically (same `TED.COM` bytes from `M80`/`L80`); they're just easier to read on github.com. Don't paste tab characters back into the sources — keep them space-only.
 
 ## Why does my freshly built TED exit immediately?
 

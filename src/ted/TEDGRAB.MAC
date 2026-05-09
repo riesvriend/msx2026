@@ -4,11 +4,11 @@
 dos             equ 5           ; BDOS entry
 calSlt          equ 0001ch      ; interslot call
 beep            equ 000c0h      ; BIOS BEEP
-enaDiskRom      equ 0f368h      ; enable main diskROM routine onder DOS
+enaDiskRom      equ 0f368h      ; enable main diskROM routine under DOS
 txtnam          equ 0f3b3h      ; name table in VRAM
 txtcol          equ 0f3b5h      ; color table in VRAM
 txtcgp          equ 0f3b7h      ; pattern table in VRAM
-rg13sav         equ 0ffdfh+13   ; bewaar-adres VDP-register
+rg13sav         equ 0ffdfh+13   ; saved-copy address of VDP register 13
 hkeycod         equ 0fdcch      ; keycode hook (my concern: dead-key)
 extBio          equ 0ffcah      ; extbios for Memman call
 

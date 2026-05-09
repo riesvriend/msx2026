@@ -1,160 +1,194 @@
 false           equ 0
 true            equ not false
 
-demo            equ false               ;True = Demoversie
-autoDemo        equ false               ;True = Autorun demo versie
+demo            equ false               ;True = build the limited demo (TEDDEMO.COM)
+autoDemo        equ false               ;True = auto-running demo build
 
-nl              equ 0
-duits           equ 1
+nl              equ 0                   ;Language id: Dutch
+duits           equ 1                   ;Language id: German
 
-taal            equ nl                  ;Huidige taal=Duits/NL
+taal            equ nl                  ;Active UI language at assemble time
 
 iff taal-nl
-cryptByte       equ 01101011B
+cryptByte       equ 01101011B           ;XOR mask used to obfuscate strings (NL build)
 else
-cryptByte       equ 10011001B
+cryptByte       equ 10011001B           ;XOR mask used to obfuscate strings (DE build)
 endIf
 
-maxMapSeg       equ 128                 ;Max. 128 mapper segmenten = 2 MEG
-maxPageStops    equ 200                 ;Max. aantal harde pagina stops
+maxMapSeg       equ 128                 ;Max 128 mapper segments = 2 MB total
+maxPageStops    equ 200                 ;Max number of hard (manual) page-break markers
 
-                ;Offset/index definities variabelentabel in (IY +/- Index)
+                ;-------------------------------------------------------------
+                ; Per-document variable table addressed via the IY register.
+                ; Each open document keeps its own table; IY is loaded with
+                ; the table's base before the editor accesses any field.
+                ; Symbols below 0 are negative offsets (IY-N), the others
+                ; are positive (IY+N) and IY itself.
+                ;-------------------------------------------------------------
 
-virPos          equ 22
-firstPntSeg     equ 21
-firstDataSeg    equ 20
-flags6          equ 19
-pg1Seg          equ 18
-pg2Slt          equ 17
-flags5          equ 16
-bufPos          equ 15
-bEndPos         equ 14
-bSrtPos         equ 13
-flags4          equ 12
-spCnt           equ 11
-vdpRead         equ 10
-vdpCw           equ 9
-mrkNum          equ 8
-spLinks         equ 7
-namCnt          equ 6
-inhX            equ 5
-inhY            equ 4
-flags3          equ 3
-flags2          equ 2
-spaties         equ 1                   ;IY-1
-maxMap          equ 0                   ;IY
-tabMap          equ 1                   ;IY+1
-dataMap         equ 2
-curMap          equ 3
-curTab          equ 4
-savMap          equ 5
-endSav          equ 6
-bufLen          equ 7
-dskFlg          equ 8
-vdpWrite        equ 9
-prtReg          equ 10
-offSet          equ 11
-xPos            equ 12
-yPos            equ 13
-flags1          equ 14
-minLin          equ 15
-maxLin          equ 16
-bouwNum         equ 17
-regLow          equ 18
-klLinks         equ 19
-klRechts        equ 20
-mapFlag         equ 21
-topMar          equ 22
-botMar          equ 23
-pagLen          equ 24
-tabSav          equ 25
-botMap          equ 26
-afbreek         equ 27
-koppos          equ 28
-voetpos         equ 29
-kopMrg          equ 30
-inspring        equ 31
-savFl           equ 32
-mrgKar          equ 33
-voetMrg         equ 34
-savFl2          equ 35
-rept            equ 36
-numPageStops    equ 37
-savFl3          equ 38
-aantIndent      equ 39
+virPos          equ 22                  ;IY-22  cursor position in virtual screen
+firstPntSeg     equ 21                  ;IY-21  first segment used for pointer table
+firstDataSeg    equ 20                  ;IY-20  first segment used for line data
+flags6          equ 19                  ;IY-19  bit flags (printer-buffer / virtual mode)
+pg1Seg          equ 18                  ;IY-18  segment mapped into Z80 page 1
+pg2Slt          equ 17                  ;IY-17  slot mapped into Z80 page 2
+flags5          equ 16                  ;IY-16  bit flags (DOS / error / display state)
+bufPos          equ 15                  ;IY-15  cursor position inside the line edit buffer
+bEndPos         equ 14                  ;IY-14  end-of-block marker
+bSrtPos         equ 13                  ;IY-13  start-of-block marker
+flags4          equ 12                  ;IY-12  bit flags (paragraph re-flow state machine)
+spCnt           equ 11                  ;IY-11  trailing-space count for paragraph fill
+vdpRead         equ 10                  ;IY-10  cached VDP read-port value
+vdpCw           equ 9                   ;IY-9   cached VDP control-word
+mrkNum          equ 8                   ;IY-8   marker line number
+spLinks         equ 7                   ;IY-7   leading-space count to the left of cursor
+namCnt          equ 6                   ;IY-6   filename-character counter
+inhX            equ 5                   ;IY-5   saved cursor X (column) for paragraph fill
+inhY            equ 4                   ;IY-4   saved cursor Y (row) for paragraph fill
+flags3          equ 3                   ;IY-3   bit flags (color / quote / ticker state)
+flags2          equ 2                   ;IY-2   bit flags (cursor / hyphenation state)
+spaties         equ 1                   ;IY-1   leading-space count for the current line
+maxMap          equ 0                   ;IY     highest mapper segment number installed
+tabMap          equ 1                   ;IY+1   memory-mapper segment used for table walks
+dataMap         equ 2                   ;IY+2   memory-mapper segment for line data
+curMap          equ 3                   ;IY+3   currently-mapped segment in page 2
+curTab          equ 4                   ;IY+4   currently-mapped segment in pointer table
+savMap          equ 5                   ;IY+5   saved-mapper segment (for nested map calls)
+endSav          equ 6                   ;IY+6   end-of-saved-area address
+bufLen          equ 7                   ;IY+7   length of the line edit buffer
+dskFlg          equ 8                   ;IY+8   disk-related flag byte
+vdpWrite        equ 9                   ;IY+9   cached VDP write-port value
+prtReg          equ 10                  ;IY+10  printer status register
+offSet          equ 11                  ;IY+11  horizontal scroll offset of the screen
+xPos            equ 12                  ;IY+12  cursor X position on screen (column)
+yPos            equ 13                  ;IY+13  cursor Y position on screen (row)
+flags1          equ 14                  ;IY+14  bit flags (insert mode, change-flag, block, ...)
+minLin          equ 15                  ;IY+15  topmost screen line in use
+maxLin          equ 16                  ;IY+16  bottommost screen line in use
+bouwNum         equ 17                  ;IY+17  current "build" line number while reflowing
+regLow          equ 18                  ;IY+18  low byte of current line number
+klLinks         equ 19                  ;IY+19  left-margin colour
+klRechts        equ 20                  ;IY+20  right-margin colour
+mapFlag         equ 21                  ;IY+21  flag set when memory mapper is in use
+topMar          equ 22                  ;IY+22  top page margin (printed lines)
+botMar          equ 23                  ;IY+23  bottom page margin (printed lines)
+pagLen          equ 24                  ;IY+24  page length in printed lines
+tabSav          equ 25                  ;IY+25  on-disk flags for save/load (see below)
+botMap          equ 26                  ;IY+26  bottommost mapper segment in use
+afbreek         equ 27                  ;IY+27  hyphenation mode (0=off, see manual F2/A)
+koppos          equ 28                  ;IY+28  header line position (printer)
+voetpos         equ 29                  ;IY+29  footer line position (printer)
+kopMrg          equ 30                  ;IY+30  header margin (lines from page top)
+inspring        equ 31                  ;IY+31  paragraph indent in characters
+savFl           equ 32                  ;IY+32  on-disk flag byte (saved with file)
+mrgKar          equ 33                  ;IY+33  mail-merge field marker character
+voetMrg         equ 34                  ;IY+34  footer margin (lines from page bottom)
+savFl2          equ 35                  ;IY+35  second on-disk flag byte (saved with file)
+rept            equ 36                  ;IY+36  repeat-key delay/rate setting
+numPageStops    equ 37                  ;IY+37  count of installed hard page-break markers
+savFl3          equ 38                  ;IY+38  third on-disk flag byte (saved with file)
+aantIndent      equ 39                  ;IY+39  indent count for SHIFT+HOME paragraph fill
 
-                ;Bit-Vlaggen in IY+FLAGSx (IY+14 IY-2 IY-3 IY-12, IY-16 IY-19)
+                ;-------------------------------------------------------------
+                ; Bit numbers within the in-memory flag bytes
+                ; (FLAGS1=IY+14, FLAGS2=IY-2, FLAGS3=IY-3,
+                ;  FLAGS4=IY-12, FLAGS5=IY-16, FLAGS6=IY-19).
+                ; Each group of eight bits below belongs to one flag byte.
+                ;-------------------------------------------------------------
 
-INSFL           equ 0
-CHANGE          equ 1
-RETKEY          equ 2
-SAV             equ 3
-SPACE           equ 4
-BLOKFL          equ 5
-LDFL            equ 6
-TABFL           equ 7
-CSRON           equ 0
-SPATIE          equ 1
-even            equ 2
-spFnd           equ 3
-ktl             equ 4
-afbrFl          equ 5
-afbrEnd         equ 6
-long            equ 7
-voorAch         equ 0
-bovOndk         equ 1
-krt             equ 2
-twee            equ 3
-insp            equ 4
-nKl             equ 5
-aanh            equ 6
-vrLoop          equ 7
-bouw            equ 0
-klaar           equ 1
-pkv             equ 2
-rstH            equ 3
-pBlk            equ 4
-move            equ 5
-onv             equ 6
-d2mm            equ 7
-err             equ 0
-dos2            equ 1
-noLin           equ 2
-blkAp           equ 3
-mted            equ 4
-mMan            equ 5
-chFnd           equ 6
-dispOff         equ 7
-pbTsr           equ 0
-pbTed           equ 1
-vir             equ 2
+                ;FLAGS1 (IY+14) -- general editor state
+INSFL           equ 0                   ;Insert mode active (INS key toggle)
+CHANGE          equ 1                   ;Text has been changed since last save
+RETKEY          equ 2                   ;Last key processed was Return
+SAV             equ 3                   ;A save operation is in progress
+SPACE           equ 4                   ;Space-bar pressed (used by paragraph fill)
+BLOKFL          equ 5                   ;Block selection is active (F5)
+LDFL            equ 6                   ;A load operation is in progress
+TABFL           equ 7                   ;Tab key handling state
 
-                ;Bitvlaggen op disk TABSAV, SAVFL, IY+SAVFL2, SAVFL3
+                ;FLAGS2 (IY-2) -- cursor / paragraph fill state
+CSRON           equ 0                   ;Cursor visible
+SPATIE          equ 1                   ;A space was found while scanning
+even            equ 2                   ;Even-numbered iteration marker
+spFnd           equ 3                   ;Space-found within the current line
+ktl             equ 4                   ;"Krantelijn" (column/newspaper layout active)
+afbrFl          equ 5                   ;Hyphenation prompt active
+afbrEnd         equ 6                   ;Hyphenation prompt finished
+long            equ 7                   ;Current line is longer than screen width
 
-STOTAB          equ 0
-UITVUL          equ 1
-AFBR            equ 2
-COMLIN          equ 3
-DRIVE           equ 4
-STTAB           equ 5
-LDTAB           equ 6
-CSR             equ 7
-VOORNUL         equ 0
-MRG             equ 1
-FFD             equ 2
-CONT            equ 3
-BKUP            equ 4
-AUTOB           equ 5
-msxK            equ 6
-blkC            equ 7
-bigLet          equ 0
-hlp             equ 1
-edit            equ 2
-ai              equ 3
-pag             equ 4
-svIns           equ 5
-knipper         equ 6
-nPageStop       equ 7
-nPageNum        equ 0
-indDir          equ 1
+                ;FLAGS3 (IY-3) -- colour / quote / on-screen status
+voorAch         equ 0                   ;Foreground/background swap (inverse video)
+bovOndk         equ 1                   ;Top/bottom margin marker on screen
+krt             equ 2                   ;Information ticker ("lichtkrant") on
+twee            equ 3                   ;Two-column display mode
+insp            equ 4                   ;Indent mode for paragraph fill
+nKl             equ 5                   ;New colour scheme requested
+aanh            equ 6                   ;Quotation prefix character pending
+vrLoop          equ 7                   ;Control-prefix character active (SELECT key)
+
+                ;FLAGS4 (IY-12) -- paragraph re-flow / save state machine
+bouw            equ 0                   ;"Build" phase of paragraph fill
+klaar           equ 1                   ;"Done" phase of paragraph fill
+pkv             equ 2                   ;Paragraph-keep-value flag (preserve indent)
+rstH            equ 3                   ;Reset HOME-key state
+pBlk            equ 4                   ;Operating on a paragraph block
+move            equ 5                   ;Move-block (instead of copy) selected
+onv            equ 6                    ;"Onvolledig" -- incomplete operation pending
+d2mm            equ 7                   ;Disk-to-MemoryMapper transfer in progress
+
+                ;FLAGS5 (IY-16) -- DOS / error / display
+err             equ 0                   ;An error condition was detected
+dos2            equ 1                   ;Running under MSX-DOS 2 (path support)
+noLin           equ 2                   ;No-line-number mode (programming source)
+blkAp           equ 3                   ;Block apply (operation pending on block)
+mted            equ 4                   ;MTed (printer driver) present
+mMan            equ 5                   ;MemMan TSR present (see manual chapter 9)
+chFnd           equ 6                   ;Character was found by search
+dispOff         equ 7                   ;Display update temporarily off
+
+                ;FLAGS6 (IY-19) -- printer buffer / virtual mode
+pbTsr           equ 0                   ;PB.TSR printer buffer present (manual ch.10)
+pbTed           equ 1                   ;PB driver active for TED output
+vir             equ 2                   ;Virtual-screen mode
+
+                ;-------------------------------------------------------------
+                ; Bit numbers for the on-disk flag bytes (TABSAV at IY+25,
+                ; SAVFL at IY+32, SAVFL2 at IY+35, SAVFL3 at IY+38).
+                ; These are persisted with each saved document so that the
+                ; layout settings survive a load/save round-trip.
+                ;-------------------------------------------------------------
+
+                ;TABSAV (IY+25) -- tab/cursor/save preferences
+STOTAB          equ 0                   ;"Bewaar Tab-tekens op diskette" (keep TABs in file)
+UITVUL          equ 1                   ;Right-justify (uitvullen) paragraphs
+AFBR            equ 2                   ;Hyphenation prompts enabled
+COMLIN          equ 3                   ;Show comment line on screen
+DRIVE           equ 4                   ;Default drive override remembered
+STTAB           equ 5                   ;Stored-tab-stops valid
+LDTAB           equ 6                   ;Load tab-stops from file (if present)
+CSR             equ 7                   ;Cursor type preference
+
+                ;SAVFL (IY+32) -- save-time flags
+VOORNUL         equ 0                   ;Pad with leading zeros
+MRG             equ 1                   ;Mail-merge file
+FFD             equ 2                   ;Form-feed at end of document
+CONT            equ 3                   ;Continuation file (multi-part)
+BKUP            equ 4                   ;Make .BAK backup before saving
+AUTOB           equ 5                   ;Auto-backup periodically
+msxK            equ 6                   ;MSX character-set save
+blkC            equ 7                   ;Block character (paragraph mark) preference
+
+                ;SAVFL2 (IY+35) -- second save-time flag byte
+bigLet          equ 0                   ;Capital letters preferred
+hlp             equ 1                   ;Help-bar visible at startup
+edit            equ 2                   ;Editor mode (vs viewer)
+ai              equ 3                   ;Auto-indent enabled (F3/S/A)
+pag             equ 4                   ;Page numbering on
+svIns           equ 5                   ;Save the insert-mode state
+knipper         equ 6                   ;Cursor blink enabled
+nPageStop       equ 7                   ;Save hard-page-break markers
+
+                ;SAVFL3 (IY+38) -- third save-time flag byte
+nPageNum        equ 0                   ;Suppress page numbering on first page
+indDir          equ 1                   ;Remember independent (last-used) directory
 

@@ -1,16 +1,16 @@
-                ;Bestand: TEDSTR.MAC
+                ;File: TEDSTR.MAC
 
 if1
                 .printx * Assemble: TEDSTR.MAC *
 endif
 
-                ;Dit bestand bevat alle TED-schermteksten en taal-afhankelijke
-                ; karaktertabellen.
+                ;This file contains all TED on-screen texts and the
+                ; language-dependent character tables.
 
-                ;De volgende talen worden ondersteund:
+                ;The following languages are supported:
                 ;
-                ;TAAL EQU NL            ;Nederlands
-                ;TAAL EQU DUITS         ; en Duits
+                ;TAAL EQU NL            ;Dutch
+                ;TAAL EQU DUITS         ; and German
 
 
 tab             equ   9
@@ -23,7 +23,7 @@ up              equ 1EH
 down            equ 1FH
 nul             equ 255
 
-                include offset.mac     ;Bevat var-offsets, Taal- en Demovlaggen
+                include offset.mac     ;Contains variable offsets, Language and Demo flags
 
                 global f2Kar,f3Kar,f4Kar,f5Kar,inhKar,prtKar,scrKar,indKar
                 global goKar,aliKar,insKar,kolKar,hlpKar,memKar,tabKar,pageKar
@@ -42,7 +42,7 @@ nul             equ 255
                 global TSAVNAM,TLOADNAM,TSAVINS,TZOEK,TZOEK2,TWEL,TACHTER,TONV
                 global tPageTabFull,tStkErr,tIndent,tRechts,tLinks
 
-                ;Videoram adressen van scherm teksten/waardes
+                ;Video-RAM addresses of on-screen texts/values
 
                 global vrmReg,vrmKol,vrmPag,vrmTF7
                 global xyFnk,xZoek
@@ -50,220 +50,220 @@ nul             equ 255
                 global xAantPos
 
 
-                ;Karaktertabellen voor de funktietoetsen
-                ; Indeling: Kar, kar, ..., 0
+                ;Character tables for the function-key menus
+                ; Layout: char, char, ..., 0
 
 
-if              TAAL eq NL              ;TRUE indien TAAL=Nederlands
+if              TAAL eq NL              ;TRUE if TAAL=Dutch
 
-                ;Nederlandstalige karakters bij funktietoetsen
+                ;Dutch-language hot-key characters for the function keys
 
-                ;Funktietoets 2
+                ;Function key 2
 
-F2KAR:          db 'l'                  ;Linkerkantlijn
-                db 'r'                  ;Rechterkantlijn
-                db 'a'                  ;Alinea instellingen
-                db 'z'                  ;Zet tab
-                db 'w'                  ;Wis tab
-                db 't'                  ;Tab instellingen
-                db 'm'                  ;Change Memorymapper
-                db 'p'                  ;Printer instelling
-                db 's'                  ;Sorteer instelling
-                db 'd'                  ;Printerdriver
-                db 'b'                  ;Bewaar instellingen
-                db 255                  ;Funktietoets
-                db 0                    ;Einde van tabel
+F2KAR:          db 'l'                  ;Left margin
+                db 'r'                  ;Right margin
+                db 'a'                  ;Paragraph settings
+                db 'z'                  ;Set tab stop
+                db 'w'                  ;Erase tab stop
+                db 't'                  ;Tab settings
+                db 'm'                  ;Change memory mapper
+                db 'p'                  ;Printer settings
+                db 's'                  ;Sort settings
+                db 'd'                  ;Printer driver
+                db 'b'                  ;Save settings
+                db 255                  ;Function key
+                db 0                    ;End of table
 
-                ;Funktietoets 3
+                ;Function key 3
 
-f3Kar:          db 'g'                  ;Geheugen vrij
-                db 'w'                  ;wis Tekst/Buffer
-                db 'i'                  ;disk Inhoud
-                db 'b'                  ;Backup aan/uit
-                db 'p'                  ;Pagina indikatie aan/uit/stop
-                db 'k'                  ;Kleur instellen
-                db 'e'                  ;Verander '.TXT'
-                db 'l'                  ;Kolominstellen
-                db 's'                  ;Scherm
-                db 'h'                  ;Kopi‰er hulpmenu
-                db 255                  ;Funktietoets
+f3Kar:          db 'g'                  ;Free memory ("Geheugen vrij")
+                db 'w'                  ;Wipe text / printer-buffer
+                db 'i'                  ;Disk directory ("Inhoud")
+                db 'b'                  ;Backup on/off
+                db 'p'                  ;Page-break indicator on/off/stop
+                db 'k'                  ;Set colour
+                db 'e'                  ;Change default extension '.TXT'
+                db 'l'                  ;Column setup ("koLom")
+                db 's'                  ;Screen settings
+                db 'h'                  ;Copy help menu
+                db 255                  ;Function key
                 db 0
 
-                ;Funktietoets 4
+                ;Function key 4
 
-F4KAR:          db 'n'                  ;Zoek nog eens
-                db 'z'                  ;Zoek
-                db 'b'                  ;Bewaar
-                db 'l'                  ;Laad
-                db 'g'                  ;Ga naar regel
-                db 'p'                  ;Print de tekst
+F4KAR:          db 'n'                  ;Search again ("Nog eens zoeken")
+                db 'z'                  ;Search ("Zoek")
+                db 'b'                  ;Save ("Bewaar")
+                db 'l'                  ;Load
+                db 'g'                  ;Go to line
+                db 'p'                  ;Print the text
                 db 's'                  ;Stop
-                db 255                  ;Funktietoets
+                db 255                  ;Function key
                 db 0
 
-                ;Funktietoets 5
+                ;Function key 5
 
-f5Kar:          db 's'                  ;Startblok
-                db 'e'                  ;Eindeblok
-                db 'd'                  ;Wis blokdefinitie
-                db 'k'                  ;Kopieer blok
-                db 'w'                  ;Wis blok
-                db 'v'                  ;Verplaats blok
-                db 'p'                  ;Print blok
-                db 't'                  ;sorTeer
-                db 'l'                  ;Laad blok
-                db 'b'                  ;Bewaar blok
-                db 'i'                  ;Inspringen
-                db 255                  ;Funktietoets
+f5Kar:          db 's'                  ;Start of block
+                db 'e'                  ;End of block
+                db 'd'                  ;Erase block definition
+                db 'k'                  ;Copy block
+                db 'w'                  ;Erase block contents
+                db 'v'                  ;Move block ("Verplaats")
+                db 'p'                  ;Print block
+                db 't'                  ;sorT (sort the block)
+                db 'l'                  ;Load block
+                db 'b'                  ;Save block
+                db 'i'                  ;Indent
+                db 255                  ;Function key
                 db 0
 
                 ;F2/Tab
 
 tabKar:         db ESC
-                db 'g'                  ;Gebruik in geheugen
-                db 'b'                  ;Bewaren op disk
-                db 'l'                  ;Direkt laden van disk
+                db 'g'                  ;Use tab table currently in memory
+                db 'b'                  ;Save tab table to disk
+                db 'l'                  ;Load tab table directly from disk
                 db 0
 
                 ;F2/MemMap
 
 memKar:         db ESC
-                db 'm'                  ;Mapper aan/uit
-                db 'v'                  ;Vram aan/uit
+                db 'm'                  ;Memory mapper on/off
+                db 'v'                  ;VRAM use on/off
                 db 0
 
-                ;F2/Bewaar instel.
+                ;F2/Save settings
 
 insKar:         db ESC
-                db 'e'                  ;Elke tekst bewaren
-                db 't'                  ;Bewaar in TED
-                db 'b'                  ;Bewaar instellingen
-                db 'l'                  ;Laad instellingen
+                db 'e'                  ;Save settings with every text
+                db 't'                  ;Save settings inside TED itself
+                db 'b'                  ;Save settings to a separate file
+                db 'l'                  ;Load settings from a file
                 db 0
 
-                ;F3/Kolom
+                ;F3/Column
 
 kolKar:         db ESC
-                db 'a'                  ;Aantal kolommen
+                db 'a'                  ;Number of columns
                 db 0
 
-                ;F3/Disk Inhoud
+                ;F3/Disk directory
 
 inhKar:         db ESC
                 db DOWN
                 db UP
                 db RIGHT
                 db LEFT
-                db 'i'                  ;Inhoud
-                db 'l'                  ;Tekst laden
-                db 'b'                  ;Voeg een blok toe
-                db 'w'                  ;File wissen
+                db 'i'                  ;Directory listing ("Inhoud")
+                db 'l'                  ;Load text
+                db 'b'                  ;Append a block from disk
+                db 'w'                  ;Erase file ("File wissen")
                 db 'm'                  ;Mail-merge
-                db 'k'                  ;Karakerset
-                db 's'                  ;Instellingen
+                db 'k'                  ;Character set
+                db 's'                  ;Settings
                 db 0
 
-                ;F3/Pagina
+                ;F3/Page
 
 pageKar:        db esc
-                db 'p'                  ;Plaats pagina stop
-                db 'v'                  ;Verwijder paginastop
-                db 'a'                  ;Verwijder alle paginastops
-                db 'n'                  ;Pagina-nummer indicatie
-                db 's'                  ;Pagina-stop indicatie
-                db 'g'                  ;Pagina-grens indicatie
+                db 'p'                  ;Place a page-break stop
+                db 'v'                  ;Remove the current page-break stop
+                db 'a'                  ;Remove all page-break stops
+                db 'n'                  ;Page-number indicator
+                db 's'                  ;Page-stop indicator line
+                db 'g'                  ;Page-boundary indicator line
                 db 0
 
-                ;F3/Hulp
+                ;F3/Help
 
 hlpKar:         db ESC
-                db 't'                  ;Hulp naar text
-                db 'm'                  ;Hulp naar menu
+                db 't'                  ;Copy help menu into the text
+                db 'm'                  ;Copy text back into the help menu
                 db 0
 
-                ;F2/Printer instellingen
+                ;F2/Printer settings
 
 PRTKAR:         db ESC
                 db 's'                  ;Setup string
-                db 'b'                  ;Boven marge
-                db 'o'                  ;Onder marge
-                db 'l'                  ;pagina Lengte
-                db '1'                  ;Kopregel tekst
-                db '2'                  ;Voetregel tekst
-                db 'm'                  ;Mail-Merge
-                db 'n'                  ;Mail-Merge Naam
-                db 'a'                  ;Kaart einde
-                db 'v'                  ;Veld einde
-                db 'e'                  ;Eerste paginanummer
-                db 'p'                  ;Kopregel Positie
-                db 't'                  ;Voetregel Positie
-                db 'f'                  ;Formfeed
-                db 'c'                  ;Continu printen
-                db 'r'                  ;Kopregel marge
-                db 'g'                  ;Voetregel marge
-                db 'i'                  ;Mail-Merge teken
-                db 'k'                  ;Eerste Kaart
+                db 'b'                  ;Top margin ("Boven")
+                db 'o'                  ;Bottom margin ("Onder")
+                db 'l'                  ;Page Length
+                db '1'                  ;Header (line 1) text
+                db '2'                  ;Footer (line 2) text
+                db 'm'                  ;Mail-merge
+                db 'n'                  ;Mail-merge file Name
+                db 'a'                  ;End-of-record (kAArt)
+                db 'v'                  ;End-of-field (Veld)
+                db 'e'                  ;First page number ("Eerste")
+                db 'p'                  ;Header line Position
+                db 't'                  ;FooTer line position
+                db 'f'                  ;Form feed
+                db 'c'                  ;Continuous printing
+                db 'r'                  ;Header maRgin
+                db 'g'                  ;Footer marGin
+                db 'i'                  ;Mail-merge marker character
+                db 'k'                  ;First record / Kaart
                 db 0
 
-                ;Scherm instellingen
+                ;Screen settings
 
 scrKar:         db ESC
-                db 's'                  ;Commandoregel op scherm
-                db 'c'                  ;Kleuren cursor
-                db 'b'                  ;Blok cursor
-                db 'v'                  ;Voorloop nul
-                db 'l'                  ;Lichtkrant
-                db 'g'                  ;Grote letters
-                db 'm'                  ;MSX set
+                db 's'                  ;Show command bar on screen
+                db 'c'                  ;Cursor colours
+                db 'b'                  ;Block-style cursor
+                db 'v'                  ;Leading zero in clock
+                db 'l'                  ;Information ticker ("Lichtkrant")
+                db 'g'                  ;Large letters in help menu
+                db 'm'                  ;MSX character set
                 db 'e'                  ;Edit mode
                 db 'a'                  ;Auto-indent
-                db 'r'                  ;Repeteer toetsen
-                db 'k'                  ;Karakterset naam
-                db 'i'                  ;Knipperende cursor
-                db 'n'                  ;Knippertijd aan
-                db 'u'                  ;Knippertijd uit
+                db 'r'                  ;Key-repeat
+                db 'k'                  ;Character-set file name
+                db 'i'                  ;Blinking cursor on/off
+                db 'n'                  ;Cursor blink time - on phase
+                db 'u'                  ;Cursor blink time - off phase
                 db 0
 
-                ;Karaktertabel voor F4/Ga Naar
+                ;Character table for F4/Go To
 
 goKar:          db ESC                  ;Escape
-                db 'r'                  ;Naar regel
-                db 't'                  ;Naar top
-                db 'b'                  ;Naar bodem
-                db 's'                  ;Naar blokstart
-                db 'e'                  ;Naar blokeinde
+                db 'r'                  ;Go to line ("Regel")
+                db 't'                  ;Go to top
+                db 'b'                  ;Go to bottom
+                db 's'                  ;Go to start of block
+                db 'e'                  ;Go to end of block
                 db 0
 
-                ;F2/Alinea instellingen
+                ;F2/Paragraph settings
 
 ALIKAR:         db ESC                  ;ESCape
-                db 'u'                  ;Uitvullen
-                db 'a'                  ;Afbreken
-                db 'i'                  ;Inspringen
-                db 's'                  ;Streepje
+                db 'u'                  ;Right-justify ("Uitvullen")
+                db 'a'                  ;Hyphenate / break ("Afbreken")
+                db 'i'                  ;Indent ("Inspringen")
+                db 's'                  ;Hyphen character ("Streepje")
                 db 0
 
                 ;F5/Indent
 
 indKar:         db esc                  ;ESCape
-                db 'a'                  ;Aantal posities
-                db left                 ;Schuif naar links
-                db right                ;Schuif naar rechts
+                db 'a'                  ;Number of positions to shift
+                db left                 ;Shift to the left
+                db right                ;Shift to the right
                 db 0
 
-                ;Videoram adressen van scherm teksten/waardes
+                ;Video-RAM addresses of on-screen texts/values
 
-VRMREG          equ 18                  ;Regelnummer
-VRMKOL          equ 30                  ;Kolomnummer
-VRMPAG          equ 41                  ;Paginanummer
-VRMTF7          equ 46                  ;'F7:Hulp'
+VRMREG          equ 18                  ;Line number
+VRMKOL          equ 30                  ;Column number
+VRMPAG          equ 41                  ;Page number
+VRMTF7          equ 46                  ;'F7:Hulp' (help label)
 
-                ;Cursor posities van schermteksten /waardes
+                ;Cursor positions of on-screen texts / values
 
 XYFNK           equ 3101H               ;F2/X etc
-XZOEK           equ 15                  ;Zoektekst
+XZOEK           equ 15                  ;Search-text field
 
-                ;Schermteksten
+                ;On-screen texts
 
 if              DEMO
 
@@ -290,7 +290,7 @@ TACCESS:        db cr,lf,tab,tab,'  Toegangs code: ',nul
 TGEBR:          db cr,lf,tab,'Gebruiker: ',nul
 endif
 
-                ;Lichtkrant
+                ;Information ticker ("Lichtkrant") text
 
 KRTSTART:       db "              M.J. Vriend's TED "
 
@@ -480,217 +480,217 @@ TWEL:           db ' Wel',nul
 TACHTER:        db 'Achte',nul
 TONV:           db 'Onv',nul
 
-endif           ;End Taal=Nederlands
+endif           ;End TAAL=Dutch
 
 
-if              TAAL eq DUITS           ;TRUE indien TAAL=DUITS
+if              TAAL eq DUITS           ;TRUE if TAAL=GERMAN
 
-                ;Duitstalige opties bij de funktietoetsen
+                ;German-language hot-key options for the function keys
 
-                ;Funktietoets 2
+                ;Function key 2
 
-F2KAR:          db 'l'                  ;Linkerkantlijn
-                db 'r'                  ;Rechterkantlijn
-                db 'a'                  ;Paragraph instellingen
-                db 'z'                  ;Zet tab
-                db 'e'                  ;Wis tab
-                db 't'                  ;Tab instellingen
-                db 'm'                  ;Change Memorymapper
-                db 'd'                  ;Printer instelling
-                db 'o'                  ;Sorteer instelling
-                db 'b'                  ;Printerdriver
-                db 's'                  ;Bewaar instellingen
-                db 255                  ;Funktietoets
-                db 0                    ;Einde van tabel
+F2KAR:          db 'l'                  ;Left margin
+                db 'r'                  ;Right margin
+                db 'a'                  ;Paragraph settings
+                db 'z'                  ;Set tab stop
+                db 'e'                  ;Erase tab stop
+                db 't'                  ;Tab settings
+                db 'm'                  ;Change memory mapper
+                db 'd'                  ;Printer settings
+                db 'o'                  ;Sort settings
+                db 'b'                  ;Printer driver
+                db 's'                  ;Save settings
+                db 255                  ;Function key
+                db 0                    ;End of table
 
-                ;Funktietoets 3
+                ;Function key 3
 
-F3KAR:          db 'r'                  ;Geheugen vrij
-                db 'l'                  ;wis Tekst/Buffer
-                db 'i'                  ;disk Inhoud
-                db 'b'                  ;Backup aan/uit
-                db 'p'                  ;Pagina stop - indikatie aan/uit
-                db 'f'                  ;Kleur instellen
-                db 'e'                  ;Verander '.TXT'
-                db 't'                  ;Kolominstellen
-                db 's'                  ;Scherm
-                db 'h'                  ;Kopi‰er hulpmenu
-                db 255                  ;Funktietoets
+F3KAR:          db 'r'                  ;Free memory ("Geheugen vrij")
+                db 'l'                  ;Wipe text / printer-buffer
+                db 'i'                  ;Disk directory ("Inhoud")
+                db 'b'                  ;Backup on/off
+                db 'p'                  ;Page-stop indicator on/off
+                db 'f'                  ;Set colour
+                db 'e'                  ;Change default extension '.TXT'
+                db 't'                  ;Column setup
+                db 's'                  ;Screen settings
+                db 'h'                  ;Copy help menu
+                db 255                  ;Function key
                 db 0
 
-                ;Funktietoets 4
+                ;Function key 4
 
-F4KAR:          db 'w'                  ;Zoek nog eens
-                db 'n'                  ;Zoek
-                db 's'                  ;Bewaar
-                db 'l'                  ;Laad
-                db 'g'                  ;Ga naar regel
-                db 'd'                  ;Print de tekst
+F4KAR:          db 'w'                  ;Search again
+                db 'n'                  ;Search
+                db 's'                  ;Save
+                db 'l'                  ;Load
+                db 'g'                  ;Go to line
+                db 'd'                  ;Print the text
                 db 'b'                  ;Stop
-                db 255                  ;Funktietoets
+                db 255                  ;Function key
                 db 0
 
-                ;Funktietoets 5
+                ;Function key 5
 
-F5KAR:          db 'a'                  ;Startblok
-                db 'e'                  ;Eindeblok
-                db 'u'                  ;Wis blokdefinitie
-                db 'k'                  ;Kopieer blok
-                db 'h'                  ;Wis blok
-                db 'v'                  ;Verplaats blok
-                db 'd'                  ;Print blok
-                db 't'                  ;sorTeer
-                db 'l'                  ;Laad blok
-                db 's'                  ;Bewaar blok
-                db 'i'                  ;Inspringen
-                db 255                  ;Funktietoets
+F5KAR:          db 'a'                  ;Start of block
+                db 'e'                  ;End of block
+                db 'u'                  ;Erase block definition
+                db 'k'                  ;Copy block
+                db 'h'                  ;Erase block contents
+                db 'v'                  ;Move block
+                db 'd'                  ;Print block
+                db 't'                  ;sorT (sort the block)
+                db 'l'                  ;Load block
+                db 's'                  ;Save block
+                db 'i'                  ;Indent
+                db 255                  ;Function key
                 db 0
 
                 ;F2/Tab
 
 tabKAR:         db ESC
-                db 'g'                  ;Gebruik in geheugen
-                db 's'                  ;Bewaren op disk
-                db 'l'                  ;Direkt laden van disk
+                db 'g'                  ;Use tab table currently in memory
+                db 's'                  ;Save tab table to disk
+                db 'l'                  ;Load tab table directly from disk
                 db 0
 
                 ;F2/MemMap
 
 MEMKAR:         db ESC
-                db 'r'                  ;Mapper aan/uit
-                db 'v'                  ;Vram aan/uit
+                db 'r'                  ;Memory mapper on/off
+                db 'v'                  ;VRAM use on/off
                 db 0
 
-                ;F2/Bewaar instel.
+                ;F2/Save settings
 
 INSKAR:         db ESC
-                db 't'                  ;Elke tekst bewaren
-                db 'd'                  ;Bewaar in TED
-                db 's'                  ;Bewaar instellingen
-                db 'l'                  ;Laad instellingen
+                db 't'                  ;Save settings with every text
+                db 'd'                  ;Save settings inside TED itself
+                db 's'                  ;Save settings to a separate file
+                db 'l'                  ;Load settings from a file
                 db 0
 
-                ;F3/Kolom
+                ;F3/Column
 
 KOLKAR:         db ESC
-                db 's'                  ;Aantal kolommen
+                db 's'                  ;Number of columns
                 db 0
 
-                ;F3/Disk Inhoud
+                ;F3/Disk directory
 
 INHKAR:         db ESC
                 db DOWN
                 db UP
                 db RIGHT
                 db LEFT
-                db 'i'                  ;Inhoud
-                db 'l'                  ;Tekst laden
-                db 'b'                  ;Voeg een blok toe
-                db 'h'                  ;File wissen
+                db 'i'                  ;Directory listing
+                db 'l'                  ;Load text
+                db 'b'                  ;Append a block from disk
+                db 'h'                  ;Erase file
                 db 'm'                  ;Mail-merge
-                db 'z'                  ;Karakerset
-                db 'e'                  ;Instellingen
+                db 'z'                  ;Character set
+                db 'e'                  ;Settings
                 db 0
 
-                ;F3/Pagina
+                ;F3/Page
 
 pageKar:        db esc
-                db 's'                  ;Setz Pagina stop
-                db 'e'                  ;Entfern pagina stop
-                db 'a'                  ;Entfern alle pagina stops
-                db 'n'                  ;Pagina-nummer indicatie aan/uit
-                db 'i'                  ;Pagina-stop indicatie aan/uit
-                db 'g'                  ;Pagina-grens indicatie aan/uit
+                db 's'                  ;Place a page-break stop ("Setz")
+                db 'e'                  ;Remove the current page-break stop ("Entfern")
+                db 'a'                  ;Remove all page-break stops
+                db 'n'                  ;Page-number indicator on/off
+                db 'i'                  ;Page-stop indicator line on/off
+                db 'g'                  ;Page-boundary indicator line on/off
                 db 0
 
-                ;F3/Hulp
+                ;F3/Help
 
 HLPKAR:         db ESC
-                db 'z'                  ;Hulp naar text
-                db 'v'                  ;Hulp naar menu
+                db 'z'                  ;Copy help menu into the text
+                db 'v'                  ;Copy text back into the help menu
                 db 0
 
-                ;Printer instellingen
+                ;Printer settings
 
 PRTKAR:         db ESC
                 db 's'                  ;Setup string
-                db 'o'                  ;Boven marge
-                db 'u'                  ;Onder marge
-                db 'l'                  ;pagina Lengte
-                db '1'                  ;Kopregel tekst
-                db '2'                  ;Voetregel tekst
-                db 'm'                  ;Mail-Merge
-                db 'n'                  ;Mail-Merge Naam
-                db 'a'                  ;Kaart einde
-                db 'd'                  ;Veld einde
-                db 'e'                  ;Eerste paginanummer
-                db 'p'                  ;Kopregel Positie
-                db 't'                  ;Voetregel Positie
-                db 'v'                  ;Formfeed
-                db 'r'                  ;Continu printen
-                db 'z'                  ;Kopregel marge
-                db 'i'                  ;Voetregel marge
-                db 'h'                  ;Mail-Merge teken
-                db 'k'                  ;Eerste Kaart
+                db 'o'                  ;Top margin ("Oben")
+                db 'u'                  ;Bottom margin ("Unten")
+                db 'l'                  ;Page Length
+                db '1'                  ;Header (line 1) text
+                db '2'                  ;Footer (line 2) text
+                db 'm'                  ;Mail-merge
+                db 'n'                  ;Mail-merge file Name
+                db 'a'                  ;End-of-record (Karte / kAArt)
+                db 'd'                  ;End-of-field
+                db 'e'                  ;First page number
+                db 'p'                  ;Header line Position
+                db 't'                  ;Footer line position
+                db 'v'                  ;Form feed ("Vorschub")
+                db 'r'                  ;Continuous printing
+                db 'z'                  ;Header margin ("Zeile")
+                db 'i'                  ;Footer margin
+                db 'h'                  ;Mail-merge marker character
+                db 'k'                  ;First record / Karte
                 db 0
 
-                ;Scherm instellingen
+                ;Screen settings
 
 ScrKAR:         db ESC
-                db 'b'                  ;Commandoregel op scherm
-                db 'f'                  ;Kleuren cursor
-                db 'c'                  ;Blok cursor
-                db 'u'                  ;Voorloop nul
-                db 's'                  ;Lichtkrant
-                db 'h'                  ;Grote letters
-                db 'm'                  ;MSX set
+                db 'b'                  ;Show command bar on screen ("Befehl")
+                db 'f'                  ;Cursor colours ("Farbe")
+                db 'c'                  ;Block-style cursor
+                db 'u'                  ;Leading zero in clock
+                db 's'                  ;Information ticker / scroll-text
+                db 'h'                  ;Large letters in help menu
+                db 'm'                  ;MSX character set
                 db 'e'                  ;Edit mode
                 db 'a'                  ;Auto-indent
-                db 'r'                  ;Repeteer toetsen
-                db 'z'                  ;Karakterset naam
-                db 'i'                  ;Knipperende cursor aan/uit
-                db 'n'                  ;Knippertijd aan
-                db 'o'                  ;Knippertijd uit
+                db 'r'                  ;Key-repeat
+                db 'z'                  ;Character-set file name
+                db 'i'                  ;Blinking cursor on/off
+                db 'n'                  ;Cursor blink time - on phase
+                db 'o'                  ;Cursor blink time - off phase
                 db 0
 
-                ;Karaktertabel voor F4/Ga Naar
+                ;Character table for F4/Go To
 
 GOKAR:          db ESC                  ;Escape
-                db 'z'                  ;Naar regel
-                db 'a'                  ;Naar top
-                db 'e'                  ;Naar bodem
-                db 'b'                  ;Naar blokstart
-                db 's'                  ;Naar blokeinde
+                db 'z'                  ;Go to line
+                db 'a'                  ;Go to top
+                db 'e'                  ;Go to bottom
+                db 'b'                  ;Go to start of block
+                db 's'                  ;Go to end of block
                 db 0
 
-                ;F2/Alinea instellingen
+                ;F2/Paragraph settings
 
 aliKar:         db esc                  ;ESCape
-                db 'b'                  ;Uitvullen
-                db 'w'                  ;Afbreken
-                db 'e'                  ;Inspringen
-                db 't'                  ;Streepje
+                db 'b'                  ;Right-justify ("Blocksatz")
+                db 'w'                  ;Hyphenate / word-break ("Wortumbruch")
+                db 'e'                  ;Indent
+                db 't'                  ;Hyphen character ("Trennstrich")
                 db 0
 
                 ;F5/Indent
 
 indKar:         db esc                  ;ESCape
-                db 'v'                  ;Aantal posities
-                db left                 ;Schuif naar links
-                db right                ;Schuif naar rechts
+                db 'v'                  ;Number of positions to shift ("Verschieb")
+                db left                 ;Shift to the left
+                db right                ;Shift to the right
                 db 0
 
-                ;Videoram adressen van scherm teksten/waardes
+                ;Video-RAM addresses of on-screen texts/values
 
-VRMREG          equ 17                  ;Regelnummer
-VRMKOL          equ 30                  ;Kolomnummer
-VRMPAG          equ 40                  ;Paginanummer
-VRMTF7          equ 45                  ;'F7:Hilfe'
+VRMREG          equ 17                  ;Line number
+VRMKOL          equ 30                  ;Column number
+VRMPAG          equ 40                  ;Page number
+VRMTF7          equ 45                  ;'F7:Hilfe' (help label)
 
-                ;Cursor posities van schermteksten /waardes
+                ;Cursor positions of on-screen texts / values
 
 XYFNK           equ 3101H               ;F2/X etc
-XZOEK           equ 14                  ;Zoektekst
+XZOEK           equ 14                  ;Search-text field
 
 if              DEMO
 TINTRO:         db cr
@@ -716,7 +716,7 @@ TACCESS:        db cr,lf,tab,tab,'Kode 2: ',nul
 TGEBR:          db cr,lf,tab,'Gebraucher: ',nul
 endif
 
-                ;Lichtkrant
+                ;Information ticker ("Lichtkrant") text
 
 KRTSTART:       db "              M.J. Vriend's TED (D) "
 
@@ -734,18 +734,16 @@ db 'Ein Gro',0e1h,'teil des Erl',94H,'ses von TED wird an Caritatieve Verb',84H,
 db 'gestiftet. '
 
 .comment %
-db 'n',84H,'heres k',94H,'nnen Sie in der EURO BOX erfahren unter Ruf Nr. '
-db '02508-659. Die EURO BOX ist eine Service Einrichtung von der Fa. HSH f',81H,'r '
-db "MSX'",'ler. Die EURO BOX bietet Ihnen folgendes: Schwartzes-Brett -*- Postf',84h,'cher '
-db '-*- Anzeigen -*- Neuheiten -*- Software -*- Tips -*- Tricks -*- Kontakte -*- '
-db 'Public Domain -*- Artikel -*- Nachrichten -*- Sonderangebote. Sie k',94H,'nnen '
-db 'Private Post oder Mitteilungen an Ihren MSX Freunden und Beckanten hinterlegen -*- '
-db '-*- MSX Bezugsquellen in Europa -*- Information ',81h,'ber Neuheiten -*- und vieles '
-db 'mehr erfahren in der EURO BOX. Die EURO BOX ist f',81h,'r Sie 24 Stunden am Tag, '
-db 'jeden Tag bereit. Wenn Sie Fragen zur EURO BOX haben Schreiben Sie an HSH '
-db 'Computervertrieb GmbH, Stichwort "EURO BOX", Wagenfeldstr. 55, '
-db '4406-Drensteinfurt, West Germany. Sie k',94H,'nnen aber auch unter Telefon Nr. '
-db '02508-659 die EURO BOX direkt erreichen. '
+ Disabled marketing block (translated from the original German):
+ More information about the EURO BOX is available by calling 02508-659.
+ The EURO BOX is a service operated by HSH for MSX users. It offers:
+ message board, mailboxes, classifieds, news, software, tips and tricks,
+ contacts, public domain, articles, special offers. You can leave private
+ mail for MSX friends and acquaintances; find MSX suppliers across Europe;
+ read up on new releases and much more. The EURO BOX is available 24
+ hours a day, every day. For questions, write to HSH Computervertrieb GmbH,
+ keyword "EURO BOX", Wagenfeldstr. 55, 4406-Drensteinfurt, West Germany,
+ or dial 02508-659 to reach the EURO BOX directly.
 %
 
 if              DEMO
@@ -931,7 +929,7 @@ TWEL:           db '    ',nul
 TACHTER:        db '  R',81h,'ckw',84H,'rts suchen',cr,lf,nul
 TONV:           db '  Im gesammten Text ersetzen ohne abzufragen',nul
 
-endif           ;End Taal=Duits
+endif           ;End TAAL=German
 
 if1
                 .printx * Pass 1 done *
@@ -939,5 +937,5 @@ else
                 .printx * Pass 2 done *
 endif
 
-                end                     ;End TEDSTR.MAC
+                end                     ;End of TEDSTR.MAC
 

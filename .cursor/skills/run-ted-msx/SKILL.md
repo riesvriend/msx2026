@@ -34,44 +34,50 @@ Verified working as of May 2026 against WebMSX 6.0.8.
 
 ## How do I run a hello-world build right now?
 
-1. `tools/pack.sh hello` rebuilds `dist/hello-build.zip` from `src/hello/`.
-2. Open
+The repo is published. Just click:
 
-   ```
-   https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&DISKA_FILES_URL=<your-zip-url>&FAST_BOOT=1&BASIC_ENTER=ML
-   ```
+```
+https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=ML&DISKA_FILES_URL=https://raw.githubusercontent.com/riesvriend/msx2026/main/dist/hello-build.zip
+```
 
-   or for local testing with the wrapper server in this repo: `http://localhost:8765/wmsx/index.html?MACHINE=MSX2PE&PRESETS=DISK,RAM512&DISKA_FILES_URL=http://localhost:8765/dist/hello-build.zip&FAST_BOOT=1&BASIC_ENTER=ML`.
-3. WebMSX boots into MSX-DOS 1.03, types `ML`, runs `M80 =HELLO/M/P` then `L80 HELLO,HELLO/N/E`.
-4. After the build, type `HELLO` in the emulator → `Hello, MSX!`.
+What happens:
+1. WebMSX fetches `hello-build.zip` from `raw.githubusercontent.com` and turns it into a 720K virtual floppy in drive A.
+2. `MSXDOS.SYS` + `COMMAND.COM` are in the zip, so it boots to `A>`.
+3. `AUTOEXEC.BAT` runs `M80 =HELLO/M/P` then `L80 HELLO,HELLO/N/E`, runs `HELLO` (`Hello, MSX!`), then `DIR HELLO.COM`.
+4. Then `BASIC_ENTER=ML` invokes `ML.BAT` again as a re-build sanity check.
 
-The hello-world `AUTOEXEC.BAT` chains the whole sequence automatically; that's the recommended pattern for any `.MAC` project.
+For local iteration: `tools/pack.sh hello` rebuilds `dist/hello-build.zip`. With a CORS-enabled local server: `http://localhost:8765/wmsx/index.html?MACHINE=MSX2PE&PRESETS=DISK,RAM512&DISKA_FILES_URL=http://localhost:8765/dist/hello-build.zip&FAST_BOOT=1&BASIC_ENTER=ML`. The `AUTOEXEC.BAT` pattern is what you want to copy for any new `.MAC` project.
 
 ## How do I rebuild TED.COM from source?
 
-1. `tools/pack.sh ted` rebuilds `dist/ted-build.zip` (tools + sources + `MK.BAT` + `LEES.MIJ`).
-2. Launch:
+Click:
 
-   ```
-   https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&DISKA_FILES_URL=<your-zip-url>&FAST_BOOT=1&BASIC_ENTER=MK&Z80_CLOCK_MODE=8&VDP_CLOCK_MODE=8
-   ```
+```
+https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=MK&Z80_CLOCK_MODE=8&VDP_CLOCK_MODE=8&DISKA_FILES_URL=https://raw.githubusercontent.com/riesvriend/msx2026/main/dist/ted-build.zip
+```
 
-3. `MK.BAT` runs the four M80 passes (TEDSTR, GETPUT, SUBTED, MAIN) then `L80 SUBTED,GETPUT,TEDSTR,MAIN,TED/N/E` — produces a fresh `TED.COM` (~30 KB).
-4. The same batch then runs `TED 12345` to register the binary (see "Why does my freshly built TED exit immediately?"), then `TED LEES.MIJ` to launch the editor.
+What `MK.BAT` does:
 
-At 8x Z80 turbo a fresh build takes a few minutes (TED is ~336 KB of source spread over four `.MAC` files). The original developer's `ML4.BAT` is included for reference but doesn't run on stock MSX-DOS 1 (uses `>` redirection and custom `disint`/`enaint` utilities); use `MK.BAT` instead.
+1. `M80 =TEDSTR/M/P`, `M80 =GETPUT/M/P`, `M80 =SUBTED/M/P`, `M80 =MAIN/M/P` — assembles all four modules.
+2. `L80 SUBTED,GETPUT,TEDSTR,MAIN,TED/N/E` — links them into a fresh `TED.COM` (~30 KB).
+3. `TED 12345` — runs the freshly linked binary's registration entry point (see "Why does my freshly built TED exit immediately?"). This patches `TED.COM` on disk to make the editor reachable.
+4. `TED LEES.MIJ` — launches the now-editorial `TED.COM` with the welcome letter open.
+
+At 8x Z80 turbo the full sequence takes ~90 s in a foreground browser tab. The original developer's `ML4.BAT` is included for reference but doesn't run on stock MSX-DOS 1 (uses `>` redirection and custom `disint`/`enaint` utilities) — use `MK.BAT` instead.
+
+For local iteration: `tools/pack.sh ted` rebuilds `dist/ted-build.zip` (tools + sources + `MK.BAT` + `LEES.MIJ`). Push to GitHub → next click of the URL above picks it up.
 
 ## How do I run TED without rebuilding?
 
-1. `tools/pack.sh ted-run` rebuilds `dist/ted-run.zip` (prebuilt `TED.COM` + helpers + manual + sample text + `MSXDOS.SYS` + `COMMAND.COM`).
-2. Launch:
+Click:
 
-   ```
-   https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&DISKA_FILES_URL=<your-zip-url>&FAST_BOOT=1&BASIC_ENTER=TED+LEES.MIJ
-   ```
+```
+https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=TED+LEES.MIJ&DISKA_FILES_URL=https://raw.githubusercontent.com/riesvriend/msx2026/main/dist/ted-run.zip
+```
 
-3. The editor appears immediately with `LEES.MIJ` loaded.
-4. Inside TED: `F7` for help, `F2` for settings, `F3` for system, `F4` for commands, `F5` for blocks. Status bar is in Dutch.
+`dist/ted-run.zip` contains the already-registered prebuilt `TED.COM` plus `LEES.MIJ`, the manual, helpers, and `MSXDOS.SYS` + `COMMAND.COM`. The editor appears within seconds. Inside TED: `F7` help, `F2` settings, `F3` system, `F4` commands, `F5` block ops. Status bar is in Dutch.
+
+Local iteration: `tools/pack.sh ted-run`.
 
 ## Why does my freshly built TED exit immediately?
 
@@ -107,13 +113,15 @@ Keep filenames 8.3 and uppercase. Use CRLF line endings (the `pack.sh` `ensure_c
 
 ## How do I distribute the launch URL to others?
 
-Push the repo to GitHub and use:
+Already done: this repo is public at `github.com/riesvriend/msx2026`, and `raw.githubusercontent.com` is CORS-friendly to `webmsx.org`. The three one-click URLs in [README.md](../../../README.md) work for anyone with a browser. They were verified end-to-end on May 9 2026 against WebMSX 6.0.8.
+
+For your own fork, replace `riesvriend` with your GitHub username:
 
 ```
-https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&DISKA_FILES_URL=https://raw.githubusercontent.com/<user>/msx2026/main/dist/ted-run.zip&FAST_BOOT=1&BASIC_ENTER=TED+LEES.MIJ
+https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=TED+LEES.MIJ&DISKA_FILES_URL=https://raw.githubusercontent.com/<user>/msx2026/main/dist/ted-run.zip
 ```
 
-`raw.githubusercontent.com` is CORS-friendly. Arbitrary hosts may not be — drag-drop the zip onto the WebMSX page is the always-works fallback.
+Arbitrary other hosts may not have CORS — drag-drop the zip onto the WebMSX page is the always-works fallback.
 
 ## Why does my zip boot to MSX BASIC instead of A>?
 

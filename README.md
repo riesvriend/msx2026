@@ -11,7 +11,8 @@ These open the online emulator and have it pull a ZIP-as-floppy straight from th
 | **Run prebuilt TED** (drops into the editor on `LEES.MIJ`) | [Launch](https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=TED+LEES.MIJ&DISKA_FILES_URL=https://raw.githubusercontent.com/riesvriend/msx2026/main/dist/ted-run.zip) | ~5 s |
 | **Rebuild TED from source** (4× M80 + L80 + register + run) | [Launch](https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=MK&Z80_CLOCK_MODE=8&VDP_CLOCK_MODE=8&DISKA_FILES_URL=https://raw.githubusercontent.com/riesvriend/msx2026/main/dist/ted-build.zip) | ~90 s |
 | **Hello-world sanity check** (M80 → L80 → `Hello, MSX!`) | [Launch](https://webmsx.org/?MACHINE=MSX2PE&PRESETS=DISK,RAM512&FAST_BOOT=1&BASIC_ENTER=ML&DISKA_FILES_URL=https://raw.githubusercontent.com/riesvriend/msx2026/main/dist/hello-build.zip) | ~5 s |
-| **Read the manual** | [doc/TED26.utf8.txt](doc/TED26.utf8.txt) — or inside TED with `BASIC_ENTER=TED+TED26.DOC` | — |
+| **Read the manual (English)** | [doc/TED26ENG.utf8.txt](doc/TED26ENG.utf8.txt) — or inside TED with `BASIC_ENTER=TED+TED26ENG.DOC` | — |
+| **Read the manual (Dutch original)** | [doc/TED26.utf8.txt](doc/TED26.utf8.txt) — or inside TED with `BASIC_ENTER=TED+TED26.DOC` | — |
 
 > Tip: If `raw.githubusercontent.com` ever blocks (rate limits, corporate proxy), download the zip from [`dist/`](dist/) and drag-drop it onto the WebMSX screen — same effect.
 
@@ -34,4 +35,4 @@ The launch URLs above always pick up the latest `main` of each zip.
 
 ## See also
 
-The full walkthrough — including the registration step that lets a freshly built `TED.COM` actually start the editor — is captured as a question-driven skill at [.cursor/skills/run-ted-msx/SKILL.md](.cursor/skills/run-ted-msx/SKILL.md).
+The full walkthrough — including the registration step that lets a freshly built `TED.COM` actually start the editor — is captured as a question-driven skill at [.claude/skills/run-ted-msx/SKILL.md](.claude/skills/run-ted-msx/SKILL.md).

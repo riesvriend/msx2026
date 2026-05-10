@@ -1,0 +1,2204 @@
+   To print this manual, press F4, then press P.
+
+	      █████🮘████████🮘 ▂▄▆ █████  🮙███████🮙▆▄▂
+		🮂▀🮅🮘███🮅▀🮂   ████ 🮅▀🮂	  🮙█ 🮂▀🮅█🮙████
+		    ███🮘     ████ ▆▄▂	  🮙█	 🮙████
+		    ███🮘     ████ █████   🮙█	 🮙████
+		    ███🮘     ████ 🮅▀🮂	  🮙█	 🮙████
+		    ███🮘     ████ █▆▄▂	  🮙█ ▂▄▆█🮙████
+		    ███🮘     🮂▀🮅█ █████  🮙███████🮙🮅▀🮂
+
+		      TED version #2.6 manual
+
+		  Copyright (C) 1991 M.S. BBS Jos-Tel
+			    (C) M.J. Vriend
+		    English translation (C) 2026
+
+	CONTENTS					      Page
+
+1.	Introduction.............................................  3
+
+2.	The Jos-Tel Multiple Sclerosis fund-raiser...............  4
+   2.1	  What is Multiple Sclerosis.............................  4
+   2.2	  What happens with the proceeds of the Jos-Tel fund.....  5
+
+3.	Installing TED...........................................  6
+   3.1	  Preparing a working diskette...........................  6
+   3.2	  Starting the program...................................  7
+
+4.	Screen layout............................................  8
+   4.1	  Status lines...........................................  8
+   4.2	  Text lines.............................................  9
+
+5.	Keyboard................................................. 10
+   5.1	  Letter keys........................................... 10
+   5.2	  Other keys............................................ 10
+
+6.	Description of the function-key commands................. 14
+   6.1	  Structure of the function keys........................ 14
+   6.2	  Function keys 1 and 6: page up / page down............ 14
+   6.3	  Function key 2: Settings.............................. 14
+   6.4	  Function key 3: System................................ 23
+   6.5	  Function key 4: Commands.............................. 30
+   6.6	  Function key 5: Block functions....................... 32
+   6.7	  Function key 7: Help menu............................. 32
+
+7.	Control-key commands..................................... 33
+   7.1	  How they work......................................... 33
+   7.2	  Starting the TEDINS6 install program.................. 33
+   7.3	  Showing the current settings.......................... 33
+   7.4	  Setting key combinations.............................. 33
+   7.5	  Saving the key combinations........................... 34
+   7.6	  Leaving TEDINS6....................................... 34
+
+8.	Step-by-step examples.................................... 35
+   8.1	  Reflowing text into paragraphs........................ 35
+   8.2	  Form letter with mail merge........................... 36
+   8.3	  Lists................................................. 38
+   8.4	  Text in columns....................................... 38
+   8.5	  Pascal program........................................ 39
+   8.6	  BASIC program......................................... 39
+   8.7	  Assembler program..................................... 40
+
+9.	The MemMan memory manager................................ 41
+   9.1	  Installing MemMan..................................... 41
+
+10.	The PB.TSR printer-buffer program........................ 42
+  10.1	  Installing the printer buffer......................... 42
+  10.2	  The PRINT.COM helper program.......................... 42
+
+
+Appendix A - Quick reference of functions........................ 44
+Appendix B - Changes since TED 2.5............................... 48
+
+Ordering, information, etc....................................... 49
+
+
+§ 1.  Introduction
+
+TED is a full-featured word processor for MSX2 computers. TED is
+particularly fast, easy to operate, and has a large memory
+capacity.
+
+TED can be used for, among other things:
+   - letters
+   - reports
+   - manuals
+   - personally addressed mailings
+   - meeting minutes
+   - programming in assembler, Pascal, C, BASIC, etc.
+
+TED uses all available MSX2 memory, both Video RAM and the Memory
+Mapper, and can also cooperate with a printer buffer and a
+RAM disk. TED runs under both the MSX-DOS1 and MSX-DOS2 operating
+systems.
+
+The demonstration version of TED is called TEDDEMO.COM. This demo
+is almost identical to TED 2.6; only the save and print functions
+are removed. The evaluation program may be freely distributed.
+You can buy a registered version of TED 2.6 from Jos-Tel for
+ƒ 50,=. That price includes the diskette and shipping; the entire
+profit (about ƒ 40,=) goes to the Dutch Multiple Sclerosis
+Foundation. An accounting can be found in the Jos-Tel BBS.
+
+
+§ 2.  The Jos-Tel Multiple Sclerosis fund-raiser
+
+TED has been in development for three years and is still being
+adapted and extended to user needs. TED is developed and sold in
+the Netherlands by MS-BBS Jos-Tel. This BBS aims to raise money
+for the Friends of Multiple Sclerosis Research Foundation by
+selling various MSX and MS-DOS programs, including TED.
+
+
+§ 2.1  What is Multiple Sclerosis
+
+Anyone between the ages of 20 and 40 can fall victim to the
+debilitating disease Multiple Sclerosis. Medical science is
+helpless because there is hardly any money for research. Your
+contribution helps put an end to the threat that MS poses to all
+of us.
+
+MS - a disease of the nervous system.
+MS - leads to mild paralysis.
+MS - whose cause is unknown so a cure is not possible.
+MS - where you never know when the next attack will take away
+     another piece of your energy.
+MS - a quiet sorrow for the person who has it and for the partner
+     who watches helplessly.
+
+
+§ 2.2  What happens with the proceeds of the Jos-Tel fund-raiser
+
+By making a donation in support of the Friends of M.S. Research
+Foundation, you can download some very nice programs from
+Jos-Tel.
+
+The Friends of M.S. Research Foundation has set itself the goal
+of funding research into the cause and treatment of Multiple
+Sclerosis. The foundation uses its funds to support researchers,
+caregivers, etc.
+
+Every month I transfer your contributions to the giro account of
+the MS Foundation. An accounting of this can be found in the
+Jos-Tel BBS.
+
+Thank you for purchasing this program,
+
+					 with kind regards,
+
+						   J.R. de Boer,
+						   Sysop Jos-Tel
+
+
+With our endorsement, signed,
+
+   Mw. M. du Bois	  director MS Foundation, The Hague
+   Dr. P.J.H.W. Jansen	  neurologist St. Anthonius Hospital, Sneek
+   Ted de Braak 	  radio/TV presenter-entertainer, Lelystad
+   Chriet Titulaer	  Wondere Wereld presenter, Houten
+   Bert Haanstra	  filmmaker, Laren
+   Thijs van Leer	  musician, Huizen
+   Prof. O.R. Hommes	  neurologist, Nijmegen
+
+
+§ 3. Installing TED
+
+On the original TED diskette you will find the TED.COM program,
+some helper programs and various text files from the Jos-Tel BBS.
+You should copy this diskette directly to a blank diskette and
+use the copy as your working disk. The original can then be
+stored in a safe place.
+
+TED is protected by means of a user name embedded in every sold
+copy. Your user name is shown on screen every time you exit TED.
+You may always make working copies for your own use. Of course
+it is not allowed to distribute or copy TED for third parties.
+Please respect the Multiple Sclerosis fund-raiser and support
+the cause by not distributing copies!
+
+
+§ 3.1  Preparing a working diskette
+
+The MSXDOS system, which is protected by copyright, is not on
+the original TED diskette, so you also need to copy the
+MSXDOS.SYS and COMMAND.COM files to your working disk.
+
+The best way is as follows:
+
+1. Make sure you have a blank, formatted diskette ready, and
+   start your computer with any MSXDOS diskette in the A: drive,
+   for example the system diskette that came with your computer.
+   If you have two disk drives, you can already place the blank
+   diskette in the B: drive.
+
+2. After the A> prompt of MSXDOS, type the following command:
+   COPY  A:MSXDOS.SYS B:
+   This copies the MSXDOS.SYS file from the system diskette to
+   the (still empty) TED working disk. If you have only one disk
+   drive, you will have to swap the diskettes when prompted.
+
+3. In the same way, copy the COMMAND.COM file from your system
+   diskette to the working disk with the command:
+   COPY A:COMMAND.COM B:
+
+4. Next put the original TED diskette in the A: drive and copy
+   all files to the working disk with the command:
+   COPY A:*.* B:
+
+
+§ 3.2  Starting TED
+
+You switch the computer on with the TED working diskette in the
+A: drive. After a few seconds the A> prompt of MSX-DOS appears.
+By now typing the command:
+
+TED
+
+and pressing Return, TED is loaded and started. It is also
+possible to have TED automatically read a text file at startup,
+for example the file `BRIEF.TXT'. To do this, type the following
+after the A> prompt of MSX-DOS:
+
+TED BRIEF.TXT
+
+TED is then loaded and the text file with the name 'BRIEF.TXT'
+is read into memory. You can of course choose any other
+filename. If you don't supply a name extension, the default
+extension that you can configure yourself is used.
+Note: The extension is the part of the filename after the dot;
+in this example the extension is therefore '.TXT'.
+
+If MSX-DOS 2 is used, you can also specify which directory the
+file should be loaded from.
+
+
+§ 4. Screen layout
+
+§ 4.1 Status lines
+
+The lines that do not belong to the actual text are shown in
+'inverse' (= the opposite colour). By default this colour is
+green.
+
+- Information line
+  The top line of the screen (information line) shows the
+following:
+
+	- the state of the 'Insert' flag.
+	- the current line and column number of the cursor
+	- the current page. Page length can be set with command
+	  F2/P/L.
+	- The active function or control key. If no function is
+	  active, it shows: "F7:Help".
+	- an information ticker
+	- a clock
+	- Below the information line is the filename of the
+	  current text. If MSX-DOS2 is used, the full search path
+	  is shown, including any sub-directories.
+
+- Command line
+  The line below the information line is the command line. This
+line shows the meanings of the function keys.
+
+- Ruler
+  The second-to-last line of the screen shows the boundaries of
+the left and right margins, as well as the configurable tab
+stops. The left margin is indicated with the letter 'L' and the
+right margin with the letter 'R'. A tab stop is shown by the
+'+' character. The arrow on the bottom line shows the column
+position of the cursor.
+
+
+§ 4.2 Text lines
+
+The remaining lines have the 'normal' colour and contain the
+text being edited. Text that is part of a block is shown in
+inverse. At the right edge of each of these lines a 'status
+character' is shown. This character is shown in inverse and
+contains information about the corresponding text line.
+
+
+The meanings of the status characters are:
+
+space	Indicates that the line is not the end of the paragraph.
+	This is the case when the last character of the line is a
+	space. So you can add a line to a paragraph by placing a
+	space at the end of that line.
+
+<	Marks the end of a paragraph. Reflowing with the HOME key
+	will therefore stop at this line.
+
++	This status character is shown when the line contains
+	more characters than the screen can display.
+
+1..5	These status characters are used to mark the last line of
+	the column with the corresponding number.
+P	Marks the last line of the last column of a page.
+
+
+§ 5. The keyboard
+
+§ 5.1 Letter keys
+
+As with any word processor or typewriter, the letter keys
+(A..Z 1..9 etc.) are used to type the text. When the right
+margin is reached, the entire word is moved to the next line, so
+you don't need to watch whether you have reached the end of the
+line. The Return key is used to start a new paragraph.
+
+
+§ 5.2 Other keys
+
+In addition to the regular letter keys, there are a number of
+keys with a special meaning.
+
+The cursor (arrow) keys move the cursor (the cursor indicates
+where the next character will be placed). When moving the
+cursor, the text scrolls up, down, left or right as needed. The
+cursor cannot be placed more than one position past the last
+character of a line.
+
+
+RETURN	Sends the cursor to the start of the next line. If the
+	insert mode is ON, the underlying text moves down one
+	line.
+
+BS	Deletes the character to the left of the cursor.
+DEL	Deletes the character under the cursor.
+	SHIFT+DEL deletes the text to the right of the cursor.
+	CTRL+DEL  deletes the current line.
+
+INS	Toggles insert mode on or off. With this you decide
+	whether a typed character should overwrite the current
+	one, or whether the typed character should be inserted.
+
+HOME	Reflows the paragraph the cursor is in, based on the
+	current margin settings. Paragraphs are optionally also
+	right-aligned (set via F2/A).
+	If the hyphenation option is enabled with F2/A, you may
+	in some cases be asked to hyphenate words. Words are only
+	hyphenated when at least five letters of the word still
+	fit on the previous line.
+	The cursor is then placed on the relevant word and a
+	help line appears at the bottom of the screen. You can
+	then use the left/right cursor keys to move the cursor to
+	the position where the word should be split, then press
+	Return. If however the word cannot be hyphenated, press
+	the spacebar; the entire word is then wrapped to the next
+	line. If you want to abort reflowing the paragraph,
+	because for example you made a mistake while hyphenating,
+	press ESCape.
+
+	N.B.: At the rightmost position of a line only spaces
+	      can be placed, even if a word still seems to fit
+	      entirely on the line. These spaces indicate that
+	      the paragraph continues on the next line.
+
+	On the input lines of the various menus, pressing the
+	HOME key clears the entire current line. This works
+	faster than clearing the line with the BS (back-space)
+	key.
+
+	CTRL+HOME:  Almost identical to HOME, but reflows the
+		    paragraph from the cursor position onward,
+		    leaving the text before the cursor untouched.
+		    This function is particularly useful for
+		    reflowing a paragraph with a sub-heading
+		    before the left margin. A worked example of
+		    this option can be found in § 8.1, reflowing
+		    paragraphs.
+
+	SHIFT+HOME: Almost identical to HOME, but indents the
+		    first line of the paragraph. The number of
+		    positions can be set with F2/A/I.
+
+	GRAPH+HOME: Centers the current line based on the
+		    current margin settings.
+
+CTRL	When CTRL is pressed together with a left or right
+	cursor key, the cursor moves to the start, or end, of
+	the current line. Together with the up or down key, the
+	cursor moves one screen height up or down (this is the
+	same as function keys F6 and F1).
+	Furthermore, by holding CTRL and then pressing one or
+	two letter keys, you can perform the same options as
+	those that can be triggered with function keys. You can
+	configure these letter combinations with the program
+	TEDINS6.BAS, see § 7.
+	N.B.: The ^-character is often used to indicate the CTRL
+	key.
+
+SHIFT	Works as the regular shift key, but also has special
+	functions:
+
+	SHIFT+Right/Left arrow: Cursor one word to the right
+	respectively left.
+
+	SHIFT+Up/Down arrow: Cursor to the start of the previous
+	or next printer page or column. The page length can be
+	configured via F2/Print/Length. By default the text is
+	printed in one column, so each column starts on a new
+	page. The F3/koLom command can be used to change the
+	number of columns per page.
+
+TAB	Moves the cursor to the next tab stop. A tab stop is
+	shown in the ruler at the bottom of the screen as a
+	crossed mark. If insert mode is ON, spaces are inserted
+	in the line; otherwise the cursor jumps over the text
+	without inserting spaces.
+	When the auto-indent function is ON (command F3/S/A),
+	the function of the TAB key changes. The cursor stops
+	not only at tab stops but also under the start of a word
+	on the previous line. See also the description of the
+	F3/S/A function.
+
+	SHIFT+TAB: With this key combination you can enter text
+		   in front of the current left margin. Text
+		   entered after shift+tab is not automatically
+		   transported from the first screen position to
+		   the start of the left margin. This effect is
+		   therefore only noticeable when the left margin
+		   is at a column position greater than 1.
+
+ESC	Has 2 meanings:
+	1. Cancels a choice made via a function or control key.
+	2. While typing text it produces an 'escape character',
+	   which can be used to control the printer. This escape
+	   character is shown on screen as an inverse letter 'e'.
+	   N.B.: Look up the printer codes in your printer
+	   manual!
+
+SELECT	Produces the Control prefix character. The advanced user
+	can use this to enter the ascii characters that are
+	normally only used as control codes. These include the
+	characters with ascii numbers 0..31, 127 (DEL) and 255
+	(Cursor).
+
+	The control prefix character is an inverse-displayed
+	^-character. Directly after this control character you
+	must enter a second character. When the text is saved to
+	disk, the ascii number of this second character minus 64
+	is taken.
+
+	Example: the combination ^G stands for the ascii
+		 character with value 7 (beep), because the
+		 letter G has ascii number 71, and 71-64 is 7.
+
+	Other useful characters are for example:
+
+	^L: cls 		^[: escape, inverse 'e' character
+	^\: cursor right	^]: cursor left
+	^^: cursor up		^_: cursor down
+
+	See the standard ASCII table for further details; it is
+	in nearly every MSX manual.
+
+STOP	With the STOP key the state of the cassette relay can be
+	toggled. If a cassette recorder is connected to the
+	cassette connector, the cassette motor can thus be
+	switched on and off. This makes it easier, for example,
+	to type out dictated text from cassette. Hobbyists can
+	of course also switch all kinds of other things on and
+	off via the cassette relay.
+
+
+§ 6.  Description of the function-key commands
+
+§ 6.1  Structure of the function keys
+
+The meanings of the function keys are shown in the command line
+at the top of the screen. After pressing one of the function
+keys F2..F5, a 2nd command line appears. This sub-line shows the
+options belonging to that function key, which you can select by
+pressing a letter key (indicated with a capital letter). If you
+want to return to the 'normal' command line without making a
+choice, press ESC(ape). You can then continue where you left
+off.
+
+A complete description of each function key and the corresponding
+options follows. A short summary list can be found in appendix A.
+
+
+§ 6.2  Function keys F1 and F6: Down/Up
+
+   Moves the cursor one screen height down, respectively up.
+
+
+§ 6.3  Function key F2: Settings
+
+
+F2/L and F2/R: Left/Right margin
+
+   Set the left or right margin by entering a column number. If
+   you enter nothing, the current cursor position is used.
+
+   While typing the text is placed within the margins as much as
+   possible. If however a particular paragraph has been changed
+   with DEL and INS etc., you can press the HOME key to reflow
+   the paragraph again.
+
+
+F2/A: Paragraph (Alinea)
+
+   With this you can set how the Home key reflows paragraphs.
+   You have the following options:
+
+   -U: Justify (Uitvullen)
+       Right-justify paragraphs on/off.
+
+   -A: Hyphenate (Afbreken)
+       Hyphenation of words on/off.
+
+   -S: Hyphenation mark (Streepje)
+       Shape of the hyphenation mark.
+       This mark is used to indicate that a word has been
+       hyphenated. You have the choice between a long dash: '-'
+       (Ascii nr. 45) and a short dash: '·' (Ascii nr. 250). It
+       is recommended to use the short dash, because otherwise
+       there can be confusion between a hyphenation mark and a
+       hyphen connector. Take for example the following
+       sentence (in Dutch):
+
+       "De auto heeft een voor- en een achterruit"
+       ("The car has a windshield and a rear window")
+
+       While reflowing this sentence - via the "HOME" key - the
+       hyphen after the word 'voor' must not be confused with a
+       hyphenation mark. The words "voor-" and "en" would then
+       be joined together, which is not the intent in this
+       example.
+       By using the shorter 'MSX-dash' as the hyphenation mark,
+       this confusion is avoided. While printing - via the
+       Printer Driver - the hyphenation mark "·" (Shift+Graph+C
+       on the keyboard) is automatically replaced by a regular
+       dash.
+
+       For texts that need to be usable on computers without the
+       MSX or IBM character set, the 'long' dash should always
+       be used, since the short dash does not exist on other
+       brands of computers. In that case you can of course also
+       turn off hyphenation with the F2/A function.
+
+   -I: Indent (Inspringen)
+       Set the number of positions to indent at the start of a
+       paragraph when reflowing with shift+home.
+
+
+F2/Z and F2/W: Set/Clear tab stop
+
+       Set or clear a tab stop at the position where the cursor
+       is. In the ruler at the bottom of the screen the crossed
+       line that indicates the tab stop appears or disappears.
+
+
+F2/T: Tab settings
+
+       With this you can specify whether runs of spaces may be
+       stored as TAB characters (ascii no. 9). You have three
+       options:
+
+   -G: Use Tab characters in memory (Geheugen)
+       If this option is enabled, more text fits in memory but
+       the load and save functions are somewhat slower. The
+       spaces are converted based on the tab stops set with
+       F2/W and F2/Z.
+       Toggling this setting clears the current text, so save
+       to disk first!
+
+   -B: Save Tab characters to disk (Bewaar)
+       Using this option produces shorter disk files. The
+       spaces are converted to TAB characters based on the
+       configurable tab stops. If you load text that was saved
+       with a different tab-stop setting, the text is adapted
+       to the new setting. If you don't want this, turn this
+       option off before saving the text.
+       Also when text made with TED needs to be loaded into
+       word processors that don't know TAB characters (e.g.
+       Tasword and the Turbo Pascal editor), turn this option
+       off.
+
+   -L: Load Tab characters directly from disk (Laad)
+       If this option is enabled, all tab characters are placed
+       directly from disk into memory, and runs of spaces that
+       could possibly also be represented by one or more tab
+       characters are not converted to tab characters. This
+       speeds up loading.
+
+       If however the text is not optimally provided with tab
+       characters (texts that have been entirely typed in TED
+       are), less text fits in memory. It is therefore
+       advisable to turn this option OFF when reading text
+       files that were not created with TED. If you don't, the
+       text will not be optimally provided with TAB characters
+       during saving either, so the file will take more space
+       on disk than necessary.
+
+      Summary:
+	- For the smallest possible text, use the setting
+	  ON, ON, OFF
+	- For the fastest possible loading/saving, use the
+	  setting OFF, OFF, OFF
+	- If you want both options, first save the text with
+	  as many TABs as possible (setting ON, ON, OFF), then
+	  switch the setting to ON, ON, ON and save this
+	  setting with F2/B. The text will from then on be
+	  loaded/saved quickly but the existing TAB characters
+	  remain. When you add lines, those will also be
+	  optimally provided with TAB characters.
+
+
+F2/M: Memorymapper
+
+   With this you can decide whether TED may use the Memory
+   mapper and/or the Video RAM. This is especially important
+   when a RAMdisk program is used under MSX-DOS1. After using
+   this option, save the current settings to disk via
+   F2/Save/Ted, so TED already knows during startup which part
+   of memory may be used. Disabling for instance the memory
+   mapper afterwards can have fatal consequences for an already
+   present ramdisk.
+
+   An exception is the printer-buffer program PB. TED detects
+   the presence of this program directly after startup and
+   makes sure no memory conflicts arise. Using PB.COM reduces
+   the maximum available memory to 150 kilobytes.
+
+   If the MemMan memory manager or the MSX-DOS2 operating
+   system is used, TED automatically determines which part of
+   memory is still free for use. Specifying whether or not TED
+   may use the Memory Mapper(s!) therefore has no effect under
+   DOS2 or MemMan; TED will ignore this setting.
+
+   Changing the Memory Mapper and Video RAM settings clears
+   the current text, so save to disk first!
+
+
+F2/P: Printer
+
+   With this you can specify how the text should be printed.
+   You have several options, indicated on the screen by a
+   capital letter. To change the header or footer line, however,
+   choose a digit (1 or 2).
+
+   You have the following options:
+
+   -S: Setup String
+       This string is sent to the printer every time printing
+       starts. It usually consists of a few ESC codes, e.g.:
+       ESC L006 (with this code your MSX printer is set to a
+       left margin at column 6). With F2/D you can also assign
+       special codes to certain characters, so that characters
+       with ascii number lower than 32 can also be sent to the
+       printer.
+
+   -B: Top margin (Boven)
+       Number of empty lines added at the top of each page.
+       The header line can be placed at any desired position
+       within the top margin.
+
+   -O: Bottom margin (Onder)
+       Number of empty lines added at the bottom of each page.
+       The footer line can be placed at any desired position
+       within the bottom margin.
+
+   -L: Page length (Lengte)
+       The number of lines per page that contains text. If the
+       page length is set to zero, the text between the fixed
+       page-stops is not divided into pages. Fixed page-stops
+       can be placed in the text by means of the command
+       F3/Page/Place page-stop.
+
+   -1: Header line
+       Text of up to 78 characters that is automatically placed
+       above each page. If you want the page number printed in
+       the header line, type $P at the desired place. While
+       printing, the current page number will be placed there.
+
+   -2: Footer line
+       The same as the header line, except that it is placed at
+       the bottom rather than the top of the page.
+
+   -E: First page number
+       The number of the first page printed.
+
+   -P: Header line position
+       Column number of the first character of the header line.
+
+   -T: Footer line position
+       Column number of the first character of the footer line.
+
+   -R: Header line margin
+       Indicates on which line within the top margin the header
+       line is placed. If the header line margin falls outside
+       the top margin, no header is printed.
+
+   -G: Footer line margin
+       Indicates on which line within the bottom margin the
+       footer line is placed. If the footer line margin falls
+       outside the bottom margin, no footer is printed.
+       For example, if no page number needs to be printed at
+       the bottom of each page, the footer line margin can be
+       set to 0.
+
+   -F: Formfeed
+       If this option is ON, a formfeed character (ascii 12) is
+       sent to the printer after every page. On most printers
+       this advances the printer to the next page. If your
+       printer doesn't have this capability, or you want to
+       suppress page advancement or have it handled by the Top
+       and Bottom margins, turn this option off.
+
+   -C: Continuous printing
+       If this option is OFF, printing pauses at the start of
+       each new page. If you press a key, printing continues.
+       If you press ESCape, printing is interrupted.
+       If the option is ON, printing continues without pausing.
+
+   -M: Mail-Merge
+       If this option is on, while printing with F4/P or F5/P
+       a data file is read in. The data from this file can
+       then be inserted into the text while printing. The data
+       can come from any database program, or even from a
+       'plain' text file made with TED and optionally sorted.
+       The text is reprinted until all cards from the data
+       file have been processed.
+
+   -N: Filename (Naam)
+       Type here the name of the data file to be inserted by
+       the Mail-Merge function. This name can also be selected
+       with the command F3/Inhoud/Mail-merge.
+
+   -I: Mail-merge marker
+       Here you can enter the character you want to use to
+       refer in the text to a field (line) from the database
+       file. By default the dollar ($) character is used.
+       Suppose you have entered an address file with TED. You
+       have entered the name, street, postcode and city in
+       sequence. The name is therefore in the first field, the
+       address in the second and the postcode and city in the
+       third.
+       To now print the person's name, you must refer to the
+       first field of the card and so type $(1). The
+       parentheses around the field number are required. The
+       highest possible field number is 99, the lowest is 1.
+
+   -A: Card terminator
+       Here you enter the characters, or Ascii numbers, that
+       indicate the end of each card in the data file.
+       TED can only distinguish between successive cards while
+       inserting data when the end of each card is clearly
+       indicated. If you enter a data file with TED, you have
+       to put a special (arbitrary) marker between all cards
+       yourself, for example a dash (-). For the card
+       terminator you therefore enter the dash ("-") and the
+       codes for a Return (13, 10).
+       If however you want to insert cards from the EASE
+       database program (.DBD files), you only enter the
+       number 240 for the card terminator. Entering the
+       characters works the same as for the printer driver
+       (F2/D).
+
+   -V: Field terminator
+       Here you enter the characters or Ascii numbers that
+       indicate the end of each field in the data file.
+       If you enter a data file with TED, a 'field' is nothing
+       more than a regular line, and regular lines are
+       terminated with a Return. The end of a field is
+       therefore indicated by the codes of a return (13, 10).
+       If however you want to insert cards from the EASE
+       database program (.DBD files), you only enter the
+       number 0 for the field terminator. You can (of course)
+       also insert cards from other database programs into the
+       text, provided you know the correct end-of-card and
+       end-of-field codes.
+
+   -K: First card:
+       Here you specify the number of the first card to be
+       printed (inserted).
+
+F2/D: Printer driver
+
+   This is the so-called printer driver. With it, up to 32
+   characters can be replaced by a series of up to nine other
+   characters during printing. At the top of the screen an
+   overview of the current printer-driver setting is shown. For
+   each substituted character the corresponding replacement
+   codes are listed.
+
+   First you type the character you want to substitute. Then
+   you can specify the corresponding codes. For example, if
+   you want to assign the codes 27, "C", "I" and " " to the
+   character @. On a Philips MSX printer this is the code to
+   turn on italic printing. You first type the @ character,
+   then press ESC (or just type the number 27) and press
+   Return. Then you type the letter "C", optionally between
+   quotes (but not required), and press return again. Continue
+   like this until you have entered the last space. This last
+   space is also not required, but it ensures the right margin
+   stays smooth when the text is justified.
+
+   You can remove a character from the printer driver by first
+   typing the character, then erasing the 'old' code with the
+   Back-Space key. If you then press Return, the character
+   gets its own value back. To change the code of a previously
+   entered character, you do this in the same way, except that
+   you immediately type the replacement code after erasing the
+   old one with the BS key.
+
+   By pressing Return you can set the printer driver to be
+   temporarily disabled, without having to give all characters
+   their old value back. With ESCape you exit the printer
+   driver.
+
+
+F2/S: Sort settings
+
+   With this you can configure how the F5/T command should sort
+   a block.
+
+   You have the following options:
+
+   -K: Card length
+       Here you can specify how many lines a card consists of.
+
+   -A: Sort key 1
+       Here you fill in the number of the field on which to
+       sort. Then you fill in the column position of the field
+       within the line.
+
+   -B: Sort key 2
+       If for two cards the contents of the first sort field
+       are equal, the cards are subsorted by this second sort
+       key.
+
+   -C: Sort key 3
+       This is the field on which to sort if for two cards the
+       fields A and B are both equal.
+
+   An example. You have entered an address list as follows:
+
+Jos de Boer
+Boppelâns 24
+8721 GG Warns
+-
+Ries Vriend
+Molenweg 45
+1619 EV Andijk
+-
+Jan Janssen
+Boppelâns 10
+8721 ZZ Warns
+-
+
+   N.B.: As you can see, the cards are separated by a "-"
+	 character; this lets the mail-merge function know
+	 where each card ends (See F2/P/A).
+
+   To now sort this list, first specify the length per card,
+   in this case 4 lines (fields).
+
+   Suppose you want the list sorted by city name, and when
+   multiple persons live in the same city, you want the names
+   in order per city.
+
+   In the menu fill in via the "A" command the field number of
+   the city name; in this example that is 3. For the column
+   number, fill in 9, because the city name starts at position
+   9, after the postcode.
+
+   Then for "B" fill in field number 1, because the person's
+   name is in the first field. For the column number you can
+   simply fill in 1, because there is no other data before the
+   name.
+
+   For the third sort key fill in field number "0", via the
+   "C" command. This indicates that you don't want a third
+   sort pass.
+
+   Then go back to the text with ESCape. Move the cursor to
+   the 1st field of the 1st address (so somewhere on "Jos de
+   Boer") and set the start of the block here (F5/S). Then
+   set the end of the block in the last card by placing the
+   cursor on "Boppelâns 10" and pressing F5/E.
+
+   Then press F5/T and there you go: first comes Ries, then
+   Jan, and finally Jos.
+
+   N.B.: For sorting to work properly it is very important
+	 that all cards span the same number of lines. First
+	 a card with three fields and then a card with four
+	 fields is guaranteed to fail. You can check whether
+	 all cards have the same length by turning on the
+	 page indication via F3/Page/Border and setting the
+	 page length to the card length via F2/Page/Length.
+
+	 The page indication thus obtained can act as a
+	 card-length indicator. If the end of each card
+	 corresponds with the page line on the right of the
+	 screen, you know the cards have the right length.
+	 You can also page through the cards by holding the
+	 Shift key and pressing the cursor up or down key at
+	 the same time.
+
+
+F2/B: Save and load settings
+
+   With this function you can store and reload your own
+   preferred settings. All settings made with function keys F2
+   and F3 are stored on diskette.
+
+   You have the following options:
+
+   -E: Save/Load settings with each text
+       If this option is ON, an extra file is placed on
+       diskette when each text is saved. This file gets the
+       same filename as the text and the extension .TED. In
+       this file the settings such as margins and header and
+       footer lines are stored. When the text is loaded, this
+       settings file is read again.
+
+   -T: Store settings in TED
+       With this you can store the current settings in
+       TED.COM, so they are immediately active the next time
+       TED starts. DOS2 users should make sure that the file
+       TED.COM is in the current directory.
+
+   -B: Save settings to a file
+       With this you can save the current settings to a file.
+       This file will automatically get the extension .TED.
+
+   -L: Load a settings file
+       With this function you can load a settings file from
+       diskette. With this function the file will also
+       automatically get the extension .TED, even if a
+       different extension is specified. A settings file can
+       also be loaded with the F3/I/S function.
+
+
+§ 6.4  Function key F3 = System
+
+
+F3/G: Memory (Geheugen)
+
+   Shows the total and free amount of memory in kilobytes. With
+   one 128 kB Memorymapper there is about 200 kB free (122 kB
+   Video RAM and 80 kB RAM is used). Each text line costs four
+   bytes plus the length of the line.
+
+   If MSX-DOS2 is used, 32 kilobytes less memory is available.
+   TED supports both internal memory and memory in external
+   cartridges under MSX-DOS2 or MemMan.
+
+
+F3/W: Wipe (Wis)
+
+   With this you can clear the memory and/or the printer
+   buffer. You have the following options:
+
+   -T: Clear text (Tekst)
+       Clears the entire text from memory.
+
+   -P: Empty printer buffer
+       Empties the printer buffer of the program PB. This
+       option is especially useful when the paper has jammed
+       or something similar and the buffer needs to be emptied
+       quickly.
+       Both the PB.TSR printer buffer for MemMan and the
+       buffer of the program PB.COM can be used together with
+       TED.
+
+
+F3/I: Inhoud (Directory)
+
+   Gives an overview of the files and free space on the
+   diskette. You can select a drive by entering A: or B: as
+   the selection. If no selection is given, TED assumes *.ext
+   is meant, where .ext stands for the preferred extension set
+   with F3/E.
+
+   For an overview of all files type *.*.
+
+   If MSX-DOS2 is used, sub-directories can also be included
+   in the search path. For example, the search path
+
+   B:\TED\BRIEF\*.*
+
+   gives you an overview of all files and sub-directories of
+   the directory \TED\BRIEF\ on disk B:.
+
+   After Return is pressed, a cursor appears in the upper
+   left, which you can control with the cursor keys to point
+   to a file.
+
+   At the bottom of the screen a help line appears with the
+   following options:
+
+   -L: Load
+       Loads the file from disk. This option is the same as
+       F4/L. With MSX-DOS2 you can also select sub-directories
+       with this option. Sub-directories are distinguished
+       from regular files in the file overview with the letter
+       'd'. By selecting the special '..' sub-directory you
+       can go up one sub-directory level.
+
+   -B: Block
+       Adds the file to the text. This option is the same as
+       F5/L. The file is inserted at the current position of
+       the cursor.
+
+   -K: Character set:
+       Loads the file as a character set (extension .SUP).
+       This option is the same as F4/S/K. The character set
+       will not be loaded if the standard MSX character set is
+       ON (F3/S/M).
+
+   -S: Settings
+       Loads a settings file (extension .TED). This option is
+       the same as F2/B/S.
+
+   -M: Mail-Merge
+       Marks the file as the data source for the mail-merge
+       function. This option is the same as F2/P/N.
+
+   -W: Wipe (Wis)
+       Removes the file from the diskette.
+
+   -I: Directory (Inhoud)
+       With this option you can request a disk directory
+       again.
+
+   With ESCape you return to the text.
+
+
+F3/L: koLom settings (column).
+
+   You have the following options:
+
+   -A: Number of columns (Aantal)
+       With this you can specify how many columns are printed
+       next to each other on the printer. These columns must
+       be typed below each other, based on the page length.
+       They can be laid out by enabling the page indication
+       line via F3/Page/Border. If you hold the SHIFT key, you
+       can quickly jump to the start of each column with the
+       cursor up and down keys.
+
+   -1..6: Position column 1 through 6
+       The position of each column can be entered by pressing
+       a digit between 1 and 6.
+
+       Suppose you have set the number of columns to 2. The
+       first column can then for example be set at position 5,
+       and column 2 at position 45. The first column is then
+       printed at 5 spaces from the left margin, and the
+       second column at 45 spaces from the left margin. To
+       prevent the columns from overlapping, the lines of the
+       first column may, in this example, be at most 40
+       characters long.
+
+       It is also possible to enter 'title lines' that span
+       across the columns. Such a title line just goes on the
+       1st line of the 1st column. The 1st line of the
+       adjacent column(s) must then be left empty, so no lines
+       are printed over each other.
+
+
+F3/P: Page (Pagina) layout
+
+   You have the following options:
+
+   -P: Place page-stop
+       This command marks the current line as the last line of
+       a page. When the text is printed - after the marked
+       line is printed - the printer will continue on a new
+       page.
+       Up to two hundred page-stops can be placed in the text.
+
+   -V: Remove page-stop (Verwijder)
+       This command undoes a page-stop on the current line.
+
+   -A: Remove all page-stops
+       This option removes all page-stops from the text.
+
+   -N: Page-number indication on/off
+       This switch sets whether the current page number is
+       shown in the status line at the top of the screen. If
+       this option is turned off, moving the cursor will go a
+       bit smoother. This is especially relevant when the text
+       contains many page-stops.
+
+   -S: Page-stop indication on/off
+       With this switch the page-stop indication line can be
+       turned on or off. If this option is on, the end of each
+       line that contains a page-stop is marked with a dashed
+       line. Also the status character `S' appears at the far
+       right of the status bar. This character means:
+       "Page-Stop".
+
+   -G: Page-border indication on/off (Grens)
+       This option turns the indication line - which marks the
+       border between two pages - on or off. If this switch is
+       on, the status character of every last line of a page
+       becomes `P'. This character means: "Page-Border".
+       The position of a page border depends on the configured
+       page length. The page length can be changed with
+       command F2/Print/Length.
+
+       If a page contains more than one column (number of
+       columns set with F3/koLom), the status character of the
+       last line of each column changes to a digit between 1
+       and 5. This digit corresponds with the column number.
+
+       Based on these indicators the text can be laid out
+       across various pages and columns.
+
+       You can send the cursor to the start of a page or
+       column by holding the SHIFT key and pressing the cursor
+       up or down key at the same time.
+
+
+F3/K: Colour (Kleur)
+
+   Shows a colour overview on the screen. You can set four
+   colours, namely the foreground and background colour of the
+   text and the foreground and background colour of the cursor.
+   The colours of the status lines are the same as those of
+   the cursor. If the colour cursor is disabled (with F3/S/C),
+   only the colours of the status lines are changed.
+
+   Each colour consists of a mix from the palette blue, red
+   and green. To each palette colour you can assign an
+   intensity between 0 and 7 by pressing the corresponding
+   value.
+
+   With the cursor keys you can move the cursor to the colour
+   to be changed.
+
+   When you have set all colours, you can press ESC to return
+   to the text. You can save the colour settings to diskette
+   with F2/B.
+
+
+F3/B: Backup
+
+   This is the backup (reserve copy) menu. You have the
+   following choices:
+
+   -B: Make backup file
+       If this option is ON, the previous version of a text is
+       copied to a backup file when saving the text. The
+       filename of this backup file remains unchanged; only
+       the extension is changed to '.BAK'.
+
+   -A: Make automatic backup
+       If this option is ON, the text is automatically saved
+       to disk after a certain number of keystrokes. If at the
+       moment of saving no filename is yet known, TED will ask
+       for one. If a filename is known, only an audio signal
+       is sounded and you are asked to wait a moment.
+
+   -S: Number of keystrokes (Slagen)
+       With this choice you can set after how many keystrokes
+       the text should be automatically saved; see also the
+       paragraph above.
+
+
+F3/E: preferred Extension
+
+   The filename of files on a diskette consists of a name and
+   an extension. The extension indicates what kind of file it
+   is. With this option you can choose your own preferred
+   extension.
+
+   The cursor is placed after the previous extension; you can
+   adjust it by pressing Back-Space (BS) or HOME, and then
+   typing the new extension.
+
+   The extension '.TXT' after a filename indicates that it is
+   a text file. So normally this is the preferred one. If you
+   don't want to use the configured preferred extension, you
+   can of course just type an extension after the filename.
+
+
+F3/S: Screen
+
+   With this you can configure the screen. The following
+   options are available:
+
+   -C: Colour cursor
+       Toggles between a coloured and inverse (regular) cursor.
+
+   -B: Block cursor
+       Toggles between a block-shaped and a line-shaped
+       cursor. If this option is OFF, the cursor is line-
+       shaped when the insert mode is ON.
+
+   -S: Command line on screen
+       Removes / shows the command line and the marker in the
+       ruler. When this command line and ruler are removed,
+       the text window grows by three lines.
+
+   -V: Leading zero (Voorloop)
+       Removes / shows an extra zero before the minutes and
+       seconds in the clock. 7. 0: 0 thus becomes 7.00:00 or
+       vice versa.
+
+   -L: Information ticker (Lichtkrant)
+       Toggles the ticker in the upper right of the status
+       line on or off.
+
+   -G: Large letters (Groot)
+       Removes / shows large letters in the help menu that can
+       be invoked with function key F7. This feature is
+       specifically built in for the visually impaired.
+
+   -R: Repeat keys (Repeteer)
+       Toggles the keyboard repeat function on or off.
+
+   -E: Edit mode
+       Toggles edit mode on or off. Edit mode is especially
+       suited for developing software. All spaces at the end
+       of each line are automatically removed and all
+       paragraph-reflow functions are disabled.
+
+   -A: Auto Indent
+       This option is usually used in combination with edit
+       mode. If the auto indent - automatic indentation -
+       option is on, the cursor jumps after a press on return
+       to under the start of the line above.
+       The function of the TAB key is changed by this option.
+       Pressing TAB jumps to under the start of a word on the
+       previous line. The current tab stops also retain their
+       function. The auto-indent option is ideal for entering
+       and editing Pascal, C and assembler programs.
+
+   -I: Blinking cursor (knIpper)
+       Toggles cursor blinking on or off.
+
+   -N: Cursor on time (aaN)
+       With this command the number of time units can be set
+       during which the cursor is visible while blinking. One
+       unit is one fiftieth of a second.
+
+   -U: Cursor off time (Uit)
+       With this option the number of time units can be set
+       during which the cursor is invisible while blinking.
+
+   -M: MSX character set
+       Toggles between the standard MSX character set and a
+       character set on disk. If the MSX character set is on,
+       no character set can naturally be loaded from disk.
+
+   -K: Character file
+       With this option you can specify which character set
+       should be loaded from disk. You can design character
+       sets yourself with the program Superletter, written by
+       Leon van Knijff. The character set will not be loaded
+       if the standard MSX character set is ON (see paragraph
+       above).
+
+
+F3/H: Help menu
+
+       With this you can change the text in the help menu that
+       can be invoked with function key F7. You have the
+       following options:
+
+   -T: Menu to text (Tekst)
+       Copies the eight lines from the help menu to the
+       current line in the text so you can make changes to
+       it. When the text is to your liking, you can use the
+       M-option to copy the text back to the help menu.
+
+   -M: Text to Menu
+       Copies eight lines from the current line to the help
+       menu.
+
+
+§ 6.5  Function key F4 = Commands
+
+
+F4/Z: Search (Zoek)
+
+   Searches for a sequence of letters, and replaces it with
+   another sequence. If you only want to search, leave the
+   replacement text empty.
+
+   Then with function keys F1 and F2 you can decide whether
+   the search distinguishes between upper and lower case, and
+   whether to search forward or backward. With function key F3
+   you can set whether all found search texts may be replaced
+   unconditionally or whether TED should ask for confirmation
+   first.
+
+   A press on Return starts the search. You can abort the
+   search early by pressing ESCape.
+
+   The search always starts from the position where the cursor
+   currently is.
+
+   The search and replace settings are kept. You can therefore
+   reuse them later by pressing F4/Z again, or modify them.
+   To enter a new search or replacement text, clear the old
+   one by pressing the HOME key.
+
+
+F4/N: Search again (Nog eens)
+
+   Searches/replaces again with the same conditions specified
+   under F4/Z.
+
+
+F4/G: Go to (Ga naar)
+
+   Goes to a particular position in the text. You have the
+   following options:
+
+   -T: To the top of the text
+   -B: To the bottom of the text
+   -S: To the start of a block
+   -E: To the end of a block
+   -R: To a line number (Regel)
+   -0..9: To a line marked with F4/0..9
+
+
+F4/P: Print
+
+   Prints the text on the printer according to the settings
+   chosen with F2/P and F2/D. You can abort printing early by
+   pressing CTRL and STOP at the same time.
+
+   At the top of the screen the line up to which printing has
+   progressed, and the line up to which printing should go,
+   are shown. If the mail-merge function is enabled with
+   F2/P/M, it also shows which card is being read from disk
+   and inserted into the text right now.
+
+   If continuous printing is OFF (F2/P/C), printing pauses at
+   the start of each page. Printing continues when you press
+   a key.
+
+
+F4/B: Save (Bewaar) the text
+
+   Saves a text to disk under a name you specify. If you don't
+   give an extension, TED assumes the preferred extension set
+   with F3/E. E.g.: B:TEST becomes B:TEST.TXT
+
+   If the file already has a name, for example because it was
+   loaded from disk, TED shows this name and places the cursor
+   after it. If you nevertheless want to give the file a
+   different name, you can erase the old name with the Back-
+   Space (BS) or HOME key, and then type a different name.
+
+
+F4/L: Load a text
+
+   Loads a text from disk with the same assumption as for
+   F4/B. If the file is not found, the entered name is kept,
+   so you can try again with another diskette.
+
+
+F4/0..9: Mark a line
+
+   Marks the current line in memory, with a number between 0
+   and 9, so it can quickly be returned to with F4/G.
+
+
+F4/S: Stop
+
+   Stops TED and returns to MSX-Dos. Before stopping, the text
+   can still be saved to disk.
+
+
+§ 6.6  Function key F5 = Block functions
+
+
+F5/S: mark Start position of the block
+
+F5/E: mark End position of the block
+
+   Marks the current position of the cursor as the end of the
+   block. All characters belonging to the block are shown in
+   inverse (= in the colour of the status lines).
+
+F5/W: Wipes the block (removes the block from the text)
+
+F5/D: Deletes the definitions of block start and block end
+
+F5/K: Copies (Kopieert) the block to the current cursor position
+
+F5/V: Moves (Verplaatst) the block to the current cursor position
+
+F5/P: Prints the block on the printer
+
+F5/T: Sort block (sorTeer)
+
+   Sorts all cards in the block according to the settings
+   chosen with F2/S. The block must start at the 1st field of
+   the 1st card and end at the last field of the last card.
+
+F5/L: Load block
+
+   Inserts a text block from disk at the current cursor
+   position.
+
+F5/B: Saves (Bewaart) the block to disk (same assumption as F4/B)
+
+
+§ 6.7  Function key 7 = Show help menu
+
+   Shows / removes the help menu. The help menu can be changed
+   by the user with command F3/H.
+
+
+§ 7.  Control-key commands
+
+§ 7.1  How they work
+
+By holding the CTRL key and then pressing one or two letter
+keys, you can execute the same commands as with the function
+keys.
+
+
+§ 7.2  Starting the TEDINS6 install program
+
+With program TEDINS6.BAS you can choose yourself which key(s)
+you want to use for each command.
+
+To use the program TEDINS6.BAS, make sure both TED.COM and
+TEDINS6.BAS are on the diskette in drive A:. To then start
+TEDINS6, type from MSX-DOS:
+
+A>BASIC TEDINS6.BAS
+
+and from MSX-BASIC type
+
+RUN"TEDINS6.BAS"
+
+
+§ 7.3  Showing the current settings
+
+With option 1 of the menu you can view which key(s) are used
+for which command. If desired you can also have this overview
+printed.
+
+When you have just started TEDINS6, the key data is first read
+from the program TED.COM.
+
+
+§ 7.4  Setting key combinations
+
+With option 2 of the menu you can select 1 or 2 letters for
+each command. It is recommended to first print the current
+settings with option 1, so you can see in advance (on paper)
+which letter combination you want to use for each command.
+
+Behind each command, in parentheses, the corresponding function
+key and the current control-key combination are shown. You type
+two letters (the desired control keys) behind each command. If
+for a particular command you want to use only one letter, press
+RETURN instead of the second character. If you don't want to
+change the control-key combination, just press RETURN.
+
+You may use each combination only once, and if you have already
+entered a particular one-letter combination, you may not use a
+two-letter combination for another command that begins with the
+same character. If this is the case, you must choose a different
+combination. If you have made a mistake, you can press ESCape to
+start over.
+
+N.B.: For setting the commands "Set and Clear marker" you only
+      need to type one letter; the second letter is automatically
+      the digit corresponding to the marker (0..9).
+
+
+§ 7.5  Saving the key combinations
+
+With option 3 you can save the configured control keys in the
+program TED.COM, so your preferred keys are present from now on
+directly after starting TED. It is recommended after using
+option 3 to print the command list with option 1, so you have an
+overview on paper.
+
+
+§ 7.6  Quitting TEDINS6
+
+With option 4 you exit the program TEDINS6.
+
+
+§ 8.  Step-by-step examples
+
+§ 8.1  Reflowing text into paragraphs
+
+As mentioned earlier, '<' characters in the vertical status bar
+on the right side of the screen indicate the end of each
+paragraph. The paragraph layout arises because TED, while you
+type, automatically wraps all words that no longer fit on a line
+to the next line, and places a space at the end of each line.
+If the last character of a line is not a space, because for
+example Return was pressed, that line is recognized as the end
+of the paragraph.
+
+It is recommended to first enter a text (almost) completely,
+and only afterwards lay it out neatly. This way you get a
+better overview of the text because while reflowing afterwards
+the coherence of the text can be re-examined and possibly
+changed.
+
+Some examples of laying out paragraphs afterwards follow.
+
+
+   Joining two paragraphs into one
+
+      - Move the cursor with the cursor keys to the end of the
+	last line of the first paragraph. Add a space at that
+	position by pressing the spacebar. The '<' character on
+	the right side of the screen disappears and the
+	paragraphs are joined. The new paragraph thus formed
+	can be reflowed by pressing the HOME key.
+
+
+   Splitting one paragraph into two separate paragraphs
+
+      - Toggle insert mode ON with the INS key. Move the
+	cursor to the position where the paragraph should be
+	split, usually this will be the space directly after
+	the end of a line. Press Return at that position to
+	split the paragraph into two separate paragraphs. Both
+	paragraphs can be reflowed with the HOME key.
+
+
+   Reflowing paragraphs whose first line indents to the left
+
+      - Set the desired left margin with the F2/L function.
+	Move the cursor to the position before the left margin
+	from where the indent should start. Then hold the CTRL
+	key and press HOME.
+
+
+   Placing numbering, bullet points, etc. before the left margin
+
+      - To place a number or bullet - as in this paragraph -
+	before the left margin of a paragraph, you can proceed
+	as follows.
+	If the desired character or number is not yet at the
+	correct position before the margin, place it there by
+	adding spaces with the spacebar and/or removing them
+	with the BS and DEL keys. Then move the cursor to the
+	first word of the paragraph and reflow the paragraph
+	from that position by holding the CTRL key and then
+	pressing HOME. The paragraph is then reflowed
+	according to the configured margins, and the text to
+	the left of the cursor remains untouched.
+
+
+§ 8.2  Form letter with mail-merge
+
+What follows is an example layout of a form letter and a
+matching address list. First the address list is entered with
+TED. The address list should be typed just like a normal text
+and then saved to disk with the F4/B command. An address list
+can be laid out for example like this:
+
+
+M.S. BBS Jos-Tel
+Boppelâns 24
+8721 GG Warns
+Nederland
+-
+Jos' Buurman
+Boppelâns 25
+8721 GH Warns
+Friesland
+-
+
+
+As you can see, the cards are separated from each other by a
+"-" character. You can also use other separator characters; see
+the explanation of the F2/P function about the mail-merge
+settings. Also if you use data from a separate database
+program, you must configure this with the F2/P function.
+
+After you have saved the data file with the F4/B command on
+diskette, you can enter the form letter. A field (=line) from
+a data card is referenced by $(xx), where xx stands for the
+field number. The reference $(1) in the example letter below
+therefore refers to the first field of the card, in this case
+the company name.
+
+The form letter could look like this:
+
+From: Kees Bitbijter
+
+To:  $(1)
+     $(2)
+     $(3)
+	    $(4)
+
+   Madam, Sir,
+
+  By this I have the pleasure of offering you the latest price
+list of diskettes.
+
+Sincerely,
+
+		Kees Bitbijter.
+
+
+When you have entered your letter, you can turn the Mail-Merge
+function ON with the F2/P/M option. Next, with the F2/P/N
+function, enter the filename of the data file from which TED
+should read the data. Finally, by giving the F4/P (Print)
+command, the form letters are printed. The first form letter
+from the example above will look as follows:
+
+
+From: Kees Bitbijter
+
+To:  M.S. BBS Jos-Tel
+     Boppelâns 24
+     8721 GG Warns
+	    Nederland
+
+   Madam, Sir,
+
+  By this I have the pleasure of offering you the latest price
+list of diskettes.
+
+Sincerely,
+
+		Kees Bitbijter.
+
+
+You can also print address labels with the mail-merge function
+of TED. To do this you can follow the same approach as for a
+form letter; only the 'letter' is now much simpler, for
+example like this:
+
+$(1)
+$(2)
+$(3)
+     $(4)
+
+You can print the data file on labels by setting the length in
+lines of each label with the F2/P/L function (usually 9).
+Optionally you can adjust the position of the left margin by
+varying the start position of column 1 with the F3/L (column)
+function. The F4/P (Print) command is again used to start
+printing.
+
+
+§ 8.3  Lists
+
+For entering lists, such as price lists, the configurable tab
+stops can be very useful. These tab stops are shown in the
+ruler at the bottom of the screen by a '+' character. By
+pressing the TAB key you can move the cursor to the nearest
+tab stop.
+
+If the F2/T/G option is configured to keep TAB characters in
+memory, the columns of the entered list are automatically
+moved when tab stops are placed and cleared with the F2/Z and
+F2/W options. If this automatic movement is not desired, turn
+the F2/T/G option OFF. Note that the current text is wiped
+when the F2/T/G option is toggled, so save the text to disk
+first!
+
+The first line of a list can be entered and laid out by moving
+the cursor with the spacebar, TAB, DEL and BS keys to the
+desired positions. After the first line is laid out as
+desired, you can place a tab stop at any desired column
+position with the F2/Z function. Unnecessary tab stops can be
+cleared with the F2/W function.
+
+
+§ 8.4  Text in columns
+
+Below the layout of a text in two columns is discussed. It is
+recommended to first type a text completely and only
+afterwards lay it out into columns.
+
+Suppose you want to print your text in 2 columns per page.
+With the F3/L option the number of columns is set to 2. The
+first column can then for example be set at position 5 and
+column 2 at position 45. The first column is then printed at
+5 spaces from the left margin, and the second column at 45
+spaces from the left margin. To prevent the columns from
+overlapping, the lines of the first column may, in this
+example, be at most 40 characters long; this is achieved by
+setting the right margin at position 40 with F2/R and then
+reflowing the paragraphs (again) with the HOME key. A column
+spans the full length of a page; the page length can be set
+with F2/P/L. It is recommended to enable the page/column
+indication line with the F3/Page/Border function while laying
+out the text, so you can already see while laying out where
+each new column and page begins.
+
+When the text is finally to your liking, you can print it
+with F4/P (Print).
+
+
+§ 8.5  Pascal program
+
+TED is extremely suited to entering and modifying programs in
+Pascal and other languages. This so-called editing of programs
+works best when you turn 'edit mode' on (option F3/S/E). All
+unnecessary spaces at the end of each line are then
+automatically removed and all paragraph-reflow functions are
+disabled.
+
+The auto-indent function (F3/S/A) can also be used while
+entering Pascal programs, so the cursor automatically indents
+after a press on return (see also the explanation under the
+F3/S/A command).
+
+If Turbo Pascal is used, the saving of TAB characters to disk
+must be turned OFF (option F2/T/B), since Turbo Pascal cannot
+process these codes correctly. The preferred extension can be
+set to PAS with F3/E. The right margin must be set at position
+131, this being the maximum line length that Turbo Pascal
+allows.
+
+
+§ 8.6  BASIC program
+
+Also when entering BASIC programs, edit mode must be turned ON
+with F3/S/E. The auto-indent function (F3/S/A) however must be
+OFF, since BASIC lines may not be indented. The maximum line
+length for BASIC programs is 254, so the right margin must
+also be set at position 254 (with F2/R). The preferred
+extension for BASIC programs is BAS or ASC (set with F3/E).
+Finally, saving TAB characters to disk must be turned OFF
+(option F2/T/B).
+
+To be able to edit an existing BASIC program in TED, it must
+have been saved to disk with the following BASIC command:
+
+SAVE"PROGRAM.ASC",A
+
+This command places the program with the name PROGRAM.ASC on
+disk as ASCII text so that it can be read by TED. A program
+saved to disk with TED can be loaded back with the LOAD
+command of BASIC, for example:
+
+LOAD"PROGRAM.ASC".
+
+It is important that every program line of the BASIC program
+is preceded by a line number. If you forget this, BASIC will
+give the error "Direct statement in file" while loading.
+
+
+§ 8.7  Assembler program
+
+Assembler programs can become particularly unreadable if they
+are not laid out neatly. The labels, mnemonics and the
+comments are best entered in separate columns. An example:
+
+
+		;**** Test program for TED *****
+
+		;This program produces a beep tone after it is
+		;assembled with e.g. GEN80 or M80.
+
+wBoot		equ  00h
+conOut		equ  02h
+bel		equ  07h
+bdos		equ  00005h
+
+start:		ld   e,bel		;Put BEEP character in E
+		ld   c,conOut		;Function: Output to screen
+		call bdos		;Execute the command
+		ld   c,wBoot		;Warm start
+		jp   bdos		;Done
+
+		end			;End of the program
+
+
+To lay out programs in this way, you can proceed as follows.
+
+Turn both edit mode and auto-indent mode ON (options F3/S/E
+and F3/S/A). The right margin is set at position 131 (via
+F2/R) and the left margin at position 1 (F2/L). Furthermore
+TAB stops should be at positions 17, 22 and 41 (set with the
+F2/Set-tab option), so that with the TAB key it is easy to
+jump between columns. The tab stops that are normally at
+positions 9, 25 and 33 can be removed (this saves memory and
+disk space because the spaces between the mnemonics and the
+comments are automatically replaced by a single TAB
+character).
+
+When auto-indent mode is turned ON, the cursor will
+automatically indent to under the start of the previous line
+after pressing return.
+
+By means of the key combination Ctrl-Left you can quickly
+jump to the start of the line: handy for quickly entering a
+label.
+
+Finally, insert mode must be ON, otherwise the line is not
+extended up to the next TAB stop when pressing the TAB key.
+
+
+§ 9.  The MemMan memory-management program
+
+MemMan is a memory-management program developed by the MSX
+Software Team. It is a 'Public Domain' program, which means
+that it may be freely copied and distributed - in contrast to
+TED.
+
+When MemMan is loaded, it remains invisibly present for the
+user. Other programs - such as TED - can then call it to
+request working memory. MemMan will only allocate memory to TED
+that is not yet in use by other programs such as printer
+buffers or RAM disks. It is however necessary that those
+programs have also requested their working memory from MemMan.
+
+The program PB.TSR is specially written for use in cooperation
+with MemMan, see § 10. Furthermore MemMan makes it possible for
+TED to also recognize and use any external memory expansions in
+the cartridge slots.
+
+
+§ 9.1  Installing MemMan
+
+By typing after the A> prompt of MSX-DOS
+
+MEMMAN
+
+MemMan will be installed. MemMan can also be installed by
+typing after the "Ok" prompt of MSX-BASIC
+
+BLOAD"MEMMAN.BIN",R
+
+You can leave MSX-BASIC again by typing CALL SYSTEM, after
+which the A> prompt of MSX-DOS reappears. Then type TED to
+start TED. See also paragraph 3.2.
+
+For more information about MemMan, read the manual that comes
+with MemMan. This manual is called MM2INTRO.TXT and can be
+loaded in TED with the F4/Load function.
+
+
+§ 10.  The PB printer-buffer program
+
+§ 10.1	Installing the printer buffer
+
+The program PB.TSR is specially written for use in cooperation
+with MemMan. It was published in MSX Computer Magazine number
+46. This printer buffer can be used together with MemMan and
+TED without any problems.
+
+PB.TSR is a 'background' program that remains continuously in
+memory after installation. All output sent by TED and other
+programs to the printer is intercepted by PB and placed in a
+memory buffer. As a result the computer is almost immediately
+free for use after every print command, while the printing
+from the printer buffer continues in the background. The
+printer buffer is active under the MSX operating systems
+MSX-DOS1, MSX-DOS2 and MSX-BASIC.
+
+To be able to load PB, the memory-management program MemMan
+must be active; § 9 describes how MemMan can be installed.
+
+PB is installed by the program TL.COM. TL is started from
+MSX-DOS; you can go from TED to MSX-DOS with the F4/S (stop)
+command. After a few seconds the A> prompt of MSX-DOS appears.
+
+By typing the command
+
+TL PB
+
+after the A> prompt and pressing Return, PB is loaded. TED can
+then be started again; all text printed by TED is
+automatically placed in the printer buffer.
+
+
+§ 10.2 The PRINT.COM program
+
+The program PRINT.COM makes the options of PB available under
+the MSX-DOS operating system. Although PRINT is not specifically
+applicable to TED, for completeness we give a brief description
+of the available functions.
+
+An important function of PRINT is the `dumping' of files into
+the printer buffer. PRINT will load all files matching the
+given filename and place them directly into the buffer memory.
+
+The filename given to PRINT may contain the so-called
+wild-cards - `*' and `?' - so that several files can be sent to
+the buffer one after another. Under the MSX-DOS2 operating
+system you can also specify in which sub-directory the files
+are.
+
+The other options of PRINT are accessible by means of the
+so-called `switches'; commands of one letter preceded by a
+`slash', i.e. the slash character `/'. PRINT is well-equipped
+with these switches. By means of the option /C the buffer can
+be emptied. Before the buffer is emptied, confirmation is
+asked first. This question can be suppressed by specifying /D.
+This option is handy when PRINT is started from a batch file -
+the output is then not interrupted to ask for confirmation.
+
+When /S is specified, the current size of the buffer is shown
+on the screen. This size can be changed by means of /I followed
+by a number that indicates the size. Thus the command
+
+PRINT *.TXT /I16 /D
+
+creates a buffer of 16 kB and no confirmation is asked. It is
+therefore possible that the contents of the buffer are lost
+without any notice. Then all files with the extension `.TXT'
+are loaded into the buffer.
+
+Via /V the version number of PB.TSR can be queried. When under
+MSX-DOS2 /H is specified, the so-called `hidden' files can also
+be printed. The last handy switch is /F; when this option is
+specified, a formfeed character is added at the end of each
+file, causing the last sheet of paper to be automatically
+ejected from the printer after each file.
+
+
+Appendix A - Summary of keyboard, function and control keys
+
+Keyboard:
+
+RETURN	     Starts a new paragraph
+BS	     Deletes the character left of the cursor
+DEL	     Deletes the character under the cursor
+  SHIFT+DEL  deletes the text right of the cursor
+  CTRL +DEL  deletes the current line
+INS	     Toggles insert mode off or on
+HOME	     Reflows the paragraph the cursor is in
+  CTRL+HOME  Reflows the paragraph from the cursor position
+  SHIFT+HOME Reflows paragraph and indents the first line
+  GRAPH+HOME Centers the current line
+CTRL+RIGHT   To the end of the line
+CTRL+LEFT    To the start of the line
+CTRL+UP      One screen height up
+CTRL+DOWN    One screen height down
+SHIFT+RIGHT  One word to the right
+SHIFT+LEFT   One word to the left
+SHIFT+UP     One page up
+SHIFT+DOWN   One page down
+GRAPH+LEFT   Toggles upper- and lowercase
+GRAPH+RIGHT  Toggles upper- and lowercase
+TAB	     Moves the cursor to the next tab stop
+SHIFT+TAB    Enters text before the left margin
+SELECT	     Produces the control prefix character
+STOP	     Toggles the cassette motor on or off
+ESC	     1. Leaves a choice menu  2. Produces escape character
+
+
+Function and control keys:
+
+F1 = One screen height down
+
+
+F2 = Settings
+
+F2/L	     Set left margin
+F2/R	     Set right margin
+
+F2/A/U	     Justify paragraph right on/off
+F2/A/A	     Hyphenate words on/off
+F2/A/S	     Shape of the hyphenation mark
+F2/A/I	     Number of indent characters
+
+F2/Z	     Set tab stop
+F2/W	     Clear tab stop
+
+F2/T/G	     Tab characters in memory on/off
+F2/T/B	     Save tab characters to disk on/off
+F2/T/L	     Load tab characters directly from disk on/off
+
+F2/M/M	     Use Memorymapper on/off
+F2/M/V	     Use Video RAM on/off
+
+F2/P/S	     Printer Setup string
+F2/P/B	     Top margin
+F2/P/O	     Bottom margin
+F2/P/L	     Page length
+F2/P/1	     Header line
+F2/P/2	     Footer line
+F2/P/E	     First page number
+F2/P/P	     Header line position
+F2/P/T	     Footer line position
+F2/P/R	     Header line margin
+F2/P/G	     Footer line margin
+F2/P/F	     Formfeed (page advance) on/off
+F2/P/C	     Continuous printing on/off
+F2/P/M	     Print with mail-merge on/off
+F2/P/N	     Mail-Merge data file
+F2/P/A	     Card terminator character(s)
+F2/P/V	     Field terminator character(s)
+F2/P/K	     First card from the mail-merge file
+F2/P/I	     Mail Merge marker character
+
+F2/D/Return  Printer driver on/off
+
+F2/S/K	     Sort card length
+F2/S/A..C    Sort fields
+
+F2/B/E	     Save/load settings with each text
+F2/B/T	     Save current settings in TED
+F2/B/B	     Save current settings to a .TED file
+F2/B/L	     Load settings from disk
+
+
+F3 = System
+
+F3/G	     Show memory space
+
+F3/W/T	     Clear current text
+F3/W/P	     Empty printer buffer
+
+F3/I	     Disk directory
+
+F3/L/A	     Number of text columns (1..6)
+F3/L/1..6    Set column positions
+
+F3/P/P	     Place a page-stop
+F3/P/V	     Remove a page-stop
+F3/P/A	     Remove all page-stops
+F3/P/N	     Toggles page-number indication on/off
+F3/P/S	     Toggles page-stop indication on/off
+F3/P/G	     Toggles page-border indication on/off
+
+F3/K	     Set screen colours
+
+F3/B/B	     Make backup (=reserve) file on/off
+F3/B/A	     Save automatically on/off
+F3/B/S	     Number of keystrokes for autosave
+
+F3/E	     Preferred filename extension
+
+F3/S/C	     Coloured cursor on/off
+F3/S/B	     Block cursor on/off
+F3/S/S	     Command line on screen on/off
+F3/S/V	     Leading zeros in clock on/off
+F3/S/L	     Information ticker on/off
+F3/S/G	     Large letters in help menu on/off
+F3/S/E	     Edit mode on/off
+F3/S/A	     Auto-Indent on/off
+F3/S/R	     Repeat keys on/off
+F3/S/M	     MSX character set on/off
+F3/S/K	     Character-set file on disk
+F3/S/I	     Cursor blinking on/off
+F3/S/N	     Change cursor blink ON time
+F3/S/U	     Change cursor blink OFF time
+
+F3/H/T	     Copy help menu to text
+F3/H/M	     Copy text to help menu
+
+
+F4 = Commands
+
+F4/Z	     Search/Replace
+F4/N	     Search/Replace again
+
+F4/G/T	     Go to top of the text
+F4/G/B	     Go to bottom of the text
+F4/G/R	     Go to line number
+F4/G/S	     Go to start of block
+F4/G/E	     Go to end of block
+F4/G/0..9    Go to marker no. 0..9
+
+F4/P	     Print the text
+
+F4/B	     Save the text
+
+F4/L	     Load a text
+
+F4/0..9      Set a marker in the text
+
+F4/S	     Quit TED
+
+
+F5 = Block functions
+
+F5/S	     Mark start position of the block
+F5/E	     Mark end position of the block
+
+F5/W	     Wipes the block (removes the block from the text)
+
+F5/D	     Deletes the definitions of block start and block end
+
+F5/K	     Copies the block to the current cursor position
+
+F5/V	     Moves the block to the current cursor position
+
+F5/P	     Prints the block on the printer
+
+F5/T	     Sorts the block
+
+F5/L	     Load block from disk
+
+F5/B	     Save block to disk
+
+
+F6 = One screen height up
+
+F7 = Show/remove help menu
+
+
+Appendix B - News in TED version 2.6
+
+An option has been added to place fixed page borders in the
+text; these fixed page borders are called `page-stops'.
+
+For this the following commands have been added:
+
+	F3/P/P - Place a page-stop
+	F3/P/V - Remove a page-stop
+	F3/P/A - Remove all page-stops
+	F3/P/N - Toggles page-number indication on/off
+	F3/P/S - Toggles page-stop indication on/off
+	F3/P/G - Toggles page-border indication on/off
+
+Jumping to the next or previous word in the text has been made
+easier. The Shift/Left and Shift/Right key combinations have
+been adapted. Special characters such as punctuation marks,
+hyphens, dots and commas are now seen as separate words.
+
+The Graph/Left and Graph/Right key combinations have been
+added. With these, lowercase letters can be converted to
+uppercase and vice versa.
+
+While reflowing paragraphs (via the HOME key) the intermediate
+phases are no longer shown on the screen. This produces a
+calmer image and speeds up reflowing. In the upper left of the
+screen the line number of the line currently being reflowed is
+shown.
+
+A similar improvement has been made to the block functions.
+The various intermediate phases while copying and clearing
+text blocks are no longer shown on the screen. The well-known
+spinning and shaking effects while manipulating text blocks,
+familiar to seasoned TED users, are now history.
+
+While clearing blocks, the upper left of the screen shows how
+many lines still need to be wiped. This is to soften the wait
+for this relatively slow function.
+
+If TED is started from a Kanji screen mode - under MSX-DOS2 or
+on a Japanese MSX computer - it automatically switches to the
+MSX standard text screen. After exiting TED the Kanji mode is
+re-enabled.
+
+The print-buffer program PB.TSR - which has been published by
+MSX Computer Magazine - is supported by TED.
+
+
+Ordering, information, etc.
+---------------------------
+
+TED is a product of:
+
+
+      +------------------------------------------------------+
+      | JOS-TEL M.S. BBS				     |
+      | Tel.: 05149-1837				     |
+      | Speeds:  300 1200/75 1200 and 2400 baud		     |
+      | 						     |
+      | Reachable Monday through Thursday from 21.00 to 7.30 |
+      | 	   Friday through Saturday  from 20.00 to 12.00 |
+      | 	   Sunday		    from 20.00 to 7.30  |
+      +------------------------------------------------------+
+
+TED version 2.6 can be ordered by transferring ƒ 50,= to:
+
+MS BBS Jos-Tel
+Boppelâns 24
+8721 GG Warns
+Giro: 2827142, in the name of Jos de Boer.
+
+From this amount, ƒ 40,= is transferred directly to giro
+account 6989 of the MS Foundation. Ten guilders is reserved
+for postage, packaging and BBS expenses.
+
+Updates can be obtained by sending the original TED diskette
+(with sticker) and a valid means of payment - giro cheque or
+postage stamps - to the address above. The required amount can
+also be transferred to the giro account of Jos-Tel.
+
+The update fees from versions 2.4 and 2.5 are ƒ 5,-; from
+version 2.3 ƒ 10 and from earlier versions ƒ 15,-. Enclose a
+self-addressed envelope with ƒ 1,50 of postage.
+
+More information and a freely distributable demo version can
+be obtained from the BBS Jos-Tel. The demo lacks the print and
+save function.
+
+
+Constructive criticism and donations gratefully received,
+
+Sysop Jos-Tel:		Jos de Boer
+			Boppelâns 24
+			8721 GG Warns
+
+Programmer:		Ries Vriend
+			Andijk
+
+			   *** End ***

@@ -20,7 +20,7 @@ msx2026/
 │   ├── hello/              HELLO.MAC + ML.BAT — minimal proof of the toolchain
 │   └── ted/                TED #2.6 source: MAIN/SUBTED/TEDSTR/GETPUT/OFFSET/TEDGRAB.MAC
 │                           plus *.TED ruler files and our MK.BAT / SHORT.BAT
-├── runtime/ted/            Prebuilt TED.COM + helpers + LEES.MIJ + manual
+├── runtime/ted/            Prebuilt TED.COM + helpers + LEES.MIJ + manuals (Dutch + English)
 ├── dist/                   Drag any of these onto webmsx.org (or use as DISKA_FILES_URL)
 │   ├── m80-tools.zip
 │   ├── hello-build.zip
@@ -28,7 +28,9 @@ msx2026/
 │   └── ted-run.zip
 └── doc/
     ├── TED26.DOC           Original Dutch manual (CP850 + box-drawing chars)
-    └── TED26.utf8.txt      Same, transcoded for modern editors
+    ├── TED26.utf8.txt      Same, transcoded for modern editors
+    ├── TED26ENG.DOC        English translation (CP850, opens inside TED)
+    └── TED26ENG.utf8.txt   English translation, transcoded for modern editors
 ```
 
 Verified working as of May 2026 against WebMSX 6.0.8.
@@ -103,10 +105,11 @@ TED's `MAIN.MAC` declares its entry point as `codeer` (line ~7678), not the edit
 
 So a fresh-from-`L80` `TED.COM` must be run once with `TED <some-number>` before it functions as an editor. `MK.BAT` does this with `TED 12345`. The prebuilt `runtime/ted/TED.COM` was already registered by its original developer, so it works on first launch.
 
-## How do I read the Dutch manual?
+## How do I read the manual?
 
-- **Modern editor:** open [doc/TED26.utf8.txt](../../doc/TED26.utf8.txt). Box-drawing chars become Unicode equivalents.
-- **As intended (inside TED):** use `dist/ted-run.zip` and `BASIC_ENTER=TED+TED26.DOC`.
+- **Modern editor (English):** open [doc/TED26ENG.utf8.txt](../../../doc/TED26ENG.utf8.txt). Box-drawing chars become Unicode equivalents.
+- **Modern editor (Dutch original):** open [doc/TED26.utf8.txt](../../../doc/TED26.utf8.txt).
+- **As intended (inside TED):** use `dist/ted-run.zip` and `BASIC_ENTER=TED+TED26ENG.DOC` (or `TED26.DOC` for Dutch). Both ship in `runtime/ted/`.
 - **Print path the manual itself recommends:** open in TED, `F4`, `P`.
 
 ## How do I add a new .MAC project?
@@ -159,17 +162,19 @@ The `DISK` extension only provides the floppy interface — to actually drop int
 
 ## How do I run this entirely locally (no internet)?
 
+Both `wmsx/` and `dist/` are served from the same `localhost:8765` origin, so CORS doesn't apply and stdlib `http.server` is enough — no custom server script needed.
+
 ```bash
 # 1. clone WebMSX once
 git clone https://github.com/ppeccin/WebMSX ~/WebMSX
 
-# 2. set up a unified test directory (CORS-enabled HTTP server)
+# 2. set up a unified test directory side-by-side with the repo
 mkdir -p /tmp/wmsx-test
 ln -snf ~/WebMSX/release/stable/6.0/standalone /tmp/wmsx-test/wmsx
-ln -snf <repo>/dist /tmp/wmsx-test/dist
+ln -snf "$(pwd)/dist"                          /tmp/wmsx-test/dist
 
-# 3. start the server (script in this repo at /tmp/wmsx-test/serve.py)
-python3 /tmp/wmsx-test/serve.py
+# 3. serve it
+python3 -m http.server 8765 --directory /tmp/wmsx-test
 
 # 4. open
 http://localhost:8765/wmsx/index.html?MACHINE=MSX2PE&PRESETS=DISK,RAM512&DISKA_FILES_URL=http://localhost:8765/dist/ted-run.zip&FAST_BOOT=1&BASIC_ENTER=TED+LEES.MIJ

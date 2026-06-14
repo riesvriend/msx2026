@@ -23,7 +23,7 @@ up              equ 1EH
 down            equ 1FH
 nul             equ 255
 
-                include offset.mac     ;Contains variable offsets, Language and Demo flags
+                include OFFSET.MAC     ;Contains variable offsets, Language and Demo flags
 
                 global f2Kar,f3Kar,f4Kar,f5Kar,inhKar,prtKar,scrKar,indKar
                 global goKar,aliKar,insKar,kolKar,hlpKar,memKar,tabKar,pageKar

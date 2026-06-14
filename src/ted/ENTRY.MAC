@@ -1,0 +1,19 @@
+    ; Program entry point to assemble and link TED with Nestor80.
+    ;
+    ; When assembling and linking TED with the Macro80 toolchain,
+    ; the "end codeer" directive at the end of MAIN.MAC causes L80 to add
+    ; a "JP codeer" instruction at the beginning of the generated binary.
+    ; Since CP/M is assumed as the target system, this JP instruction
+    ; is linked at address 100h and the code that follows at 103h.
+    ;
+    ; Nestor80, on the othe hand, is a general purpose Z80 assembler that
+    ; knows nothing about CP/M and will not generate the jump instruction.
+    ; Thus this file must be assembled too, and linked first:
+    ;
+    ; LK80 -c 0100h -o TED.COM ENTRY.REL SUBTED.REL GETPUT.REL TEDSTR.REL MAIN.REL
+
+    ext codeer
+    
+    JP codeer
+
+    end

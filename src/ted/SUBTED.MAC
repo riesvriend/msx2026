@@ -107,7 +107,7 @@ parse           equ 5BH
                 ;Externals in TEDSTR - language-dependent screen messages
 
                 ext indKar
-                byte ext xAantPos
+                ext xAantPos
 
                 ext TRECERR,TREGLEN,TONDERB,TMEMVOL,TTOMANY,TDISKVOL,TPROT
                 ext TNODISK,TDSKERR,TVERERR,TKARERR,TNOTFND,TPROB,TVERVANG
@@ -119,7 +119,7 @@ parse           equ 5BH
                 ext INSKAR
                 ext VRMREG,VRMKOL,VRMPAG
 
-                byte ext XZOEK
+                ext XZOEK
 
                 ;Externals in GETPUT.MAC
 
@@ -3414,7 +3414,7 @@ mm3:            ld (iy-pg1Seg),9        ;Mapper segment of page 1 = block 2
 mm4:            ld (iy+maxMap),a        ;Save highest segment number
                 ret
 
-seg0identifier: 'MJV DOS1 Mapper Search';Segment 0 identifier
+seg0identifier: db 'MJV DOS1 Mapper Search';Segment 0 identifier
 identLen        equ $-seg0identifier    ;Identifier length
 
 

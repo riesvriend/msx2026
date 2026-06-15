@@ -33,6 +33,21 @@ git add dist/<target>.zip && git commit && git push
 
 The launch URLs above always pick up the latest `main` of each zip.
 
+## Building with Nestor80
+
+Alternatively to using the original MACRO-80 toolchain, TED can be built with [Nestor80](https://github.com/Konamiman/Nestor80/) too:
+
+```bash
+N80 ENTRY.MAC
+N80 SUBTED.MAC
+N80 GETPUT.MAC
+N80 TEDSTR.MAC
+N80 MAIN.MAC
+LK80 -c 0100h -o TED.COM ENTRY.REL SUBTED.REL GETPUT.REL TEDSTR.REL MAIN.REL
+```
+
+Note that the TED.COM file generated with Nestor80 will be a few bytes smaller compared to the one that MACRO-80 generates. That's because MACRO-80, being a CP/M tool, rounds the file size up to a multiple of 128 bytes; Nestor80 on the other hand doesn't do that.
+
 ## See also
 
 The full walkthrough — including the registration step that lets a freshly built `TED.COM` actually start the editor — is captured as a question-driven skill at [.claude/skills/run-ted-msx/SKILL.md](.claude/skills/run-ted-msx/SKILL.md).

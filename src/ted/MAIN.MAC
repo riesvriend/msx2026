@@ -155,7 +155,7 @@ pbClear         equ 1
                 ext kolKar,hlpKar,tabKar,memKar,pageKar
                 ext vrmTF7,xyFnk
 
-                byte ext xAfbreek,xUitvul,xStreep,xInspr,xTabIns
+                ext xAfbreek,xUitvul,xStreep,xInspr,xTabIns
 
                 ext TINTRO,TGETNAME,TGETCODE,TGEBR
                 ext KRTSTART,KRTEND,TNOKRT,TF7
@@ -7693,7 +7693,7 @@ diskBuf         equ $d                  ;Load/save buffer (at least 512 bytes)
 
                 ;Compute checksum for TED and write TED to disk
 
-codeer:
+codeer::
 if              noLicense
                 jp ini                  ;noLicense: skip the registration ritual entirely
 endif

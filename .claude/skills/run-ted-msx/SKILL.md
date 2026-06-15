@@ -18,7 +18,7 @@ msx2026/
 │   └── expand-ted-tabs.py  Replays MAKESP from GETPUT.MAC to expand TAB → spaces
 ├── src/
 │   ├── hello/              HELLO.MAC + ML.BAT — minimal proof of the toolchain
-│   └── ted/                TED #2.6 source: MAIN/SUBTED/TEDSTR/GETPUT/OFFSET/TEDGRAB.MAC
+│   └── ted/                TED #2.6 source: MAIN/SUBTED/TEDSTR/GETPUT/OFFSET.MAC
 │                           plus *.TED ruler files and our MK.BAT / SHORT.BAT
 ├── runtime/ted/            Prebuilt TED.COM + helpers + LEES.MIJ + manuals (Dutch + English)
 ├── dist/                   Drag any of these onto webmsx.org (or use as DISKA_FILES_URL)
